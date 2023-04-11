@@ -96,7 +96,7 @@ class SoalController extends Controller
             $jawaban = new Jawaban();
             $jawaban->soal_id = $soal->id;
             $jawaban->jawaban = $pilihan;
-            if ($request->kunci_jawaban == $key) {
+            if ($request->kunci_jawaban == $request->id_pilihan[$key]) {
                 $jawaban->isKunci = 1;
             }
             $jawaban->save();

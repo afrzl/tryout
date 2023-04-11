@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Soal;
 use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ujian extends Model
 {
@@ -31,5 +32,15 @@ class Ujian extends Model
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
+    }
+
+    /**
+     * Get all of the soal for the Ujian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function soal()
+    {
+        return $this->hasMany(Soal::class, 'ujian_id', 'id');
     }
 }

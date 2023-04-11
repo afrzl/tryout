@@ -43,9 +43,9 @@ class UjianController extends Controller
                     <button onclick="deleteData(`' .
                     route('ujian.destroy', $ujians->id) .
                     '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
-                    <button onclick="showDetail(`' .
-                    route('ujian.show', $ujians->id) .
-                    '`)" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></button>
+                    <a href="' .
+                    route('ujian.soal.index', $ujians->id) .
+                    '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>
                 ';
             })
             ->rawColumns(['aksi', 'lama_pengerjaan'])

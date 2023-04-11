@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SoalController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\ProfileController;
@@ -40,8 +41,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
 //route data soal
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::get('/ujian/soal/data', [UjianController::class, 'data'])->name('soal.data');
-    Route::resource('ujian/soal', UjianController::class);
+    Route::get('/ujian/soal/data/{id}', [SoalController::class, 'data'])->name('soal.data');
+    // Route::get('/ujian/soal/{id}', [SoalController::class, 'index'])->name('soal.index');
+    Route::resource('ujian.soal', SoalController::class)->shallow();
 });
 
 Route::middleware('auth')->group(function () {

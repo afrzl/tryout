@@ -7,7 +7,7 @@ Data Soal Ujian {{ $ujian->nama }}
 @section('breadcrumb')
 @parent
 <li class="breadcrumb-item"><a href="{{ route('ujian.index') }}">Ujian</a></li>
-<li class="breadcrumb-item active">Soal {{ $ujian->nama }}</li>
+<li class="breadcrumb-item active"><a href="{{ route('ujian.soal.index', $ujian->id) }}">Soal {{ $ujian->nama }}</a></li>
 @endsection
 
 @push('links')
@@ -34,14 +34,18 @@ Data Soal Ujian {{ $ujian->nama }}
                 <div class="card-body">
                     <form action="{{ route($action, $id_route) }}" method="post" class="form-horizontal needs-validation" autocomplete="off" novalidate>
                         @csrf
-
                         @if($action == 'soal.update')
                             @method('put')
+                            @php $adaKunci = 0; @endphp
                             @foreach ($soal->jawaban as $key => $value)
                             @if($value->isKunci)
                             <input type="hidden" id="kunciJawaban" value="{{ $value->id }}" required name="kunci_jawaban">
+                            @php $adaKunci = 1; @endphp
                             @endif
                             @endforeach
+                            @if(!$adaKunci)
+                            <input type="hidden" id="kunciJawaban" required name="kunci_jawaban">
+                            @endif
                         @else
                             @method('post')
                             <input type="hidden" id="kunciJawaban" required name="kunci_jawaban">
@@ -159,6 +163,9 @@ Data Soal Ujian {{ $ujian->nama }}
 
         const kunciJawaban = document.getElementById('kunciJawaban').value;
         $('#jawaban_' + kunciJawaban + '').prop('disabled', true);
+        $('#jawaban_' + kunciJawaban + '').removeClass('btn-outline-warning')
+        $('#jawaban_' + kunciJawaban + '').addClass('btn-warning')
+
         $('#hapus_' + kunciJawaban + '').prop('disabled', true);
     }
 
@@ -173,15 +180,31 @@ Data Soal Ujian {{ $ujian->nama }}
     }
 
     function jadikanKunci(id) {
+        $('[id^="jawaban_"]').prop('disabled', false);
+        $('[id^="jawaban_"]').removeClass('btn-warning')
+        $('[id^="jawaban_"]').addClass('btn-outline-warning')
+        $('[id^="hapus_"]').prop('disabled', false);
         for (let i = 0; i < $('input[name="pilihan[]"]').length; i++) {
-            $('[id^="jawaban_"]').prop('disabled', false);
-            $('[id^="hapus_"]').prop('disabled', false);
             if ($('#id_pilihan_' + id).val() == id) {
                 document.getElementById("kunciJawaban").value = $('#id_pilihan_' + id).val();
                 $('#jawaban_' + id + '').prop('disabled', true);
+
+                $('#jawaban_' + id + '').removeClass('btn-outline-warning')
+                $('#jawaban_' + id + '').addClass('btn-warning')
+
                 $('#hapus_' + id + '').prop('disabled', true);
             }
         }
     }
+
+    function invalidInput(error) {
+        toastr.error(error);
+    }
+
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            invalidInput('{{ $error }}');
+        @endforeach
+    @endif
 </script>
 @endpush

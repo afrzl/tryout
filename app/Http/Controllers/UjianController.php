@@ -146,4 +146,18 @@ class UjianController extends Controller
 
         return response(null, 204);
     }
+
+    public function publish($id)
+    {
+        $ujian = Ujian::findorFail($id);
+        if ($ujian->isPublished) {
+            $ujian->isPublished = 0;
+        } else {
+            $ujian->isPublished = 1;
+        }
+
+        $ujian->update();
+
+        return response()->json('Data berhasil disimpan', 200);
+    }
 }

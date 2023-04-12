@@ -24,7 +24,7 @@ class SoalController extends Controller
     public function data($id)
     {
         $soals = Soal::where('ujian_id', $id)
-                ->with('jawaban')
+                ->with('jawaban', 'ujian')
                 ->orderBy('created_at', 'asc')
                 ->get();
 
@@ -48,12 +48,16 @@ class SoalController extends Controller
                 return $soal;
             })
             ->addColumn('aksi', function ($soals) {
-                return '
-                    <a href="' . route('soal.edit', $soals->id) . '" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
-                    <button onclick="deleteData(`' .
-                    route('soal.destroy', $soals->id) .
-                    '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
-                ';
+                if ($soals->ujian->isPublished) {
+                    return '<span class="badge badge-success">Published</span>';
+                } else {
+                    return '
+                        <a href="' . route('soal.edit', $soals->id) . '" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
+                        <button onclick="deleteData(`' .
+                        route('soal.destroy', $soals->id) .
+                        '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
+                    ';
+                }
             })
             ->rawColumns(['aksi', 'soal'])
             ->make(true);
@@ -81,10 +85,15 @@ class SoalController extends Controller
      */
     public function store(Request $request, $id)
     {
+
         $request->validate([
             'soal' => 'required',
             'pilihan.*' => 'required',
             'kunci_jawaban' => 'required'
+        ], [
+            'soal.required' => 'Soal tidak boleh kosong.',
+            'pilihan.*.required' => 'Jawaban tidak boleh ada yang kosong.',
+            'kunci_jawaban.required' => 'Kunci jawaban harus ada.',
         ]);
 
         $soal = new Soal();

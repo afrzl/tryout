@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 //route data ujian
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/ujian/data', [UjianController::class, 'data'])->name('ujian.data');
+    Route::get('/ujian/{id}/publish', [UjianController::class, 'publish'])->name('ujian.publish');
     Route::resource('ujian', UjianController::class);
 });
 

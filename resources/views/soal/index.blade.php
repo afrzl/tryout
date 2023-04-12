@@ -19,11 +19,17 @@ Data Soal Ujian {{ $ujian->nama }}
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                @if ($ujian->jumlah_soal != $ujian->soal->count())
                 <div class="card-header row">
-                    <a href="{{ route('ujian.soal.create', $ujian->id) }}" disabled class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
+                    @if ($ujian->jumlah_soal > $ujian->soal->count())
+                    <a href="{{ route('ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
+                    @else
+                        @if($ujian->isPublished)
+                            <button onclick="cancelPublished('{{ route('ujian.publish', $ujian->id) }}')" type="button" class="btn btn-danger"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Batalkan publish</button>
+                        @else
+                            <button onclick="published('{{ route('ujian.publish', $ujian->id) }}')" type="button" class="btn btn-success"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
+                        @endif
+                    @endif
                 </div>
-                @endif
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div id="progress" class="progress mb-3">
@@ -157,6 +163,70 @@ Data Soal Ujian {{ $ujian->nama }}
                 })
                 .fail((response) => {
                     toastr.error('Tidak dapat menghapus data.');
+                    return;
+                })
+            }
+        })
+    }
+
+    function published(url) {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan mempublish ujian?',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(url, {
+                    '_method': 'get'
+                })
+                .done((response) => {
+                    toastr.options = {
+                        "positionClass": "toast-bottom-right",
+                        "closeButton" : true,
+                        "progressBar" : true
+                    };
+                    toastr.success('Ujian berhasil dipublish.');
+                    $( ".card-header" ).load(window.location.href + " .card-header>*" );
+                    tableSoal.ajax.reload();
+                })
+                .fail((response) => {
+                    toastr.error('Tidak dapat mempublish ujian.');
+                    return;
+                })
+            }
+        })
+    }
+
+    function cancelPublished(url) {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan membatalkan publish ujian?',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(url, {
+                    '_method': 'get'
+                })
+                .done((response) => {
+                    toastr.options = {
+                        "positionClass": "toast-bottom-right",
+                        "closeButton" : true,
+                        "progressBar" : true
+                    };
+                    toastr.success('Publish ujian berhasil dibatalkan.');
+                    $( ".card-header" ).load(window.location.href + " .card-header>*" );
+                    tableSoal.ajax.reload();
+                })
+                .fail((response) => {
+                    toastr.error('error.');
                     return;
                 })
             }

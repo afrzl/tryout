@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ujian', function (Blueprint $table) {
-            $table->integer('jumlah_soal')->unsigned()->before('created_at');
+            $table->boolean('isPublished')->default(false)->after('waktu_akhir');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('ujian', function (Blueprint $table) {
-            $table->dropColumn('jumlah_soal');
+            $table->dropColumn('isPublished');
         });
     }
 };

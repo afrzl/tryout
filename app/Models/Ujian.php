@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Soal;
 use App\Traits\Uuids;
+use App\Models\Pembelian;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -42,5 +43,15 @@ class Ujian extends Model
     public function soal()
     {
         return $this->hasMany(Soal::class, 'ujian_id', 'id');
+    }
+
+    /**
+     * Get all of the pembelian for the Ujian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pembelian()
+    {
+        return $this->hasMany(Pembelian::class, 'ujian_id');
     }
 }

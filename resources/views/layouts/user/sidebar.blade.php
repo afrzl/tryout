@@ -13,7 +13,7 @@
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Menu</h6>
             </li>
             <li class="nav-item">
-                <a class="nav-link  active" href="{{ asset('softUI') }}/pages/dashboard.html">
+                <a class="nav-link  active" href="{{ route('dashboard') }}">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>shop </title>
@@ -54,6 +54,7 @@
             </li>
         </ul>
     </div>
+    @auth
     <div class="sidenav-footer mx-3 ">
         <div class="card card-background shadow-none card-background-mask-secondary" id="sidenavCard">
             <div class="full-background" style="background-image: url('{{ asset('softUI') }}/assets/img/curved-images/white-curved.jpg')"></div>
@@ -70,6 +71,7 @@
         </div>
         <a class="btn bg-gradient-primary mt-3 w-100" onclick="document.getElementById('logoutForm').submit()">Logout</a>
     </div>
+    @endauth
 </aside>
 
 <form action="{{ route('logout') }}" id="logoutForm" method="post" style="display: none;">

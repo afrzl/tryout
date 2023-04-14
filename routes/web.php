@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\PaymentCallbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,11 +21,11 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 //route data user
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -45,6 +47,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/ujian/soal/data/{id}', [SoalController::class, 'data'])->name('soal.data');
     // Route::get('/ujian/soal/{id}', [SoalController::class, 'index'])->name('soal.index');
     Route::resource('ujian.soal', SoalController::class)->shallow();
+});
+
+//route pembelian
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('pembelian', PembelianController::class);
 });
 
 Route::middleware('auth')->group(function () {

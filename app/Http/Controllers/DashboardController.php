@@ -9,11 +9,15 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        if (auth()->user()->hasRole('admin')) {
-            return view('layouts.app');
-        } else {
+        if (!auth()->check()) {
             $ujians = Ujian::where('isPublished', 1)->get();
             return view('views_user.dashboard', compact('ujians'));
         }
+        if (auth()->user()->hasRole('admin')) {
+            return view('layouts.app');
+        }
+
+        $ujians = Ujian::where('isPublished', 1)->get();
+        return view('views_user.dashboard', compact('ujians'));
     }
 }

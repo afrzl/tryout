@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Models\Ujian;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class UjianController extends Controller
             ->addIndexColumn()
             ->addColumn('waktu_pengerjaan', function ($ujians)
             {
-                return Carbon::parse($ujians->waktu_mulai)->format('d/m/Y H:i:s') . ' - ' . Carbon::parse($ujians->waktu_akhir)->format('d/m/Y H:i:s');
+                return Carbon::parse($ujians->waktu_mulai)->isoFormat('D MMMM Y HH:mm:ss') . ' - <br>' . Carbon::parse($ujians->waktu_akhir)->isoFormat('D MMMM Y HH:mm:ss');
             })
             ->addColumn('lama_pengerjaan', function ($ujians)
             {
@@ -38,17 +39,17 @@ class UjianController extends Controller
             ->addColumn('aksi', function ($ujians) {
                 return '
                     <button onclick="editData(`' .
-                    route('ujian.update', $ujians->id) .
+                    route('admin.ujian.update', $ujians->id) .
                     '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
                     <button onclick="deleteData(`' .
-                    route('ujian.destroy', $ujians->id) .
+                    route('admin.ujian.destroy', $ujians->id) .
                     '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
                     <a href="' .
-                    route('ujian.soal.index', $ujians->id) .
+                    route('admin.ujian.soal.index', $ujians->id) .
                     '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>
                 ';
             })
-            ->rawColumns(['aksi', 'lama_pengerjaan'])
+            ->rawColumns(['aksi', 'lama_pengerjaan', 'waktu_pengerjaan'])
             ->make(true);
     }
 

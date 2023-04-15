@@ -70,7 +70,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('ujian.index') }}" class="nav-link {{ (request()->segment(1) == 'ujian') ? 'active' : '' }}">
+                    <a href="{{ route('admin.ujian.index') }}" class="nav-link {{ (request()->segment(1) == 'ujian') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             Ujian

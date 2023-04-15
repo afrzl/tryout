@@ -20,7 +20,7 @@ Data Ujian
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <button onclick="addForm('{{ route('ujian.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
+                    <button onclick="addForm('{{ route('admin.ujian.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -72,7 +72,7 @@ Data Ujian
             , responsive: true
             , autoWidth: false
             , ajax: {
-                url: '{{ route('ujian.data') }}'
+                url: '{{ route('admin.ujian.data') }}'
             , }
             , columns: [{
                     data: 'DT_RowIndex'

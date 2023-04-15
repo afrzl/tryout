@@ -6,8 +6,8 @@ Data Soal Ujian {{ $ujian->nama }}
 
 @section('breadcrumb')
 @parent
-<li class="breadcrumb-item"><a href="{{ route('ujian.index') }}">Ujian</a></li>
-<li class="breadcrumb-item active"><a href="{{ route('ujian.soal.index', $ujian->id) }}">Soal {{ $ujian->nama }}</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.ujian.index') }}">Ujian</a></li>
+<li class="breadcrumb-item active"><a href="{{ route('admin.ujian.soal.index', $ujian->id) }}">Soal {{ $ujian->nama }}</a></li>
 @endsection
 
 @push('links')
@@ -20,7 +20,7 @@ Data Soal Ujian {{ $ujian->nama }}
 </script>
 
 @php
-    if ($action == 'ujian.soal.store') {
+    if ($action == 'admin.ujian.soal.store') {
         $id_route = $ujian->id;
     } else {
         $id_route = $soal->id;
@@ -34,7 +34,7 @@ Data Soal Ujian {{ $ujian->nama }}
                 <div class="card-body">
                     <form action="{{ route($action, $id_route) }}" method="post" class="form-horizontal needs-validation" autocomplete="off" novalidate>
                         @csrf
-                        @if($action == 'soal.update')
+                        @if($action == 'admin.soal.update')
                             @method('put')
                             @php $adaKunci = 0; @endphp
                             @foreach ($soal->jawaban as $key => $value)
@@ -59,7 +59,7 @@ Data Soal Ujian {{ $ujian->nama }}
                                     Kolom soal tidak boleh kosong.
                                 </div>
                             </div>
-                            @if ($action == 'ujian.soal.store')
+                            @if ($action == 'admin.ujian.soal.store')
                             <div id="pilihan_0-new">
                                 <label for="pilihan[]" class="col-sm-3 col-form-label">Opsi Jawaban</label>
                                 <div class="input-group mb-3">

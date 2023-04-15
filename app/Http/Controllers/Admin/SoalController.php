@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Soal;
 use App\Models\Ujian;
 use App\Models\Jawaban;
-use Illuminate\Http\Request;
 
 class SoalController extends Controller
 {
@@ -52,9 +53,9 @@ class SoalController extends Controller
                     return '<span class="badge badge-success">Published</span>';
                 } else {
                     return '
-                        <a href="' . route('soal.edit', $soals->id) . '" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
+                        <a href="' . route('admin.soal.edit', $soals->id) . '" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
                         <button onclick="deleteData(`' .
-                        route('soal.destroy', $soals->id) .
+                        route('admin.soal.destroy', $soals->id) .
                         '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
                     ';
                 }
@@ -76,7 +77,7 @@ class SoalController extends Controller
         if ($ujian->jumlah_soal == $ujian->soal->count()) {
             return redirect()->route('admin.ujian.soal.index', $ujian->id);
         }
-        $action = 'ujian.soal.store';
+        $action = 'admin.ujian.soal.store';
         return view('soal.form', compact('ujian', 'soal', 'action'));
     }
 
@@ -132,7 +133,7 @@ class SoalController extends Controller
             abort(404);
         }
         $ujian = $soal->ujian;
-        $action = 'soal.update';
+        $action = 'admin.soal.update';
         return view('soal.form', compact('soal', 'ujian', 'action'));
     }
 

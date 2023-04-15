@@ -6,7 +6,7 @@ Data Soal Ujian {{ $ujian->nama }}
 
 @section('breadcrumb')
 @parent
-<li class="breadcrumb-item"><a href="{{ route('ujian.index') }}">Ujian</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.ujian.index') }}">Ujian</a></li>
 <li class="breadcrumb-item active">Soal {{ $ujian->nama }}</li>
 @endsection
 
@@ -21,12 +21,12 @@ Data Soal Ujian {{ $ujian->nama }}
             <div class="card">
                 <div class="card-header row">
                     @if ($ujian->jumlah_soal > $ujian->soal->count())
-                    <a href="{{ route('ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
+                    <a href="{{ route('admin.ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
                     @else
                         @if($ujian->isPublished)
-                            <button onclick="cancelPublished('{{ route('ujian.publish', $ujian->id) }}')" type="button" class="btn btn-danger"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Batalkan publish</button>
+                            <button onclick="cancelPublished('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-danger"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Batalkan publish</button>
                         @else
-                            <button onclick="published('{{ route('ujian.publish', $ujian->id) }}')" type="button" class="btn btn-success"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
+                            <button onclick="published('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-success"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
                         @endif
                     @endif
                 </div>
@@ -76,7 +76,7 @@ Data Soal Ujian {{ $ujian->nama }}
             , responsive: true
             , autoWidth: false
             , ajax: {
-                url: '{{ route('soal.data', $ujian->id) }}'
+                url: '{{ route('admin.soal.data', $ujian->id) }}'
             , }
             , columns: [{
                     data: 'DT_RowIndex'

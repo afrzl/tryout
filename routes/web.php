@@ -3,14 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SoalController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UjianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PaymentCallbackController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\Admin\SoalController as SoalController_Admin;
+use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,17 +54,17 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(fu
 });
 
 //route data ujian
-Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::get('/ujian/data', [UjianController::class, 'data'])->name('ujian.data');
-    Route::get('/ujian/{id}/publish', [UjianController::class, 'publish'])->name('ujian.publish');
-    Route::resource('ujian', UjianController::class);
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');
+    Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
+    Route::resource('ujian', UjianController_Admin::class);
 });
 
 //route data soal
-Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::get('/ujian/soal/data/{id}', [SoalController::class, 'data'])->name('soal.data');
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/ujian/soal/data/{id}', [SoalController_Admin::class, 'data'])->name('soal.data');
     // Route::get('/ujian/soal/{id}', [SoalController::class, 'index'])->name('soal.index');
-    Route::resource('ujian.soal', SoalController::class)->shallow();
+    Route::resource('ujian.soal', SoalController_Admin::class)->shallow();
 });
 
 //route pembelian

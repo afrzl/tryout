@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('soal_id');
             $table->text('jawaban');
-            $table->boolean('isKunci')->default(false);
             $table->foreign('soal_id')->references('id')->on('soal')->onDelete('cascade');
             $table->timestamps();
         });

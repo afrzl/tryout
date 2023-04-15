@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UjianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
 // });
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->middleware('auth', 'verified', 'role:admin')->name('dashboard.admin');
 
 //route verify email
 Route::get('/email/verify', function () {
@@ -70,6 +72,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 //route pembelian
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('pembelian', PembelianController::class);
+});
+
+//route ujian
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('ujian', UjianController::class);
 });
 
 Route::middleware('auth')->group(function () {

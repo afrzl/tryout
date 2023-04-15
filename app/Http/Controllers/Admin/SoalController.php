@@ -37,7 +37,7 @@ class SoalController extends Controller
                 $soal = $soals->soal . '</br><table>';
                 foreach ($soals->jawaban as $key => $jawaban) {
                     $soal .= '<tr><td style="border: none">';
-                    if ($jawaban->isKunci) {
+                    if ($jawaban->id == $soals->id_kunci_jawaban) {
                         $soal .= '<span class="badge badge-success">' . chr($key+65) . '. </span>';
                     } else {
                         $soal .= chr($key+65) . '.';
@@ -74,9 +74,6 @@ class SoalController extends Controller
         if (! $ujian) {
             abort(404);
         }
-        if ($ujian->jumlah_soal == $ujian->soal->count()) {
-            return redirect()->route('admin.ujian.soal.index', $ujian->id);
-        }
         $action = 'admin.ujian.soal.store';
         return view('soal.form', compact('ujian', 'soal', 'action'));
     }
@@ -106,10 +103,13 @@ class SoalController extends Controller
             $jawaban = new Jawaban();
             $jawaban->soal_id = $soal->id;
             $jawaban->jawaban = $pilihan;
-            if ($request->kunci_jawaban == $request->id_pilihan[$key]) {
-                $jawaban->isKunci = 1;
-            }
             $jawaban->save();
+
+            if ($request->kunci_jawaban == $request->id_pilihan[$key]) {
+                $soal = Soal::find($soal->id);
+                $soal->id_kunci_jawaban = $jawaban->id;
+                $soal->update();
+            }
         }
 
         return redirect()->route('admin.ujian.soal.index', $id)->with('message','Data berhasil disimpan');
@@ -151,19 +151,21 @@ class SoalController extends Controller
 
         $soal = Soal::with('jawaban')->findOrFail($id);
         $soal->soal = $request->soal;
+        $soal->id_kunci_jawaban = $request->kunci_jawaban;
+        if (substr($request->kunci_jawaban, -3) == "new") {
+            $soal->id_kunci_jawaban = substr($request->kunci_jawaban, 0, -3);
+        }
         $soal->update();
 
         foreach ($request->id_pilihan as $key => $pilihan) {
-            if (substr($pilihan, -3) != "new") {
-                $jawaban = Jawaban::findOrFail($pilihan);
+            $jawaban = Jawaban::find($pilihan);
+            if ($jawaban) {
                 $jawaban->jawaban = $request->pilihan[$key];
-                $jawaban->isKunci = $request->kunci_jawaban == $pilihan ? 1 : 0;
                 $jawaban->update();
             } else {
                 $jawaban = new Jawaban();
                 $jawaban->soal_id = $soal->id;
                 $jawaban->jawaban = $request->pilihan[$key];
-                $jawaban->isKunci = $request->kunci_jawaban == $pilihan ? 1 : 0;
                 $jawaban->save();
             }
         }

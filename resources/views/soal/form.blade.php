@@ -38,7 +38,7 @@ Data Soal Ujian {{ $ujian->nama }}
                             @method('put')
                             @php $adaKunci = 0; @endphp
                             @foreach ($soal->jawaban as $key => $value)
-                            @if($value->isKunci)
+                            @if($soal->id_kunci_jawaban == $value->id)
                             <input type="hidden" id="kunciJawaban" value="{{ $value->id }}" required name="kunci_jawaban">
                             @php $adaKunci = 1; @endphp
                             @endif

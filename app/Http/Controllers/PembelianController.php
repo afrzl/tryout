@@ -75,7 +75,7 @@ class PembelianController extends Controller
                     $pembelian->update();
                 }
                 if ($pembelian->status == 'Sukses') {
-                    return 'sajdbk';
+                    return redirect()->route('ujian.show', $pembelian->ujian_id);
                 }
                 return view('views_user.pembelian.index', compact('pembelian'));
             }

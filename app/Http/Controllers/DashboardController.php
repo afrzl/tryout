@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ujian;
+use App\Models\Pembelian;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -10,19 +11,31 @@ class DashboardController extends Controller
     public function index()
     {
         if (!auth()->check()) {
-            $ujians = Ujian::where('isPublished', 1)->get();
-            return view('views_user.dashboard', compact('ujians'));
+            $ujians = Ujian::where('isPublished', 1)
+                        ->where('waktu_mulai', '<=', date("Y-m-d H:i:s"))
+                        ->where('waktu_akhir', '>=', date("Y-m-d H:i:s"))
+                        ->get();
+            $history = [];
+            return view('views_user.dashboard', compact('ujians', 'history'));
         } else {
             if (auth()->user()->hasVerifiedEmail()) {
-                if (auth()->user()->hasRole('admin')) {
-                    return view('layouts.app');
-                }
-
-                $ujians = Ujian::where('isPublished', 1)->get();
-                return view('views_user.dashboard', compact('ujians'));
+                $ujians = Ujian::where('isPublished', 1)
+                            ->where('waktu_mulai', '<=', date("Y-m-d H:i:s"))
+                            ->where('waktu_akhir', '>=', date("Y-m-d H:i:s"))
+                            ->get();
+                $history = Pembelian::with('ujian')->where('user_id', auth()->user()->id)->get();
+                return view('views_user.dashboard', compact('ujians', 'history'));
             } else {
                 return redirect()->route('verification.notice');
             }
         }
+    }
+
+    public function adminIndex()
+    {
+        if (auth()->user()->hasRole('admin')) {
+            return view('layouts.app');
+        }
+        abort(403, 'Error!');
     }
 }

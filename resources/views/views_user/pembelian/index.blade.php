@@ -96,25 +96,21 @@
         snap.pay('{{ $pembelian->kode_pembelian }}', {
             // Optional
             onSuccess: function(result) {
-                alert('success');
                 /* You may add your own js here, this is just example */
                 // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
                 location.reload();
-                console.log(result);
             },
             // Optional
             onPending: function(result) {
                 /* You may add your own js here, this is just example */
                 // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
                 location.reload();
-                console.log(result)
             },
             // Optional
             onError: function(result) {
                 /* You may add your own js here, this is just example */
                 // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
                 location.reload();
-                console.log(result)
             }
         });
     });

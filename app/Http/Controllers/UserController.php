@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function data()
     {
-        $users = User::orderBy('id', 'desc')->get();
+        $users = User::orderBy('created_at', 'asc')->get();
 
         return datatables()
             ->of($users)

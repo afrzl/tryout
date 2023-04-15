@@ -20,20 +20,21 @@ Data Soal Ujian {{ $ujian->nama }}
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header row">
-                    @if ($ujian->jumlah_soal > $ujian->soal->count())
+                    @if(!$ujian->isPublished)
                     <a href="{{ route('admin.ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
-                    @else
+                    @endif
+                    @if ($ujian->soal->count() >= $ujian->jumlah_soal)
                         @if($ujian->isPublished)
-                            <button onclick="cancelPublished('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-danger"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Batalkan publish</button>
+                            <button onclick="cancelPublished('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-danger ml-3"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Batalkan publish</button>
                         @else
-                            <button onclick="published('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-success"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
+                            <button onclick="published('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-warning ml-3"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
                         @endif
                     @endif
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div id="progress" class="progress mb-3">
-                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="{{ $ujian->soal->count() }}" aria-valuemin="0" aria-valuemax="{{ $ujian->jumlah_soal }}" style="width: {{ $ujian->soal->count() / $ujian->jumlah_soal * 100 }}%">
+                        <div class="progress-bar bg-{{$ujian->soal->count() >= $ujian->jumlah_soal ? 'danger' : 'success'}}" role="progressbar" aria-valuenow="{{ $ujian->soal->count() }}" aria-valuemin="0" aria-valuemax="{{ $ujian->jumlah_soal }}" style="width: {{ $ujian->soal->count() / $ujian->jumlah_soal * 100 }}%">
                         {{ $ujian->soal->count() }} dari {{ $ujian->jumlah_soal }} soal
                         </div>
                     </div>

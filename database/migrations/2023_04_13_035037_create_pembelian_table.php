@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('ujian_id');
             $table->uuid('user_id');
-            $table->integer('kode_pembelian')->nullable();
+            $table->uuid('kode_pembelian')->nullable();
             $table->dateTime('batas_pembayaran')->nullable();
             $table->timestamps();
             $table->foreign('ujian_id')->references('id')->on('ujian')->onDelete('cascade');

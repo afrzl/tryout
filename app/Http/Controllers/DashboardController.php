@@ -12,12 +12,17 @@ class DashboardController extends Controller
         if (!auth()->check()) {
             $ujians = Ujian::where('isPublished', 1)->get();
             return view('views_user.dashboard', compact('ujians'));
-        }
-        if (auth()->user()->hasRole('admin')) {
-            return view('layouts.app');
-        }
+        } else {
+            if (auth()->user()->hasVerifiedEmail()) {
+                if (auth()->user()->hasRole('admin')) {
+                    return view('layouts.app');
+                }
 
-        $ujians = Ujian::where('isPublished', 1)->get();
-        return view('views_user.dashboard', compact('ujians'));
+                $ujians = Ujian::where('isPublished', 1)->get();
+                return view('views_user.dashboard', compact('ujians'));
+            } else {
+                return redirect()->route('verification.notice');
+            }
+        }
     }
 }

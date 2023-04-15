@@ -59,20 +59,23 @@
                                     <span class="badge badge-sm bg-gradient-{{ $pembelian->status == 'Sukses' ? 'success' : ($pembelian->status == 'Pending' ? 'warning' : ($pembelian->status == 'Belum dibayar' ? 'primary' : 'danger')) }}">{{ $pembelian->status }}</span>
                                 </td>
                             </tr>
+                            <tr>
+                                <td></td>
+                                <td style="text-align:right;">
+                                    @if($pembelian->status == 'Gagal')
+                                    <form method="post" action="{{ route('pembelian.store') }}">
+                                        @csrf
+                                        @method('post')
+                                        <input type="hidden" name="id_ujian" value="{{ $pembelian->ujian_id }}">
+                                        <button type="submit" class="btn bg-gradient-info mt-4 mb-0">Ulangi Bayar</button>
+                                    </form>
+                                    @else
+                                    <button type="button" id="pay" class="btn bg-gradient-info mt-4 mb-0">Bayar</button>
+                                    @endif
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-                    <div class="card-footer pb-0">
-                        @if($pembelian->status == 'Gagal')
-                        <form method="post" action="{{ route('pembelian.store') }}">
-                            @csrf
-                            @method('post')
-                            <input type="hidden" name="id_ujian" value="{{ $pembelian->ujian_id }}">
-                            <button type="submit" class="btn bg-gradient-info mt-4 mb-0">Ulangi Bayar</button>
-                        </form>
-                        @else
-                        <button type="button" id="pay" class="btn bg-gradient-info mt-4 mb-0">Bayar</button>
-                        @endif
-                    </div>
                 </div>
             </div>
         </div>

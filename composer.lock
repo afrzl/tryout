@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14d3c7c4350522e9f0d0a5bf88a34b5b",
+    "content-hash": "ac888e3f0566d30e62eb597f732d06f2",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -2520,6 +2520,73 @@
                 "source": "https://github.com/MarkBaker/PHPMatrix/tree/3.0.1"
             },
             "time": "2022-12-02T22:17:43+00:00"
+        },
+        {
+            "name": "michaloravec/laravel-paginateroute",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/michaloravec/laravel-paginateroute.git",
+                "reference": "eff8764982a0e2237b78947226d3797cf6bd1449"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michaloravec/laravel-paginateroute/zipball/eff8764982a0e2237b78947226d3797cf6bd1449",
+                "reference": "eff8764982a0e2237b78947226d3797cf6bd1449",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "illuminate/contracts": "~5.4.0",
+                "illuminate/routing": "~5.4.0",
+                "illuminate/translation": "~5.4.0",
+                "orchestra/testbench": "^3.4",
+                "phpunit/phpunit": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MichalOravec\\PaginateRoute\\PaginateRouteServiceProvider"
+                    ],
+                    "aliases": {
+                        "PaginateRoute": "MichalOravec\\PaginateRoute\\PaginateRouteFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MichalOravec\\PaginateRoute\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michal Oravec",
+                    "email": "michal.oravec@outlook.com",
+                    "homepage": "https://www.michaloravec.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel outer extension to easily use laravel's paginator without the query string",
+            "homepage": "https://github.com/michaloravec/laravel-paginateroute",
+            "keywords": [
+                "laravel",
+                "laravel-paginateroute",
+                "michaloravec",
+                "pagination",
+                "routing"
+            ],
+            "support": {
+                "issues": "https://github.com/michaloravec/laravel-paginateroute/issues",
+                "source": "https://github.com/michaloravec/laravel-paginateroute/tree/master"
+            },
+            "time": "2019-02-27T13:22:11+00:00"
         },
         {
             "name": "midtrans/midtrans-php",

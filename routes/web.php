@@ -77,6 +77,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //route ujian
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('ujian', UjianController::class);
+    Route::paginate('ujian', [UjianController::class, 'index'])->name('ujian.page');
 });
 
 Route::middleware('auth')->group(function () {

@@ -14,6 +14,9 @@ class UjianController extends Controller
      */
     public function index()
     {
+        if (!session('ujian')) {
+            return redirect()->route('dashboard');
+        }
         $pembelian = Pembelian::where('ujian_id', session('ujian'))->where('user_id', auth()->user()->id)->latest('updated_at')->first();
 
         if ($pembelian === null || $pembelian->status == 'Gagal') {

@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(100)->create();
         // \App\Models\Ujian::factory(5)->create();
-        for ($i=0; $i < 11; $i++) {
+        for ($i=0; $i < 6; $i++) {
             \App\Models\Soal::factory(1)->create([
-                'id_kunci_jawaban' => ($i * 5) + 81,
+                'id_kunci_jawaban' => ($i * 5) + 26,
             ]);
         }
         for ($i=1; $i < 16; $i++) {

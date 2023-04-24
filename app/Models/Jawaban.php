@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Soal;
+use App\Models\JawabanPeserta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -28,8 +29,18 @@ class Jawaban extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function soal(): BelongsTo
+    public function soal()
     {
         return $this->belongsTo(Soal::class);
+    }
+
+    /**
+     * Get all of the jawabanPeserta for the Jawaban
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function jawabanPeserta(): HasMany
+    {
+        return $this->hasMany(JawabanPeserta::class, 'jawaban_id', 'id');
     }
 }

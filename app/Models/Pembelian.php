@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Ujian;
+use App\Models\JawabanPeserta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -43,5 +44,15 @@ class Pembelian extends Model
     public function ujian()
     {
         return $this->belongsTo(Ujian::class, 'ujian_id');
+    }
+
+    /**
+     * Get all of the jawabanPeserta for the Pembelian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function jawabanPeserta()
+    {
+        return $this->hasMany(JawabanPeserta::class, 'pembelian_id');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Ujian;
 use App\Models\Jawaban;
+use App\Models\JawabanPeserta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -41,5 +42,15 @@ class Soal extends Model
     public function jawaban()
     {
         return $this->hasMany(Jawaban::class, 'soal_id', 'id');
+    }
+
+    /**
+     * Get all of the jawabanPeserta for the Soal
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function jawabanPeserta()
+    {
+        return $this->hasMany(JawabanPeserta::class, 'soal_id');
     }
 }

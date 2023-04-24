@@ -78,6 +78,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('ujian', UjianController::class);
     Route::paginate('ujian', [UjianController::class, 'index'])->name('ujian.page');
+    Route::put('/ujian/mulaiujian/{id}', [UjianController::class, 'mulaiUjian'])->name('ujian.mulai');
+    Route::put('/ujian/selesaiujian/{id}', [UjianController::class, 'selesaiUjian'])->name('ujian.selesai');
+    Route::put('/ujian/storeragu/{id}', [UjianController::class, 'storeRagu'])->name('ujian.ragu');
+    Route::get('/ujian/nilai/{id}', [UjianController::class, 'nilai'])->name('ujian.nilai');
 });
 
 Route::middleware('auth')->group(function () {

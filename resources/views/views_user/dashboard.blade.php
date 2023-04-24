@@ -49,6 +49,7 @@ Dashboard
         </div>
     </div>
 </div>
+@auth
 <div class="col-lg-8">
     <div class="card mb-4">
         <div class="card-header pb-0 p-3">
@@ -82,4 +83,5 @@ Dashboard
         </div>
     </div>
 </div>
+@endauth
 @endsection

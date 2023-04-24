@@ -60,6 +60,7 @@ Data User
     $(function() {
         tableUser = $('#Table-User').DataTable({
             processing: true
+            , serverside: true
             , responsive: true
             , autoWidth: false
             , ajax: {

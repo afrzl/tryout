@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function data()
     {
-        $users = User::orderBy('created_at', 'asc')->get();
+        $users = User::with('roles')->orderBy('created_at', 'asc')->get();
 
         return datatables()
             ->of($users)
@@ -30,7 +30,8 @@ class UserController extends Controller
                     return ($users->hasRole('admin') ?
                     '<button onclick="makeAdmin(`' .
                             route('user.makeAdmin', ['action' => 'revoke', 'id' => $users->id]) .
-                            '`)" type="button" data-action="revoke" class="btn btn-outline-danger"><i class="fa fa-minus-circle"></i> Revoke Admin</button>' :
+                            '`)" type="button" data-action="revoke" class="btn btn-outline-danger"><i class="fa fa-minus-circle"></i> Revoke Admin</button>'
+                    :
                     '<button onclick="makeAdmin(`' .
                             route('user.makeAdmin', ['action' => 'make', 'id' => $users->id]) .
                             '`)" type="button" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Make Admin</button>');

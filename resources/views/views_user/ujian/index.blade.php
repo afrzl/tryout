@@ -68,6 +68,13 @@ $ada_jawaban = false;
                     @endforeach
                 </form>
             </ul>
+            @if($soal->currentPage() == $soal->total())
+            <form action="{{ route('ujian.selesai', $pembelian->id) }}" method="post">
+                @csrf
+                @method('put')
+                <button type="submit" class="btn bg-gradient-success float-end">Selesai</button>
+            </form>
+            @endif
         </div>
     </div>
 </div>

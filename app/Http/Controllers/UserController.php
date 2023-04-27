@@ -17,10 +17,10 @@ class UserController extends Controller
 
     public function data()
     {
-        $users = User::with('roles')->orderBy('created_at', 'asc')->get();
+        $users = User::with('roles')->orderBy('created_at', 'asc');
 
         return datatables()
-            ->of($users)
+            ->eloquent($users)
             ->addIndexColumn()
             ->addColumn('role', function ($users)
             {

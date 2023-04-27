@@ -19,10 +19,10 @@ class UjianController extends Controller
 
     public function data()
     {
-        $ujians = Ujian::orderBy('created_at', 'desc')->get();
+        $ujians = Ujian::orderBy('created_at', 'desc');
 
         return datatables()
-            ->of($ujians)
+            ->eloquent($ujians)
             ->addIndexColumn()
             ->addColumn('waktu_pengerjaan', function ($ujians)
             {
@@ -126,6 +126,7 @@ class UjianController extends Controller
 
         $lama_pengerjaan = implode(":", [$request->jam, $request->menit, $request->detik]);
         $ujian = Ujian::find($id);
+
         $ujian->nama = $request->nama;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));

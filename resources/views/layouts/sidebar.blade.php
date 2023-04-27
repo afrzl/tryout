@@ -23,7 +23,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ (request()->segment(1) == 'dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}" class="nav-link {{ (request()->segment(2) == 'dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
@@ -62,7 +62,7 @@
                 <li class="nav-header">MENU</li>
                 @role('admin')
                 <li class="nav-item ">
-                    <a href="{{ route('user.index') }}" class="nav-link {{ (request()->segment(1) == 'user') ? 'active' : '' }}">
+                    <a href="{{ route('user.index') }}" class="nav-link {{ (request()->segment(2) == 'user') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             User
@@ -70,10 +70,18 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.ujian.index') }}" class="nav-link {{ (request()->segment(1) == 'ujian') ? 'active' : '' }}">
+                    <a href="{{ route('admin.ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'ujian') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             Ujian
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.peserta_ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'peserta_ujian') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Peserta Ujian
                         </p>
                     </a>
                 </li>

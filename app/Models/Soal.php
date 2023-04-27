@@ -47,10 +47,10 @@ class Soal extends Model
     /**
      * Get all of the jawabanPeserta for the Soal
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function jawabanPeserta()
     {
-        return $this->hasMany(JawabanPeserta::class, 'soal_id');
+        return $this->hasOne(JawabanPeserta::class, 'soal_id');
     }
 }

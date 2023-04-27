@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pembelian', function (Blueprint $table) {
-            $table->string('status_pengerjaan', 30)->nullable()->after('jenis_pembayaran')->default('Belum Dikerjakan');
+            $table->dateTime('waktu_selesai_pengerjaan')->nullable()->after('waktu_mulai_pengerjaan');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pembelian', function (Blueprint $table) {
-            $table->dropColumn('status_pengerjaan');
+            $table->dropColumn('waktu_selesai_pengerjaan');
         });
     }
 };

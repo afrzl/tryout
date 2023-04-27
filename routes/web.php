@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PaymentCallbackController;
+use App\Http\Controllers\Admin\PesertaUjianController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\SoalController as SoalController_Admin;
 use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
@@ -60,6 +61,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');
     Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
     Route::resource('ujian', UjianController_Admin::class);
+});
+
+//route data peserta ujian
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/peserta_ujian/data', [PesertaUjianController::class, 'data'])->name('peserta_ujian.data');
+    Route::get('/peserta_ujian/showdata/{id}', [PesertaUjianController::class, 'showData'])->name('peserta_ujian.show_data');
+    Route::get('/peserta_ujian/pembelian/{id}', [PesertaUjianController::class, 'showPeserta'])->name('peserta_ujian.show_peserta');
+    Route::get('/peserta_ujian/showdatapeserta/{id}', [PesertaUjianController::class, 'showDataPeserta'])->name('peserta_ujian.show_data_peserta');
+    Route::resource('peserta_ujian', PesertaUjianController::class);
 });
 
 //route data soal

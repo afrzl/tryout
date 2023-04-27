@@ -41,6 +41,6 @@ class Jawaban extends Model
      */
     public function jawabanPeserta(): HasMany
     {
-        return $this->hasMany(JawabanPeserta::class, 'jawaban_id', 'id');
+        return $this->hasOne(JawabanPeserta::class, 'jawaban_id', 'id');
     }
 }

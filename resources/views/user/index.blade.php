@@ -116,8 +116,8 @@ Data User
                 .done((response) => {
                     $('#modal-form').modal('hide');
                     tableUser.ajax.reload();
-                    toastr.success('Data berhasil disimpan.');
                     toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success('Data berhasil disimpan.');
                 })
                 .fail((errors) => {
                     // toastr.error('Tidak dapat menyimpan data.');
@@ -132,8 +132,8 @@ Data User
                 $.post($('#modal-reset form').attr('action'), $('#modal-reset form').serialize())
                 .done((response) => {
                     $('#modal-reset').modal('hide');
-                    toastr.success('Data berhasil disimpan.');
                     toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success('Data berhasil disimpan.');
                 })
                 .fail((errors) => {
                     // toastr.error('Tidak dapat menyimpan data.');
@@ -172,8 +172,8 @@ Data User
                 })
                 .done((response) => {
                     tableUser.ajax.reload();
-                    toastr.success('Data berhasil dihapus.');
                     toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success('Data berhasil dihapus.');
                 })
                 .fail((response) => {
                     toastr.error('Tidak dapat menghapus data.');
@@ -220,8 +220,8 @@ Data User
                 })
                 .done((response) => {
                     tableUser.ajax.reload();
-                    toastr.success(success);
                     toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success(success);
                 })
                 .fail((response) => {
                     toastr.error('Proses gagal.');

@@ -128,10 +128,12 @@ class UjianController extends Controller
 
         if ($pembelian->status_pengerjaan == 'Masih dikerjakan') {
             $pembelian->status_pengerjaan = 'Selesai';
+            $pembelian->waktu_selesai_pengerjaan = date('Y-m-d H:i:s');
             $pembelian->update();
         }
 
-        return response()->json('Data berhasil disimpan', 200);
+        response()->json('Data berhasil disimpan', 200);
+        return redirect()->route('ujian.nilai', $id);
     }
 
     public function nilai($id)

@@ -54,7 +54,7 @@ class PesertaUjianController extends Controller
                 return '
                     <a href="' .
                     route('admin.peserta_ujian.show', $ujians->id) .
-                    '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>
+                    '" type="button" class="btn btn-outline-info"><i class="fa fa-chevron-right"></i></a>
                 ';
             })
             ->rawColumns(['aksi', 'waktu_pelaksanaan', 'status'])
@@ -113,7 +113,7 @@ class PesertaUjianController extends Controller
                 return '
                     <a href="' .
                     route('admin.peserta_ujian.show_peserta', $peserta->id) .
-                    '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>
+                    '" type="button" class="btn btn-outline-info"><i class="fa fa-chevron-right"></i></a>
                 ';
             })
             ->rawColumns(['aksi', 'status_pengerjaan', 'nilai'])

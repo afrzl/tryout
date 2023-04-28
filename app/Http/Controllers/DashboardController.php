@@ -23,7 +23,10 @@ class DashboardController extends Controller
                             ->where('waktu_mulai', '<=', date("Y-m-d H:i:s"))
                             ->where('waktu_akhir', '>=', date("Y-m-d H:i:s"))
                             ->get();
-                $history = Pembelian::with('ujian')->where('user_id', auth()->user()->id)->get();
+                $history = Pembelian::with('ujian')
+                            ->where('user_id', auth()->user()->id)
+                            ->where('status', 'Sukses')
+                            ->get();
                 return view('views_user.dashboard', compact('ujians', 'history'));
             } else {
                 return redirect()->route('verification.notice');

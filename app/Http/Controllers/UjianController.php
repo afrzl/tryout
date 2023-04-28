@@ -29,7 +29,7 @@ class UjianController extends Controller
         }
 
         if ($pembelian->status_pengerjaan == 'Selesai') {
-            return redirect()->route('ujian.selesai', $pembelian->id);
+            return redirect()->route('ujian.nilai', $pembelian->id);
         }
 
         $id_pembelian = $pembelian->id;
@@ -97,7 +97,7 @@ class UjianController extends Controller
                     ->latest('updated_at')
                     ->first();
 
-        if ($pembelian === null || $pembelian->status == 'Gagal') {
+        if ($pembelian === null || $pembelian->status != 'Sukses') {
             abort(403, 'ERROR');
         }
 
@@ -132,8 +132,7 @@ class UjianController extends Controller
             $pembelian->update();
         }
 
-        response()->json('Data berhasil disimpan', 200);
-        return redirect()->route('ujian.nilai', $id);
+        return response()->json('Data berhasil disimpan', 200);
     }
 
     public function nilai($id)

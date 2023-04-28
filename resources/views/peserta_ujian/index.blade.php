@@ -35,7 +35,7 @@ Data Peserta Ujian
                                     <th>Jumlah Peserta</th>
                                     <th>Dikerjakan</th>
                                     <th>Status</th>
-                                    <th style="width: 15%"><i class="fa fa-cog"></i></th>
+                                    <th style="width: 5%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
                         </table>

@@ -68,11 +68,8 @@ Dashboard
                                         </h5>
                                     </a>
                                     <p class="text-gradient text-dark mb-2 text-sm">{{ \Carbon\Carbon::parse($history->ujian->waktu_mulai)->format('d F Y H:i:s') }} - <br>{{ \Carbon\Carbon::parse($history->ujian->waktu_akhir)->format('d F Y H:i:s') }}</p>
-                                    <p class="mb-4 text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">Rp{{ number_format( $history->ujian->harga , 0 , ',' , '.' ) }}</span>
-                                    </p>
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <a href="{{ route('ujian.show', $history->ujian_id) }}" type="submit" type="button" class="btn btn-outline-primary btn-sm mb-0">Masuk</a>
+                                        <a href="{{ route('ujian.show', $history->ujian_id) }}" type="submit" type="button" class="btn btn-outline-info btn-sm mb-0">Masuk</a>
                                     </div>
                             </div>
                         </div>

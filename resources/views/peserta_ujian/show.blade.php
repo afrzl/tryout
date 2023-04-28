@@ -54,7 +54,7 @@ Data Peserta Ujian
                                 <th>Status Pengerjaan</th>
                                 <th>Waktu Pengerjaan</th>
                                 <th>Nilai</th>
-                                <th style="width: 15%"><i class="fa fa-cog"></i></th>
+                                <th style="width: 5%"><i class="fa fa-cog"></i></th>
                             </tr>
                         </thead>
                     </table>

@@ -14,10 +14,10 @@ $ada_jawaban = false;
         <div class="card-header pb-0 p-4">
             <div class="row">
                 <div class="d-flex align-items-center col-md-6">
-                    @if (!$item->jawabanPeserta->isEmpty())
-                    <h6 class="mb-0">Nomor <span id="nomor" class="badge badge-sm bg-gradient-{{ $item->jawabanPeserta[0]->ragu_ragu == 0 ? 'info' : 'warning' }}">{{ $soal->currentPage() }}</span></h6>
+                    @if ($item->jawabanPeserta != null)
+                    <h6 class="mb-0">Nomor <span id="nomor" class="badge badge-sm bg-gradient-{{ $item->jawabanPeserta->ragu_ragu == 0 ? 'info' : 'warning' }}">{{ $soal->currentPage() }}</span></h6>
                     <div class="form-check form-switch ps-0 mt-2 mx-3">
-                        <input class="form-check-input ms-auto" onclick="storeRagu('{{ $item->jawabanPeserta[0]->id }}')" type="checkbox" {{ $item->jawabanPeserta[0]->ragu_ragu == 1 ? 'checked' : '' }} id="raguRagu">
+                        <input class="form-check-input ms-auto" onclick="storeRagu('{{ $item->jawabanPeserta->id }}')" type="checkbox" {{ $item->jawabanPeserta->ragu_ragu == 1 ? 'checked' : '' }} id="raguRagu">
                         <label class="form-check-label" for="raguRagu">Ragu-ragu</label>
                     </div>
                     @else
@@ -48,10 +48,10 @@ $ada_jawaban = false;
                             <tbody>
                                 <tr>
                                     <td>
-                                        @if ($item->jawabanPeserta->isEmpty())
+                                        @if ($item->jawabanPeserta == null)
                                         <button type="button" name="button[]" id="button{{ $key }}" data-key="{{ $key }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</button>
                                         @else
-                                        @if ($jawaban->id == $item->jawabanPeserta[0]->jawaban_id)
+                                        @if ($jawaban->id == $item->jawabanPeserta->jawaban_id)
                                         <button type="button" name="button[]" id="button{{ $key }}" data-key="{{ $key }}" class="btn bg-gradient-info mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</button>
                                         @else
                                         <button type="button" name="button[]" id="button{{ $key }}" data-key="{{ $key }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</button>
@@ -69,11 +69,7 @@ $ada_jawaban = false;
                 </form>
             </ul>
             @if($soal->currentPage() == $soal->total())
-            <form action="{{ route('ujian.selesai', $pembelian->id) }}" method="post">
-                @csrf
-                @method('put')
-                <button type="submit" class="btn bg-gradient-success float-end">Selesai</button>
-            </form>
+            <button type="submit" id="submit" class="btn bg-gradient-success float-end">Selesai</button>
             @endif
         </div>
     </div>
@@ -184,6 +180,32 @@ $ada_jawaban = false;
             }
         });
     }
+
+    $('#submit').click(function() {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan mengakhiri ujian?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('{{ route('ujian.selesai', $pembelian->id) }}', {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'put'
+                })
+                .done((response) => {
+                    window.location.href = `/ujian/nilai/` + {{ $pembelian->id }}
+                })
+                .fail((response) => {
+                    toastr.error('Tidak dapat menghapus data.');
+                    return;
+                })
+            }
+        })
+    });
 
 </script>
 @endpush

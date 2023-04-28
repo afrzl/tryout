@@ -32,6 +32,8 @@
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="{{ asset('softUI') }}/assets/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="{{ asset('AdminLTE') }}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('softUI') }}/assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
 
@@ -122,6 +124,8 @@
     <script src="{{ asset('softUI') }}/assets/js/plugins/smooth-scrollbar.min.js"></script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="{{ asset('AdminLTE') }}/plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="{{ asset('softUI') }}/assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
     @stack('scripts')

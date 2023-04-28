@@ -8,7 +8,6 @@ use App\Http\Controllers\UjianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
-use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\Admin\PesertaUjianController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\SoalController as SoalController_Admin;

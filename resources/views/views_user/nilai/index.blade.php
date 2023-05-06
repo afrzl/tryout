@@ -51,7 +51,7 @@
                                     <h6 class="mb-0 mr-6">Jumlah Benar</h6>
                                 </td>
                                 <td>
-                                    <span class="badge badge-sm bg-gradient-success">{{ $benar }} / {{ $pembelian->ujian->jumlah_soal }}</span>
+                                    <span class="badge badge-sm bg-gradient-success">{{ round($benar / $pembelian->ujian->jumlah_soal * 100, 2) }}</span>
                                 </td>
                             </tr>
                         </tbody>

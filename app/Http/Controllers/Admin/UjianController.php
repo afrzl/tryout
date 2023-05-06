@@ -24,6 +24,14 @@ class UjianController extends Controller
         return datatables()
             ->eloquent($ujians)
             ->addIndexColumn()
+            ->addColumn('nama', function ($ujians)
+            {
+                $text = $ujians->nama;
+                if ($ujians->isPublished) {
+                    $text .= ' <span class="badge badge-success">Published</span>';
+                }
+                return $text;
+            })
             ->addColumn('waktu_pengerjaan', function ($ujians)
             {
                 return Carbon::parse($ujians->waktu_mulai)->isoFormat('D MMMM Y HH:mm:ss') . ' - <br>' . Carbon::parse($ujians->waktu_akhir)->isoFormat('D MMMM Y HH:mm:ss');
@@ -37,19 +45,16 @@ class UjianController extends Controller
                 return 'Rp' . number_format( $ujians->harga , 0 , ',' , '.' );
             })
             ->addColumn('aksi', function ($ujians) {
-                return '
-                    <button onclick="editData(`' .
-                    route('admin.ujian.update', $ujians->id) .
-                    '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
-                    <button onclick="deleteData(`' .
-                    route('admin.ujian.destroy', $ujians->id) .
-                    '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
-                    <a href="' .
-                    route('admin.ujian.soal.index', $ujians->id) .
-                    '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>
-                ';
+                $text = '';
+                if (!$ujians->isPublished) {
+                    $text .= '<button onclick="editData(`' . route('admin.ujian.update', $ujians->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
+                    <button onclick="deleteData(`' . route('admin.ujian.destroy', $ujians->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
+                }
+                $text .= ' <a href="' . route('admin.ujian.soal.index', $ujians->id) . '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>';
+
+                return $text;
             })
-            ->rawColumns(['aksi', 'lama_pengerjaan', 'waktu_pengerjaan'])
+            ->rawColumns(['nama', 'aksi', 'lama_pengerjaan', 'waktu_pengerjaan'])
             ->make(true);
     }
 

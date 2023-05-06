@@ -104,7 +104,7 @@ class PesertaUjianController extends Controller
                             $benar++;
                         }
                     }
-                    return '<span class="badge badge-success">' . $benar . '</span>';
+                    return '<span class="badge badge-success">' . round($benar / $peserta->ujian->jumlah_soal * 100, 2) . '</span>';
                 } else {
                     return '<span class="badge badge-danger">-</span>';
                 }

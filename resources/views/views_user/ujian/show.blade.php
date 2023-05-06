@@ -53,13 +53,25 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td style="text-align: right">
+                                    <h6 class="mb-0 mr-6">Status</h6>
+                                </td>
+                                <td>
+                                    <span class="badge badge-sm bg-gradient-info">{{ $pembelian->status_pengerjaan }}</span>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td></td>
                                 <td style="text-align:right;">
+                                    @if ($pembelian->status_pengerjaan == 'Selesai')
+                                        <a href="{{ route('ujian.nilai', $pembelian->id) }}" type="button" class="btn bg-gradient-success mt-4 mb-0">Lihat Nilai</a>
+                                    @else
                                     <form action="{{ route('ujian.mulai', $pembelian->id) }}" method="post">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn bg-gradient-success mt-4 mb-0">Kerjakan</button>
                                     </form>
+                                    @endif
                                 </td>
                             </tr>
                         </tbody>

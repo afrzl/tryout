@@ -41,11 +41,11 @@ Data Jawaban
                             @endphp
 
                             <td style="width: 40%"><h5>Waktu Mengerjakan</h5></td>
-                            <td><h5>: {{ $pembelian->waktu_mulai_pengerjaan }} - {{ $pembelian->waktu_selesai_pengerjaan }} <span class="badge badge-success">({{ $waktu_selesai->diff($waktu_mulai)->format('%H:%I:%S'); }})</span></h5></td>
+                            <td><h5>: {{ $waktu_mulai->isoFormat('DD/MM/YYYY hh:mm:ss') }} - {{ $waktu_selesai->isoFormat('DD/MM/YYYY hh:mm:ss') }} <span class="badge badge-success">({{ $waktu_selesai->diff($waktu_mulai)->format('%H:%I:%S'); }})</span></h5></td>
                         </tr>
                         <tr>
                             <td style="width: 40%"><h5>Nilai</h5></td>
-                            <td><h5>: <span class="badge badge-success">{{ $benar }} / {{ $pembelian->ujian->jumlah_soal }}</span></h5></td>
+                            <td><h5>: <span class="badge badge-success">{{ round($benar / $pembelian->ujian->jumlah_soal * 100, 2) }}</span></h5></td>
                         </tr>
                     </table>
                     <table class="table table-bordered table-striped center-header" id="Table-Soal">

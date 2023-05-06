@@ -21,35 +21,17 @@
                 </li>
                 @endhasrole
                 @auth
-                <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                    <a href="javascript:;" class="nav-link p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="{{ route('profile.edit') }}">
                         <i class="fa fa-user opacity-6 text-dark me-1"></i>
                         {{ auth()->user()->name }}
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
-                        <li class="mb-2">
-                            <a class="dropdown-item border-radius-md" href="{{ route('profile.edit') }}">
-                                <div class="d-flex py-1">
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="text-sm font-weight-normal mb-1">
-                                            <span class="font-weight-bold"><i class="fa fa-user opacity-6 text-dark me-1"></i> Profil
-                                        </h6>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a class="dropdown-item border-radius-md" onclick="document.getElementById('logoutForm').submit()">
-                                <div class="d-flex py-1">
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="text-sm font-weight-normal mb-1">
-                                            <span class="font-weight-bold"><i class="fa fa-sign-out opacity-6 text-dark me-1"></i> Logout
-                                        </h6>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center me-2 active" href="#" aria-current="page" onclick="document.getElementById('logoutForm').submit()">
+                        <i class="fa fa-sign-out opacity-6 text-dark me-1"></i>
+                        Logout
+                    </a>
                 </li>
                 @else
                 <li class="nav-item">

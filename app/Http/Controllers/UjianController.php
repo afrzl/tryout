@@ -24,7 +24,7 @@ class UjianController extends Controller
                     ->latest('updated_at')
                     ->first();
 
-        if ($pembelian === null || $pembelian->status == 'Gagal') {
+        if ($pembelian === null || $pembelian->status != 'Sukses') {
             abort(403, 'ERROR');
         }
 

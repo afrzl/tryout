@@ -132,6 +132,9 @@ class SoalController extends Controller
         if (! $soal) {
             abort(404);
         }
+        if ($soal->ujian->isPublished) {
+            return redirect()->route('admin.ujian.soal.index', $soal->ujian_id);
+        }
         $ujian = $soal->ujian;
         $action = 'admin.soal.update';
         return view('soal.form', compact('soal', 'ujian', 'action'));

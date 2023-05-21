@@ -33,13 +33,14 @@ class UjianController extends Controller
         }
 
         $id_pembelian = $pembelian->id;
-        $soal = Soal::with(
-                ['ujian', 'jawaban','jawabanPeserta' => function ($query) use ($id_pembelian) {
-                    $query->where('jawaban_peserta.pembelian_id', $id_pembelian);
-                }])
-                ->where('ujian_id', session('ujian'))
-                ->paginate(1);
-        return view('views_user.ujian.index', compact('soal', 'pembelian'));
+        $preparation = JawabanPeserta::with(['soal', 'soal.jawaban' => function ($q)
+        {
+            $q->inRandomOrder();
+        }, 'soal.ujian'])
+                ->where('pembelian_id', $id_pembelian);
+        $ragu_ragu = $preparation->pluck('ragu_ragu');
+        $soal = $preparation->paginate(1);
+        return view('views_user.ujian.index', compact('soal', 'ragu_ragu', 'pembelian'));
     }
 
     /**
@@ -56,21 +57,19 @@ class UjianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pembelian_id' => 'required',
-            'soal_id' => 'required',
+            'jawaban_peserta' => 'required',
             'key' => 'required',
-            'jawaban_id' => 'required',
         ]);
 
-        $jawaban_peserta = JawabanPeserta::where('pembelian_id', $request->pembelian_id)->where('soal_id', $request->soal_id)->first();
+        $jawaban_peserta = JawabanPeserta::findOrFail($request->jawaban_peserta);
         if ($jawaban_peserta === null) {
             $store = new JawabanPeserta();
             $store->pembelian_id = $request->pembelian_id;
             $store->soal_id = $request->soal_id;
-            $store->jawaban_id = $request->jawaban_id[$request->key];
+            $store->jawaban_id = $request->key;
             $store->save();
         } else {
-            $jawaban_peserta->jawaban_id = $request->jawaban_id[$request->key];
+            $jawaban_peserta->jawaban_id = $request->key;
             $jawaban_peserta->update();
         }
 
@@ -107,7 +106,11 @@ class UjianController extends Controller
 
     public function mulaiUjian($id)
     {
-        $pembelian = Pembelian::findOrFail($id);
+        $pembelian = Pembelian::with('ujian')->findOrFail($id);
+        $soal = Soal::where('ujian_id', $pembelian->ujian->id)
+                ->inRandomOrder()
+                ->limit($pembelian->ujian->jumlah_soal)
+                ->get();
 
         if ($pembelian->status_pengerjaan == 'Selesai') {
             return redirect()->route('ujian.nilai', $pembelian->id);
@@ -117,6 +120,14 @@ class UjianController extends Controller
             $pembelian->status_pengerjaan = 'Masih dikerjakan';
             $pembelian->waktu_mulai_pengerjaan = date('Y-m-d H:i:s');
             $pembelian->update();
+
+            foreach ($soal as $key => $item) {
+                $store = new JawabanPeserta();
+                $store->pembelian_id = $pembelian->id;
+                $store->soal_id = $item->id;
+                $store->save();
+            }
+
         }
 
         return redirect()->route('ujian.index');

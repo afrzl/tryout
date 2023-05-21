@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Ujian;
 use App\Models\Jawaban;
 use App\Models\JawabanPeserta;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -52,5 +54,26 @@ class Soal extends Model
     public function jawabanPeserta()
     {
         return $this->hasOne(JawabanPeserta::class, 'soal_id');
+    }
+
+    public static function customPaginate($items,$perPage)
+    {
+        //Get current page form url e.g. &page=6
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentPage = $currentPage - 1;
+
+        //Create a new Laravel collection from the array data
+        $collection = new Collection($items);
+
+        //Define how many items we want to be visible in each page
+        $perPage = $perPage;
+
+        //Slice the collection to get the items to display in current page
+        $currentPageSearchResults = ($items->count() > $perPage) ? $collection->slice($currentPage * $perPage, $perPage)->all() : $collection->all();
+
+        //Create our paginator and pass it to the view
+        $paginatedSearchResults = new LengthAwarePaginator($currentPageSearchResults, count($collection), $perPage);
+
+    return $paginatedSearchResults;
     }
 }

@@ -31,12 +31,13 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
         $cek = Pembelian::where('user_id', auth()->user()->id)->where('ujian_id', $request->id_ujian)->latest('updated_at')->first();
+        $ujian = Ujian::find($request->id_ujian);
 
         if (!$cek) {
             $pembelian = new Pembelian();
             $pembelian->ujian_id = $request->id_ujian;
             $pembelian->user_id = auth()->user()->id;
-            $pembelian->status = 'Belum dibayar';
+            $pembelian->status = $ujian->harga == 0 ? 'Sukses' : 'Belum dibayar';
             $pembelian->save();
 
             $id_pembelian = $pembelian->id;
@@ -45,7 +46,7 @@ class PembelianController extends Controller
                 $pembelian = new Pembelian();
                 $pembelian->ujian_id = $request->id_ujian;
                 $pembelian->user_id = auth()->user()->id;
-                $pembelian->status = 'Belum dibayar';
+                $pembelian->status = $ujian->harga == 0 ? 'Sukses' : 'Belum dibayar';
                 $pembelian->save();
 
                 $id_pembelian = $pembelian->id;
@@ -67,15 +68,15 @@ class PembelianController extends Controller
             $snapToken = $pembelian->kode_pembelian;
 
             if ($pembelian->user_id === auth()->user()->id) {
+                if ($pembelian->status == 'Sukses') {
+                    return redirect()->route('ujian.show', $pembelian->ujian_id);
+                }
                 if (is_null($snapToken)) {
                     $midtrans = new CreateSnapTokenService($pembelian);
                     $snapToken = $midtrans->getSnapToken();
 
                     $pembelian->kode_pembelian = $snapToken;
                     $pembelian->update();
-                }
-                if ($pembelian->status == 'Sukses') {
-                    return redirect()->route('ujian.show', $pembelian->ujian_id);
                 }
                 return view('views_user.pembelian.index', compact('pembelian'));
             }

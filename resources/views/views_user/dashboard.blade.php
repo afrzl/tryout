@@ -17,34 +17,38 @@ Dashboard
         </div>
         <div class="card-body p-3">
             <div class="row">
-                @foreach ($ujians as $ujian)
-                <div class="col-xl-4 col-md-6 mb-xl-0 mb-4">
-                    <div class="card card-blog card-plain">
-                        <div class="card">
-                            <div class="card-body p-3">
-                                <form method="post" action="{{ route('pembelian.store') }}">
-                                    @csrf
-                                    @method('post')
-                                    <input type="hidden" name="id_ujian" value="{{ $ujian->id }}">
+                @if (count($ujians) > 0)
+                    @foreach ($ujians as $ujian)
+                    <div class="col-xl-4 col-md-6 mb-xl-0 mb-4">
+                        <div class="card card-blog card-plain">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <form method="post" action="{{ route('pembelian.store') }}">
+                                        @csrf
+                                        @method('post')
+                                        <input type="hidden" name="id_ujian" value="{{ $ujian->id }}">
 
-                                    <a href="javascript:;">
-                                        <h5>
-                                            {{ $ujian->nama }}
-                                        </h5>
-                                    </a>
-                                    <p class="text-gradient text-dark mb-2 text-sm">{{ \Carbon\Carbon::parse($ujian->waktu_mulai)->format('d F Y H:i:s') }} - <br>{{ \Carbon\Carbon::parse($ujian->waktu_akhir)->format('d F Y H:i:s') }}</p>
-                                    <p class="mb-4 text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">Rp{{ number_format( $ujian->harga , 0 , ',' , '.' ) }}</span>
-                                    </p>
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <button type="submit" type="button" class="btn btn-outline-primary btn-sm mb-0">Beli</button>
-                                    </div>
-                                </form>
+                                        <a href="javascript:;">
+                                            <h5>
+                                                {{ $ujian->nama }}
+                                            </h5>
+                                        </a>
+                                        <p class="text-gradient text-dark mb-2 text-sm">{{ \Carbon\Carbon::parse($ujian->waktu_mulai)->format('d F Y H:i:s') }} - <br>{{ \Carbon\Carbon::parse($ujian->waktu_akhir)->format('d F Y H:i:s') }}</p>
+                                        <p class="mb-4 text-sm">
+                                            <span class="badge badge-sm bg-gradient-success">Rp{{ number_format( $ujian->harga , 0 , ',' , '.' ) }}</span>
+                                        </p>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <button type="submit" type="button" class="btn btn-outline-primary btn-sm mb-0">Beli</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
+                    @endforeach
+                @else
+                    <h8><i>Belum ada tryout...</i></h8>
+                @endif
             </div>
         </div>
     </div>

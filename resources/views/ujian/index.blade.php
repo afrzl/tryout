@@ -169,6 +169,7 @@ Data Ujian
                 .done((response) => {
                     var lama_pengerjaan = response.lama_pengerjaan.split(":");
                     $('#modal-form [name=nama]').val(response.nama);
+                    $('#modal-form [name=jenis_ujian]').val(response.jenis_ujian);
                     $('#modal-form [name=waktu_mulai]').val(moment(response.waktu_mulai).format('D/MM/YYYY HH:mm'));
                     $('#modal-form [name=waktu_akhir]').val(moment(response.waktu_akhir).format('D/MM/YYYY HH:mm'));
                     $('#modal-form [name=jam]').val(lama_pengerjaan[0]);

@@ -20,6 +20,14 @@ Data Soal Ujian {{ $ujian->nama }}
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header row">
+                    @if($ujian->jenis_ujian == 'skd')
+                        <select class="form-control mr-3" name="jenis_soal" id="Jenis_soal" style="width: 150px">
+                            <option value="all">Pilih Semua</option>
+                            <option value="twk">TWK</option>
+                            <option value="tiu">TIU</option>
+                            <option value="tkp">TKP</option>
+                        </select>
+                    @endif
                     @if(!$ujian->isPublished)
                     <a href="{{ route('admin.ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
                     @endif
@@ -45,6 +53,7 @@ Data Soal Ujian {{ $ujian->nama }}
                                 <tr>
                                     <th style="width: 5%">No</th>
                                     <th>Soal</th>
+                                    <th style="width: 5%">Jenis Soal</th>
                                     <th style="width: 10%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
@@ -71,26 +80,26 @@ Data Soal Ujian {{ $ujian->nama }}
     document.body.classList.add('sidebar-collapse');
 
     let tableSoal;
+    const jenis_ujian = '{{ $ujian->jenis_ujian }}';
+
     $(function() {
+        let jenis_soal = $('#Jenis_soal').val();
         tableSoal = $('#Table-Soal').DataTable({
             processing: true
             , responsive: true
             , autoWidth: false
             , ajax: {
-                url: '{{ route('admin.soal.data', $ujian->id) }}'
-            , }
-            , columns: [{
-                    data: 'DT_RowIndex'
-                    , searchable: false
+                url: '{{ route('admin.soal.data', $ujian->id) }}',
+                data: function (d) {
+                    d.jenis_soal = $('#Jenis_soal').val(),
+                    d.search = $('input[type="search"]').val()
                 }
-                , {
-                    data: 'soal'
-                }
-                , {
-                    data: 'aksi'
-                    , searchable: false
-                    , sortable: false
-                }
+            }
+            , columns: [
+                { data: 'DT_RowIndex', searchable: false}
+                , { data: 'soal' }
+                , { data: 'jenis_soal' }
+                , { data: 'aksi', searchable: false, sortable: false}
             , ]
             , dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip'
             , buttons: [
@@ -99,6 +108,15 @@ Data Soal Ujian {{ $ujian->nama }}
             , columnDefs: [
                 { className: 'text-center', targets: [0, 2] },
             ]
+        });
+
+        if (jenis_ujian != 'skd') {
+            let column = tableSoal.column(2);
+            column.visible(false);
+        }
+
+        $('#Jenis_soal').change(function(){
+            tableSoal.ajax.reload();
         });
 
         'use strict'

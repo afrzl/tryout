@@ -22,12 +22,11 @@ class SoalController extends Controller
         return view('soal.index', compact('ujian'));
     }
 
-    public function data($id)
+    public function data(Request $request, $id)
     {
         $soals = Soal::where('ujian_id', $id)
                 ->with('jawaban', 'ujian')
-                ->orderBy('created_at', 'asc')
-                ->get();
+                ->orderBy('created_at', 'asc');
 
         return datatables()
             ->of($soals)
@@ -37,16 +36,24 @@ class SoalController extends Controller
                 $soal = $soals->soal . '</br><table>';
                 foreach ($soals->jawaban as $key => $jawaban) {
                     $soal .= '<tr><td style="border: none">';
-                    if ($jawaban->id == $soals->id_kunci_jawaban) {
+                    if ($jawaban->point == $soals->jawaban->max('point')) {
                         $soal .= '<span class="badge badge-success">' . chr($key+65) . '. </span>';
                     } else {
                         $soal .= chr($key+65) . '.';
                     }
-                    $soal .= '</td><td style="border: none">' . $jawaban->jawaban . '</td></tr>';
+                    if ($soals->jenis_soal == 'tkp') {
+                        $soal .= '</td><td style="border: none"><font color="green">(' . $jawaban->point . ')</font> ' . $jawaban->jawaban . '</td></tr>';
+                    } else {
+                        $soal .= '</td><td style="border: none">' . $jawaban->jawaban . '</td></tr>';
+                    }
                 }
                 $soal .= '</table>';
 
                 return $soal;
+            })
+            ->addColumn('jenis_soal', function ($soals)
+            {
+                return strtoupper($soals->jenis_soal);
             })
             ->addColumn('aksi', function ($soals) {
                 if ($soals->ujian->isPublished) {
@@ -58,6 +65,17 @@ class SoalController extends Controller
                         route('admin.soal.destroy', $soals->id) .
                         '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
                     ';
+                }
+            })
+            ->filter(function ($soals) use ($request) {
+                if ($request->get('jenis_soal') == 'twk' || $request->get('jenis_soal') == 'tiu' || $request->get('jenis_soal') == 'tkp') {
+                    $soals->where('jenis_soal', $request->jenis_soal);
+                }
+                if (!empty($request->get('search'))) {
+                    $soals->where(function($w) use($request){
+                        $search = $request->get('search');
+                        $w->orWhere('soal', 'LIKE', "%$search%");
+                    });
                 }
             })
             ->rawColumns(['aksi', 'soal'])
@@ -83,33 +101,29 @@ class SoalController extends Controller
      */
     public function store(Request $request, $id)
     {
-
         $request->validate([
+            'jenis_soal' => 'required_if:jenis_ujian,skd',
             'soal' => 'required',
-            'pilihan.*' => 'required',
-            'kunci_jawaban' => 'required'
+            'jawaban.*' => 'required'
         ], [
+            'jenis_soal.required' => 'Jenis soal tidak boleh kosong.',
             'soal.required' => 'Soal tidak boleh kosong.',
-            'pilihan.*.required' => 'Jawaban tidak boleh ada yang kosong.',
-            'kunci_jawaban.required' => 'Kunci jawaban harus ada.',
+            'jawaban.*.required' => 'Jawaban tidak boleh kosong.',
         ]);
 
         $soal = new Soal();
         $soal->ujian_id = $id;
         $soal->soal = $request->soal;
+        $soal->jenis_soal = $request->jenis_ujian == 'skd' ? $request->jenis_soal : null;
         $soal->save();
 
-        foreach ($request->pilihan as $key => $pilihan) {
+        foreach ($request->jawaban as $key => $jawaban) {
             $jawaban = new Jawaban();
             $jawaban->soal_id = $soal->id;
-            $jawaban->jawaban = $pilihan;
-            $jawaban->save();
+            $jawaban->jawaban = $request->jawaban[$key];
+            $jawaban->point = $request->point[$key] ? $request->point[$key] : 0;
 
-            if ($request->kunci_jawaban == $request->id_pilihan[$key]) {
-                $soal = Soal::find($soal->id);
-                $soal->id_kunci_jawaban = $jawaban->id;
-                $soal->update();
-            }
+            $jawaban->save();
         }
 
         return redirect()->route('admin.ujian.soal.index', $id)->with('message','Data berhasil disimpan');
@@ -128,7 +142,7 @@ class SoalController extends Controller
      */
     public function edit($id)
     {
-        $soal = Soal::with('ujian')->find($id);
+        $soal = Soal::with('ujian', 'jawaban')->find($id);
         if (! $soal) {
             abort(404);
         }
@@ -146,38 +160,26 @@ class SoalController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'jenis_soal' => 'required_if:jenis_ujian,skd',
             'soal' => 'required',
-            'pilihan.*' => 'required',
-            'id_jawaban.*' => 'required',
-            'kunci_jawaban' => 'required',
+            'jawaban.*' => 'required',
+            'id_jawaban.*' => 'required'
+        ], [
+            'jenis_soal.required' => 'Jenis soal tidak boleh kosong.',
+            'soal.required' => 'Soal tidak boleh kosong.',
+            'jawaban.*.required' => 'Jawaban tidak boleh kosong.',
         ]);
 
         $soal = Soal::with('jawaban')->findOrFail($id);
         $soal->soal = $request->soal;
-        $soal->id_kunci_jawaban = $request->kunci_jawaban;
-        if (substr($request->kunci_jawaban, -3) == "new") {
-            $soal->id_kunci_jawaban = substr($request->kunci_jawaban, 0, -3);
-        }
+        $soal->jenis_soal = $request->jenis_ujian == 'skd' ? $request->jenis_soal : null;
         $soal->update();
 
-        foreach ($request->id_pilihan as $key => $pilihan) {
-            $jawaban = Jawaban::find($pilihan);
-            if ($jawaban) {
-                $jawaban->jawaban = $request->pilihan[$key];
-                $jawaban->update();
-            } else {
-                $jawaban = new Jawaban();
-                $jawaban->soal_id = $soal->id;
-                $jawaban->jawaban = $request->pilihan[$key];
-                $jawaban->save();
-            }
-        }
-
-        if ($request->has('id_deleted')) {
-            foreach ($request->id_deleted as $key => $value) {
-                $jawaban = Jawaban::findOrFail($value);
-                $jawaban->delete();
-            }
+        foreach ($request->id_jawaban as $key => $id_jawaban) {
+            $jawaban = Jawaban::findOrFail($id_jawaban);
+            $jawaban->jawaban = $request->jawaban[$key];
+            $jawaban->point = $request->point[$key];
+            $jawaban->update();
         }
 
         return redirect()->route('admin.ujian.soal.index', $soal->ujian_id)->with('message','Data berhasil disimpan');

@@ -73,6 +73,7 @@ class UjianController extends Controller
     {
         $request->validate([
             'nama' => 'required',
+            'jenis_ujian' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
             'jam' => 'required|min:0',
@@ -85,6 +86,7 @@ class UjianController extends Controller
         $lama_pengerjaan = implode(":", [$request->jam, $request->menit, $request->detik]);
         $ujian = new Ujian();
         $ujian->nama = $request->nama;
+        $ujian->jenis_ujian = $request->jenis_ujian;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));
         $ujian->lama_pengerjaan = $lama_pengerjaan;
@@ -120,6 +122,7 @@ class UjianController extends Controller
     {
         $request->validate([
             'nama' => 'required',
+            'jenis_ujian' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
             'jam' => 'required|min:0',
@@ -133,6 +136,7 @@ class UjianController extends Controller
         $ujian = Ujian::find($id);
 
         $ujian->nama = $request->nama;
+        $ujian->jenis_ujian = $request->jenis_ujian;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));
         $ujian->lama_pengerjaan = $lama_pengerjaan;
@@ -157,11 +161,7 @@ class UjianController extends Controller
     public function publish($id)
     {
         $ujian = Ujian::findorFail($id);
-        if ($ujian->isPublished) {
-            $ujian->isPublished = 0;
-        } else {
-            $ujian->isPublished = 1;
-        }
+        $ujian->isPublished = $ujian->isPublished ? 0 : 1;
 
         $ujian->update();
 

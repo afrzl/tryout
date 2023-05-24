@@ -9,10 +9,8 @@ $ada_jawaban = false;
 
 @section('content')
 @foreach ($soal as $item)
-<div class="col-md-6">
-    <div class="d-flex justify-content-end ">
-        <h4><span id="timer" class="badge badge-sm bg-gradient-success">--:--:--</span></h4>
-    </div>
+<div class="d-flex justify-content-end">
+    <h4><span id="timer" class="badge badge-sm bg-gradient-success">--:--:--</span></h4>
 </div>
 <div id="divReload">
     <div id="soal" class="col-12">
@@ -44,12 +42,12 @@ $ada_jawaban = false;
                                     <tr>
                                         <td>
                                             @if ($item->jawaban_id == null)
-                                            <button type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</button>
+                                            <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</a>
                                             @else
                                                 @if ($jawaban->id == $item->jawaban_id)
-                                                <button type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn bg-gradient-info mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</button>
+                                                <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn bg-gradient-info mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</a>
                                                 @else
-                                                <button type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</button>
+                                                <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</a>
                                                 @endif
                                             @endif
                                         </td>
@@ -135,26 +133,29 @@ $ada_jawaban = false;
         }
     }, 1000);
 
-    $(document).on('click', ".button-jawaban", function(){
-        var data = $.parseJSON($(this).attr('data-key'));
-        document.getElementById("key").value = data;
-        var jawaban = data;
-        var jml_jawaban = $('#form').attr('data-jawaban');
-        $.post('{{ route('ujian.store') }}', $('#form').serialize())
-            .done((response) => {
-                for (let i = 0; i < jml_jawaban; i++) {
-                    let pilgan = $('#button' + i).attr('data-key');
-                    if (pilgan == jawaban) {
-                        document.getElementById("button" + i).className = "btn bg-gradient-info mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban";
-                    } else {
-                        document.getElementById("button" + i).className = "btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban";
+    $(function() {
+        $(document).on('click', ".button-jawaban", function(){
+            var data = $.parseJSON($(this).attr('data-key'));
+            document.getElementById("key").value = data;
+            var jawaban = data;
+            var jml_jawaban = $('#form').attr('data-jawaban');
+            $.post('{{ route('ujian.store') }}', $('#form').serialize())
+                .done((response) => {
+                    for (let i = 0; i < jml_jawaban; i++) {
+                        let pilgan = $('#button' + i).attr('data-key');
+                        if (pilgan == jawaban) {
+                            document.getElementById("button" + i).className = "btn bg-gradient-info mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban";
+                        } else {
+                            document.getElementById("button" + i).className = "btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban";
+                        }
                     }
-                }
-            })
-            .fail((errors) => {
-                return;
-            });
+                })
+                .fail((errors) => {
+                    return;
+                });
+        });
     });
+
 
     function storeRagu(jawaban_id) {
         event.preventDefault()

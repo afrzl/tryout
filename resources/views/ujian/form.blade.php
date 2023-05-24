@@ -22,6 +22,19 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="Jenis_ujian" class="col-sm-3 col-form-label">Jenis Ujian</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="jenis_ujian" id="Jenis_ujian" required>
+                                <option value="">-- Pilih Jenis Ujian --</option>
+                                <option value="skd">SKD</option>
+                                <option value="mtk">Matematika</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Kolom jenis ujian tidak boleh kosong.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="Waktu_mulai" class="col-sm-3 col-form-label datetimepicker-input">Mulai Ujian</label>
                         <div class="col-sm-9">
                             <input type="text" name="waktu_mulai" id="Waktu_mulai" class="form-control datetimepicker-input" placeholder="Mulai Ujian" data-toggle="datetimepicker" data-target="#Waktu_mulai" required>

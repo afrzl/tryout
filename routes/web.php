@@ -9,7 +9,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Admin\PesertaUjianController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Admin\SoalController as SoalController_Admin;
 use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
 
@@ -30,22 +29,6 @@ use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->middleware('auth', 'verified', 'role:admin')->name('dashboard.admin');
-
-//route verify email
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-
-    return redirect('/home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 //route data user
 Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -103,4 +86,12 @@ Route::middleware('auth')->group(function () {
 //     //
 // });
 
-require __DIR__.'/auth.php';
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});

@@ -2,20 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Traits\Uuids;
 use App\Models\Pembelian;
+use App\Traits\Uuids;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, Uuids;
+    use HasApiTokens;
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
+    use HasRoles;
+    use Uuids;
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +42,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -48,12 +56,13 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * Add a mutator to ensure hashed passwords
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
      */
-    public function setPasswordAttribute($password)
-    {
-        $this->attributes['password'] = bcrypt($password);
-    }
+    protected $appends = [
+        'profile_photo_url',
+    ];
 
     /**
      * Get all of the pembelian for the User
@@ -64,4 +73,5 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Pembelian::class, 'user_id');
     }
+
 }

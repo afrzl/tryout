@@ -37,7 +37,7 @@ class DashboardController extends Controller
     public function adminIndex()
     {
         if (auth()->user()->hasRole('admin')) {
-            return view('layouts.app');
+            return view('layouts.admin.app');
         }
         abort(403, 'Error!');
     }

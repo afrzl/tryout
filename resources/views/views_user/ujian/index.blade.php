@@ -9,18 +9,18 @@ $ada_jawaban = false;
 
 @section('content')
 @foreach ($soal as $item)
-<div class="d-flex justify-content-end">
-    <h4><span id="timer" class="badge badge-sm bg-gradient-success">--:--:--</span></h4>
+<div class="d-flex justify-content-end" x-data="countdown()" x-init="init()">
+    <h4><span x-text="getTime()" class="badge badge-sm bg-gradient-success"></span></h4>
 </div>
 <div id="divReload">
     <div id="soal" class="col-12">
         <div class="card h-100">
             <div class="card-header pb-0 p-4">
                 <div class="row">
-                    <div class="d-flex align-items-center col-md-6">
-                        <h6 class="mb-0">Nomor <span id="nomor" class="badge badge-sm bg-gradient-{{ $item->ragu_ragu == 0 ? 'info' : 'warning' }}">{{ $soal->currentPage() }}</span></h6>
+                    <div class="d-flex align-items-center col-md-6" x-data x-init="$store.getRagu.setRagu('{{ $item->ragu_ragu }}')">
+                        <h6 class="mb-0">Nomor <span id="nomor" class="badge badge-sm" :class="$store.getRagu.ragu ? 'bg-gradient-warning' : 'bg-gradient-info'">{{ $soal->currentPage() }}</span></h6>
                         <div class="form-check form-switch ps-0 mt-2 mx-3">
-                            <input class="form-check-input ms-auto" onclick="storeRagu('{{ $item->id }}')" type="checkbox" {{ $item->ragu_ragu == 1 ? 'checked' : '' }} id="raguRagu">
+                            <input class="form-check-input ms-auto" @click="$store.getRagu.toggle({{ $item->id }})" type="checkbox" :checked="$store.getRagu.ragu ? 'isChecked' : ''">
                             <label class="form-check-label" for="raguRagu">Ragu-ragu</label>
                         </div>
                     </div>
@@ -34,31 +34,25 @@ $ada_jawaban = false;
                         @csrf
                         @method('post')
                         <input type="hidden" id="key" class="key" name="key">
-                        @foreach ($item->soal->jawaban as $key => $jawaban)
-                        <li class="list-group-item border-0 ps-0 pt-0 mb-2">
-                            <input type="hidden" name="jawaban_peserta" value="{{ $item->id }}">
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            @if ($item->jawaban_id == null)
-                                            <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</a>
-                                            @else
-                                                @if ($jawaban->id == $item->jawaban_id)
-                                                <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn bg-gradient-info mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</a>
-                                                @else
-                                                <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban">{{ chr($key + 65) }}</a>
-                                                @endif
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $jawaban->jawaban }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </li>
-                        @endforeach
+                        <div>
+                            @foreach ($item->soal->jawaban as $key => $jawaban)
+                            <li class="list-group-item border-0 ps-0 pt-0 mb-2">
+                                <input type="hidden" name="jawaban_peserta" value="{{ $item->id }}">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <a type="button" name="button[]" id="button{{ $key }}" data-key="{{ $jawaban->id }}" class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban {{ $jawaban->id == $item->jawaban_id ? 'bg-gradient-info' : '' }}">{{ chr($key + 65) }}</a>
+                                            </td>
+                                            <td>
+                                                {{ $jawaban->jawaban }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+                            @endforeach
+                        </div>
                     </form>
                 </ul>
                 @if($soal->currentPage() == $soal->total())
@@ -100,38 +94,52 @@ $ada_jawaban = false;
     countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(split_pengerjaan[1]));
     countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(split_pengerjaan[2]));
 
-    let x = setInterval(function() {
-        let now = new Date().getTime();
-        let distance = countDownDate - now;
+    function countdown() {
+        const split_pengerjaan = '{{ $soal[0]->soal->ujian->lama_pengerjaan }}'.split(':');
+        let countDownDate = new Date("{{ $pembelian->waktu_mulai_pengerjaan }}");
+        countDownDate.setHours(countDownDate.getHours() + parseInt(split_pengerjaan[0]));
+        countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(split_pengerjaan[1]));
+        countDownDate.setSeconds(countDownDate.getSeconds() + parseInt(split_pengerjaan[2]));
+        return {
+            countdown: '',
+            distance: null,
+            init() {
+                setInterval(() => {
+                    let now = new Date().getTime();
+                    this.distance = countDownDate - now;
 
-        let hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-        let minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-        let seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-
-        document.getElementById("timer").innerHTML = hours + ":" +
-            minutes + ":" + seconds;
-        if (distance < 0) {
-            clearInterval(x);
-            const pembelian_id = '{{ $pembelian->id }}'
-            let token = $("meta[name='csrf-token']").attr("content");
-            $.ajax({
-                url: `/ujian/selesaiujian/` + pembelian_id
-                , type: "put"
-                , cache: false
-                , data: {
-                    "_token": token
+                    hours = String(Math.floor((this.distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                    minutes = String(Math.floor((this.distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                    seconds = String(Math.floor((this.distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                    this.countdown = hours + ":" + minutes + ":" + seconds;
+                }, 1000);
+            },
+            getTime() {
+                if (this.distance < 0) {
+                    const pembelian_id = '{{ $pembelian->id }}'
+                    let token = $("meta[name='csrf-token']").attr("content");
+                    $.ajax({
+                        url: `/ujian/selesaiujian/` + pembelian_id
+                        , type: "put"
+                        , cache: false
+                        , data: {
+                            "_token": token
+                        }
+                        , success: function(response) {
+                            console.log('success');
+                            window.location.href = `/ujian/nilai/` + pembelian_id;
+                        }
+                        , error: function(error) {
+                            console.log('error')
+                            document.getElementById("timer").innerHTML = "EXPIRED";
+                        }
+                    });
+                } else {
+                    return this.countdown
                 }
-                , success: function(response) {
-                    console.log('success');
-                    window.location.href = `/ujian/nilai/` + pembelian_id;
-                }
-                , error: function(error) {
-                    console.log('error')
-                    document.getElementById("timer").innerHTML = "EXPIRED";
-                }
-            });
+            },
         }
-    }, 1000);
+    }
 
     $(function() {
         $(document).on('click', ".button-jawaban", function(){
@@ -156,33 +164,29 @@ $ada_jawaban = false;
         });
     });
 
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('getRagu', {
+            ragu: false,
 
-    function storeRagu(jawaban_id) {
-        event.preventDefault()
-        let token = $("meta[name='csrf-token']").attr("content");
-        console.log(jawaban_id);
-        $.ajax({
-            url: `/ujian/storeragu/` + jawaban_id
-            , type: "put"
-            , cache: false
-            , data: {
-                "_token": token
+            setRagu(initRagu) {
+                this.ragu = (initRagu == '1' ? true : false)
+            },
+
+            toggle(id) {
+                let token = $("meta[name='csrf-token']").attr("content");
+                $.ajax({
+                    url: `/ujian/storeragu/` + id
+                    , type: "put"
+                    , cache: false
+                    , data: {
+                        "_token": token
+                    }
+                }).then(response => {
+                    this.ragu = ! this.ragu
+                });
             }
-            , success: function(response) {
-                console.log('success')
-                var raguRagu = document.getElementById("raguRagu")
-                raguRagu.checked = !raguRagu.checked;
-                if (raguRagu.checked) {
-                    document.getElementById("nomor").className = "badge badge-sm bg-gradient-warning";
-                } else {
-                    document.getElementById("nomor").className = "badge badge-sm bg-gradient-info";
-                }
-            }
-            , error: function(error) {
-                console.log('error')
-            }
-        });
-    }
+        })
+    })
 
     function fetch_data(page) {
         let l = window.location;

@@ -151,6 +151,9 @@ class UjianController extends Controller
         $benar = 0;
         $pembelian = Pembelian::with('ujian', 'jawabanPeserta.soal')
                     ->findOrFail($id);
+        if ($pembelian->status_pengerjaan != 'Selesai' || $pembelian->user_id != auth()->user()->id) {
+            abort(403, 'ERROR');
+        }
         foreach ($pembelian->jawabanPeserta as $key => $jawabanPeserta) {
             if ($jawabanPeserta->jawaban_id == $jawabanPeserta->soal->id_kunci_jawaban) {
                 $benar++;

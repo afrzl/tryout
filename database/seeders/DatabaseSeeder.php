@@ -12,16 +12,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            RolesAndPermissionsSeeder::class,
-        ]);
-        // \App\Models\User::factory(100)->create();
+        // $this->call([
+        //     RolesAndPermissionsSeeder::class,
+        // ]);
         // \App\Models\Ujian::factory(5)->create();
-        // for ($i=0; $i < 6; $i++) {
-        //     \App\Models\Soal::factory(1)->create([
-        //         'id_kunci_jawaban' => ($i * 5) + 26,
-        //     ]);
-        // }
+        // \App\Models\Soal::factory(45)->create();
+        for ($i=162; $i < 207; $i++) {
+            for ($j=0; $j < 5; $j++) {
+                \App\Models\Jawaban::factory(1)->create([
+                    'soal_id' => $i,
+                    'point' => $j == 0 ? 5 : 0,
+                ]);
+            }
+        }
         // for ($i=1; $i < 16; $i++) {
         //     \App\Models\Jawaban::factory(5)->create([
         //         'soal_id' => $i + 16,

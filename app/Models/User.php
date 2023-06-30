@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Pembelian;
 use App\Traits\Uuids;
+use App\Models\Session;
+use App\Models\Pembelian;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
@@ -72,6 +73,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function pembelian()
     {
         return $this->hasMany(Pembelian::class, 'user_id');
+    }
+
+    /**
+     * Get all of the sessions for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sessions()
+    {
+        return $this->hasMany(Session::class, 'user_id', 'id');
     }
 
 }

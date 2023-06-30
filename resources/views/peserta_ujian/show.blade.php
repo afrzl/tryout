@@ -22,6 +22,7 @@ Data Peserta Ujian
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
+                    <button onclick="refresh('{{ route('admin.peserta_ujian.refresh', $ujian->id) }}')" type="button" class="btn btn-outline-success btn-sm mb-3 float-right">Refresh</button>
                     <table class="mb-5">
                         <tr>
                             <td style="width: 40%"><h5>Nama Ujian</h5></td>
@@ -127,6 +128,21 @@ Data Peserta Ujian
             ]
         });
     });
+
+    function refresh(url) {
+        $.ajax({
+            url: url,
+            success: function(satwork) {
+                tableShow.ajax.reload();
+                toastr.options = {
+                    "positionClass": "toast-bottom-right",
+                    "closeButton" : true,
+                    "progressBar" : true
+                };
+                toastr.success('Data berhasil diperbarui.');
+            }
+        });
+    }
 </script>
 
 @endpush

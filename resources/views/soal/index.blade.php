@@ -41,10 +41,50 @@ Data Soal Ujian {{ $ujian->nama }}
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <div id="progress" class="progress mb-3">
-                        <div class="progress-bar bg-{{$ujian->soal->count() >= $ujian->jumlah_soal ? 'danger' : 'success'}}" role="progressbar" aria-valuenow="{{ $ujian->soal->count() }}" aria-valuemin="0" aria-valuemax="{{ $ujian->jumlah_soal }}" style="width: {{ $ujian->soal->count() / $ujian->jumlah_soal * 100 }}%">
-                        {{ $ujian->soal->count() }} dari {{ $ujian->jumlah_soal }} soal
+                    <div id="progress-bar">
+                        <div id="progress" class="progress mb-3">
+                            <div class="progress-bar bg-{{$ujian->soal->count() >= $ujian->jumlah_soal ? 'danger' : 'success'}}" role="progressbar" aria-valuenow="{{ $ujian->soal->count() }}" aria-valuemin="0" aria-valuemax="{{ $ujian->jumlah_soal }}" style="width: {{ $ujian->soal->count() / $ujian->jumlah_soal * 100 }}%">
+                                {{ $ujian->soal->count() }} dari {{ $ujian->jumlah_soal }} soal
+                            </div>
                         </div>
+                        @if($ujian->jenis_ujian == 'skd')
+                        <div class="row">
+                            <div class="col-1 text-sm">
+                                <p>TWK : </p>
+                            </div>
+                            <div class="col-11">
+                                <div id="progress" class="progress mt-1">
+                                    <div class="progress-bar bg-{{$twk->count() >= 30 ? 'danger' : 'warning'}}" role="progressbar" aria-valuenow="{{ $twk->count() }}" aria-valuemin="0" aria-valuemax="30" style="width: {{ $twk->count() / 30 * 100 }}%">
+                                        {{ $twk->count() }} dari 30 soal
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1 text-sm">
+                                <p>TIU : </p>
+                            </div>
+                            <div class="col-11">
+                                <div id="progress" class="progress mt-1">
+                                    <div class="progress-bar bg-{{$tiu->count() >= 35 ? 'danger' : 'warning'}}" role="progressbar" aria-valuenow="{{ $tiu->count() }}" aria-valuemin="0" aria-valuemax="35" style="width: {{ $tiu->count() / 35 * 100 }}%">
+                                        {{ $tiu->count() }} dari 35 soal
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1 text-sm">
+                                <p>TKP : </p>
+                            </div>
+                            <div class="col-11">
+                                <div id="progress" class="progress mt-1">
+                                    <div class="progress-bar bg-{{$tkp->count() >= 45 ? 'danger' : 'warning'}}" role="progressbar" aria-valuenow="{{ $tkp->count() }}" aria-valuemin="0" aria-valuemax="45" style="width: {{ $tkp->count() / 45 * 100 }}%">
+                                        {{ $tkp->count() }} dari 45 soal
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                     <form action="" method="post" class="form-member">
                         @csrf
@@ -57,6 +97,7 @@ Data Soal Ujian {{ $ujian->nama }}
                                     <th style="width: 10%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
+                            <tbody></tbody>
                         </table>
                     </form>
                     <!-- /.row -->
@@ -96,7 +137,7 @@ Data Soal Ujian {{ $ujian->nama }}
                 }
             }
             , columns: [
-                { data: 'DT_RowIndex', searchable: false}
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false}
                 , { data: 'soal' }
                 , { data: 'jenis_soal' }
                 , { data: 'aksi', searchable: false, sortable: false}
@@ -172,7 +213,7 @@ Data Soal Ujian {{ $ujian->nama }}
                 })
                 .done((response) => {
                     tableSoal.ajax.reload();
-                    $( "#progress" ).load(window.location.href + " #progress>*" );
+                    $( "#progress-bar" ).load(window.location.href + " #progress-bar>*" );
                     toastr.options = {
                         "positionClass": "toast-bottom-right",
                         "closeButton" : true,

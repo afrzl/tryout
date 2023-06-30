@@ -19,6 +19,12 @@ class SoalController extends Controller
         if (! $ujian) {
             abort(404);
         }
+        if ($ujian->jenis_ujian == 'skd') {
+            $twk = $ujian->soal->where('jenis_soal', 'twk');
+            $tiu = $ujian->soal->where('jenis_soal', 'tiu');
+            $tkp = $ujian->soal->where('jenis_soal', 'tkp');
+            return view('soal.index', compact('ujian', 'twk', 'tiu', 'tkp'));
+        }
         return view('soal.index', compact('ujian'));
     }
 
@@ -26,7 +32,7 @@ class SoalController extends Controller
     {
         $soals = Soal::where('ujian_id', $id)
                 ->with('jawaban', 'ujian')
-                ->orderBy('created_at', 'asc');
+                ->orderBy('created_at', 'desc');
 
         return datatables()
             ->of($soals)

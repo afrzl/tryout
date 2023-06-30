@@ -14,6 +14,7 @@ class DashboardController extends Controller
             $ujians = Ujian::where('isPublished', 1)
                         ->where('waktu_mulai', '<=', date("Y-m-d H:i:s"))
                         ->where('waktu_akhir', '>=', date("Y-m-d H:i:s"))
+                        ->orderBy('waktu_mulai', 'asc')
                         ->get();
             $history = [];
             return view('views_user.dashboard', compact('ujians', 'history'));

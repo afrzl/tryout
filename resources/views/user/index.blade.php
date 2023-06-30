@@ -201,9 +201,9 @@ Data User
     }
 
     function makeAdmin(url) {
-        var action = url.split('/')[4];
-        var title = action === 'make' ? 'Apakah anda yakin akan mengubah user menjadi admin?' : 'Apakah anda yakin akan merevoke hak akses admin?';
-        var success = action === 'make' ? 'User berhasil menjadi admin' : 'Hak akses admin user direvoke';
+        let action = url.split('/')[6];
+        let title = (action === 'make' ? 'Apakah anda yakin akan mengubah user menjadi admin?' : 'Apakah anda yakin akan merevoke hak akses admin?');
+        let success = action === 'make' ? 'User berhasil menjadi admin' : 'Hak akses admin user direvoke';
         Swal.fire({
             title: title,
             icon: 'warning',

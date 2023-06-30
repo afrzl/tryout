@@ -64,7 +64,7 @@ class PesertaUjianController extends Controller
 
     public function showData($id)
     {
-        $peserta = Pembelian::with('user', 'jawabanPeserta.soal')
+        $peserta = Pembelian::with('user', 'user.sessions', 'jawabanPeserta.soal')
                     ->where('ujian_id', $id)
                     ->where('status', 'Sukses')
                     ->orderBy('created_at', 'desc');
@@ -167,6 +167,26 @@ class PesertaUjianController extends Controller
             })
             ->rawColumns(['status', 'soal'])
             ->make(true);
+    }
+
+    public function refresh($id) {
+        $pembelian = Pembelian::with('ujian')->where('ujian_id', $id)->get();
+        $ujian = Ujian::with('pembelian')->find($id);
+        $d = explode(':', $ujian->lama_pengerjaan);
+        $lama_pengerjaan =  ($d[0] * 3600) + ($d[1] * 60) + $d[2];
+        foreach ($ujian->pembelian as $key => $value) {
+            if ($value->status_pengerjaan == 'Masih dikerjakan') {
+                $waktu_akhir = Carbon::parse($ujian->pembelian[$key]->waktu_mulai_pengerjaan)->addSeconds($lama_pengerjaan);
+                if ($waktu_akhir->isPast()) {
+                    $pembelian = Pembelian::findOrFail($value->id);
+                    $pembelian->status_pengerjaan = "Selesai";
+                    $pembelian->waktu_selesai_pengerjaan = $waktu_akhir;
+                    $pembelian->update();
+                }
+            }
+        }
+
+        return response()->json('Data berhasil disimpan', 200);
     }
 
     /**

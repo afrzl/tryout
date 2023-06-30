@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Soal;
 use App\Models\Ujian;
 use App\Models\Jawaban;
+use App\Models\Session;
 use App\Models\Pembelian;
 use Illuminate\Http\Request;
 use App\Models\JawabanPeserta;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Collection;
 
 class UjianController extends Controller
 {
@@ -104,16 +107,50 @@ class UjianController extends Controller
         return view('views_user.ujian.show', compact('pembelian'));
     }
 
+    public function sessionDestroy() {
+        $session = Session::where('user_id', auth()->user()->id)
+                    ->where('id', '!=', session()->getId());
+        $session->delete();
+
+        return response(200);
+    }
+
     public function mulaiUjian($id)
     {
+        $session = Session::where('user_id', auth()->user()->id)->get();
+        if ($session->count() > 1) {
+            return response()->json('session limit', 200);
+        }
         $pembelian = Pembelian::with('ujian')->findOrFail($id);
-        $soal = Soal::where('ujian_id', $pembelian->ujian->id)
-                ->inRandomOrder()
-                ->limit($pembelian->ujian->jumlah_soal)
-                ->get();
+        if ($pembelian->ujian->jenis_ujian == 'skd') {
+            $twk = Soal::where('ujian_id', $pembelian->ujian->id)
+                    ->where('jenis_soal', 'twk')
+                    ->inRandomOrder()
+                    ->limit(30)
+                    ->get();
+            $tiu = Soal::where('ujian_id', $pembelian->ujian->id)
+                    ->where('jenis_soal', 'tiu')
+                    ->inRandomOrder()
+                    ->limit(35)
+                    ->get();
+            $tkp = Soal::where('ujian_id', $pembelian->ujian->id)
+                    ->where('jenis_soal', 'tkp')
+                    ->inRandomOrder()
+                    ->limit(45)
+                    ->get();
+            $soal = new Collection();
+            $soal = $soal->merge($twk);
+            $soal = $soal->merge($tiu);
+            $soal = $soal->merge($tkp);
+        } else {
+            $soal = Soal::where('ujian_id', $pembelian->ujian->id)
+                    ->inRandomOrder()
+                    ->limit($pembelian->ujian->jumlah_soal)
+                    ->get();
+        }
 
         if ($pembelian->status_pengerjaan == 'Selesai') {
-            return redirect()->route('ujian.nilai', $pembelian->id);
+            return response()->json('telah dikerjakan|{{ $pembelian->id }}', 200);
         }
 
         if ($pembelian->status_pengerjaan != 'Masih dikerjakan') {
@@ -127,10 +164,8 @@ class UjianController extends Controller
                 $store->soal_id = $item->id;
                 $store->save();
             }
-
         }
-
-        return redirect()->route('ujian.index');
+        return response()->json('OK', 200);
     }
 
     public function selesaiUjian($id)

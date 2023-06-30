@@ -18,7 +18,7 @@
             </div>
             <div class="card-body px-3 pt-0 pb-2">
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0">
+                    <table class="table align-items-center mb-0" x-data>
                         <tbody>
                             <tr>
                                 <td style="text-align: right; width: 50%">
@@ -66,11 +66,7 @@
                                     @if ($pembelian->status_pengerjaan == 'Selesai')
                                         <a href="{{ route('ujian.nilai', $pembelian->id) }}" type="button" class="btn bg-gradient-success mt-4 mb-0">Lihat Nilai</a>
                                     @else
-                                    <form action="{{ route('ujian.mulai', $pembelian->id) }}" method="post">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn bg-gradient-success mt-4 mb-0">Kerjakan</button>
-                                    </form>
+                                    <button @click="kerjakan({{ $pembelian->id }})" class="btn bg-gradient-success mt-4 mb-0">Kerjakan</button>
                                     @endif
                                 </td>
                             </tr>
@@ -84,5 +80,40 @@
 @endsection
 
 @push('scripts')
-
+<script>
+    function kerjakan(id) {
+        let token = $("meta[name='csrf-token']").attr("content");
+        $.ajax({
+            url: `/ujian/mulaiujian/` + id
+            , type: "put"
+            , cache: false
+            , data: {
+                "_token": token
+            }
+        }).then(res => {
+            const response = res.split('|');
+            if (response[0] == 'session limit') {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Anda terdeteksi menggunakan lebih dari 2 perangkat. Silahkan tekan tombol logout dari semua perangkat untuk memulai ujian!',
+                    confirmButtonText: 'Logout dari semua perangkat',
+                }).then((result) => {
+                    $.ajax({
+                        url: `{{ route('session_destroy')}}`
+                        , type: "get"
+                        , cache: false
+                    }).then(response => {
+                        if (response == 200) {
+                            kerjakan(id)
+                        }
+                    })
+                });
+            } else if (response[0] == 'telah dikerjakan') {
+                window.location.href = `/ujian/nilai/${response[1]}`;
+            } else if (response[0] == 'OK') {
+                window.location.href = "{{ route('ujian.index')}}";
+            }
+        });
+    }
+</script>
 @endpush

@@ -17,7 +17,6 @@ class JawabanFactory extends Factory
     public function definition(): array
     {
         return [
-            'soal_id' => '',
             'jawaban' => fake()->sentence(),
         ];
     }

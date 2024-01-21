@@ -70,6 +70,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.paket.index') }}" class="nav-link {{ (request()->segment(2) == 'paket') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Paket Ujian
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'ujian') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>

@@ -157,32 +157,32 @@ Data Ujian
     }
 
     function editData(url) {
-            $('#modal-form').modal('show');
-            $('#modal-form .modal-title').text('Edit Ujian');
+        $('#modal-form').modal('show');
+        $('#modal-form .modal-title').text('Edit Ujian');
 
-            $('#modal-form form')[0].reset();
-            $('#modal-form form').attr('action', url);
-            $('#modal-form [name=_method]').val('put');
-            $('#modal-form [name=nama]').focus();
+        $('#modal-form form')[0].reset();
+        $('#modal-form form').attr('action', url);
+        $('#modal-form [name=_method]').val('put');
+        $('#modal-form [name=nama]').focus();
 
-            $.get(url)
-                .done((response) => {
-                    var lama_pengerjaan = response.lama_pengerjaan.split(":");
-                    $('#modal-form [name=nama]').val(response.nama);
-                    $('#modal-form [name=jenis_ujian]').val(response.jenis_ujian);
-                    $('#modal-form [name=waktu_mulai]').val(moment(response.waktu_mulai).format('D/MM/YYYY HH:mm'));
-                    $('#modal-form [name=waktu_akhir]').val(moment(response.waktu_akhir).format('D/MM/YYYY HH:mm'));
-                    $('#modal-form [name=jam]').val(lama_pengerjaan[0]);
-                    $('#modal-form [name=menit]').val(lama_pengerjaan[1]);
-                    $('#modal-form [name=detik]').val(lama_pengerjaan[2]);
-                    $('#modal-form [name=harga]').val(response.harga);
-                    $('#modal-form [name=jumlah_soal]').val(response.jumlah_soal);
-                })
-                .fail((errors) => {
-                    alert('Tidak dapat menampilkan data.');
-                    return;
-                })
-        }
+        $.get(url)
+            .done((response) => {
+                var lama_pengerjaan = response.lama_pengerjaan.split(":");
+                $('#modal-form [name=nama]').val(response.nama);
+                $('#modal-form [name=jenis_ujian]').val(response.jenis_ujian);
+                $('#modal-form [name=waktu_mulai]').val(moment(response.waktu_mulai).format('D/MM/YYYY HH:mm'));
+                $('#modal-form [name=waktu_akhir]').val(moment(response.waktu_akhir).format('D/MM/YYYY HH:mm'));
+                $('#modal-form [name=jam]').val(lama_pengerjaan[0]);
+                $('#modal-form [name=menit]').val(lama_pengerjaan[1]);
+                $('#modal-form [name=detik]').val(lama_pengerjaan[2]);
+                $('#modal-form [name=harga]').val(response.harga);
+                $('#modal-form [name=jumlah_soal]').val(response.jumlah_soal);
+            })
+            .fail((errors) => {
+                alert('Tidak dapat menampilkan data.');
+                return;
+            })
+    }
 
     function deleteData(url) {
         Swal.fire({

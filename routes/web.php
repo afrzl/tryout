@@ -8,6 +8,7 @@ use App\Http\Controllers\UjianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\Admin\PaketUjianController;
 use App\Http\Controllers\Admin\PesertaUjianController;
 use App\Http\Controllers\Admin\SoalController as SoalController_Admin;
 use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
@@ -36,6 +37,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(fu
     Route::resource('user', UserController::class);
     Route::post('/user/resetPassword/{id}', [UserController::class, 'resetPassword'])->name('user.resetpassword');
     Route::post('/user/makeAdmin/{action}/{id}', [UserController::class, 'makeAdmin'])->name('user.makeAdmin');
+});
+
+//route data paket ujian
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/paket/data', [PaketUjianController::class, 'data'])->name('paket.data');
+    // Route::get('/paket/data', [UjianController_Admin::class, 'data'])->name('paket.data');
+    Route::resource('paket', PaketUjianController::class);
 });
 
 //route data ujian

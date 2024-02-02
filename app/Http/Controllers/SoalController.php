@@ -18,7 +18,7 @@ class SoalController extends Controller
         if (! $ujian) {
             abort(404);
         }
-        return view('soal.index', compact('ujian'));
+        return view('admin.soal.index', compact('ujian'));
     }
 
     public function data($id)
@@ -77,7 +77,7 @@ class SoalController extends Controller
             return redirect()->route('admin.ujian.soal.index', $ujian->id);
         }
         $action = 'ujian.soal.store';
-        return view('soal.form', compact('ujian', 'soal', 'action'));
+        return view('admin.soal.form', compact('ujian', 'soal', 'action'));
     }
 
     /**
@@ -133,7 +133,7 @@ class SoalController extends Controller
         }
         $ujian = $soal->ujian;
         $action = 'soal.update';
-        return view('soal.form', compact('soal', 'ujian', 'action'));
+        return view('admin.soal.form', compact('soal', 'ujian', 'action'));
     }
 
     /**

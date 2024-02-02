@@ -16,7 +16,7 @@ class PaketUjianController extends Controller
     public function index()
     {
         $ujians = Ujian::get();
-        return view('paket_ujian.index', compact('ujians'));
+        return view('admin.paket_ujian.index', compact('ujians'));
     }
 
     public function data()

@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Ujian;
 use App\Traits\Uuids;
 use App\Models\Session;
+use App\Models\Voucher;
 use App\Models\Pembelian;
+use App\Models\UjianUser;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
@@ -52,9 +55,17 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
+
+    /**
+     * Add a mutator to ensure hashed passwords
+     */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
 
     /**
      * The accessors to append to the model's array form.
@@ -83,6 +94,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sessions()
     {
         return $this->hasMany(Session::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the voucher associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function voucher()
+    {
+        return $this->hasOne(Voucher::class, 'himada_id', 'id');
+    }
+
+    /**
+     * Get all of the ujianUser for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ujianUser()
+    {
+        return $this->hasMany(UjianUser::class, 'user_id', 'id');
     }
 
 }

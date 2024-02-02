@@ -1,36 +1,75 @@
-<x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+@extends('layouts.auth')
 
-        <x-validation-errors class="mb-4" />
+@section('title', 'Reset Password')
 
-        <form method="POST" action="{{ route('password.update') }}">
-            @csrf
+@push('style')
+    <!-- CSS Libraries -->
+@endpush
 
-            <input type="hidden" name="token" value="{{ $request->route('token') }}">
+@section('main')
+    <div class="card card-primary">
+        <div class="card-header">
+            <h4>Reset Password</h4>
+        </div>
 
-            <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('password.update') }}">
+                @csrf
+                <input type="hidden" name="token" value="{{ $request->route('token') }}">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email"
+                        type="email"
+                        value="{{ old('email', $request->email) }}"
+                        class="form-control"
+                        name="email"
+                        tabindex="1"
+                        required
+                        autofocus>
+                </div>
 
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            </div>
+                <div class="form-group">
+                    <label for="password">New Password</label>
+                    <input id="password"
+                        type="password"
+                        class="form-control pwstrength"
+                        data-indicator="pwindicator"
+                        name="password"
+                        tabindex="2"
+                        required>
+                    <div id="pwindicator"
+                        class="pwindicator">
+                        <div class="bar"></div>
+                        <div class="label"></div>
+                    </div>
+                </div>
 
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
-            </div>
+                <div class="form-group">
+                    <label for="password_confirmation">Konfirmasi Password</label>
+                    <input id="password_confirmation"
+                        type="password"
+                        class="form-control"
+                        name="password_confirmation"
+                        tabindex="2"
+                        required>
+                </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Reset Password') }}
-                </x-button>
-            </div>
-        </form>
-    </x-authentication-card>
-</x-guest-layout>
+                <div class="form-group">
+                    <button type="submit"
+                        class="btn btn-primary btn-lg btn-block"
+                        tabindex="4">
+                        Reset Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <!-- JS Libraies -->
+    <script src="{{ asset('stisla/library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
+
+    <!-- Page Specific JS File -->
+    <script src="{{ asset('stisla/js/page/auth-register.js') }}"></script>
+@endpush

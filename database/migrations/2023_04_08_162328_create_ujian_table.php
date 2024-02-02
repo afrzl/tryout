@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nama');
             $table->integer('harga')->unsigned();
-            $table->time('waktu_pengerjaan');
+            $table->integer('waktu_pengerjaan')->unsigned();
             $table->dateTime('waktu_mulai');
             $table->dateTime('waktu_akhir');
 

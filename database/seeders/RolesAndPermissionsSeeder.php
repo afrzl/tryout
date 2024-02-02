@@ -18,10 +18,10 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'view ujian']);
-        Permission::create(['name' => 'create ujian']);
-        Permission::create(['name' => 'update ujian']);
-        Permission::create(['name' => 'delete ujian']);
+        // Permission::create(['name' => 'view ujian']);
+        // Permission::create(['name' => 'create ujian']);
+        // Permission::create(['name' => 'update ujian']);
+        // Permission::create(['name' => 'delete ujian']);
 
         // create roles and assign created permissions
 
@@ -30,10 +30,10 @@ class RolesAndPermissionsSeeder extends Seeder
         // $role->givePermissionTo('edit articles');
 
         // or may be done by chaining
-        $role = Role::create(['name' => 'admin'])
-            ->givePermissionTo(['view ujian', 'create ujian', 'update ujian', 'delete ujian']);
+        // $role = Role::create(['name' => 'admin'])
+        //     ->givePermissionTo(['view ujian', 'create ujian', 'update ujian', 'delete ujian']);
 
-        // $role = Role::create(['name' => 'super-admin']);
+        $role = Role::create(['name' => 'himada']);
         // $role->givePermissionTo(Permission::all());
     }
 }

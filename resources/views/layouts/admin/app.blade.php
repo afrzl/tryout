@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <title>@yield('title') - {{ config('app.name', 'Laravel') }}</title>
 
@@ -31,6 +32,14 @@
         table.center-header th{
             text-align :center;
             vertical-align: middle;
+        }
+        .form-group.required .control-label:after {
+            content:" *";
+            color:red;
+        }
+        .form-group.required .col-form-label:after {
+            content:" *";
+            color:red;
         }
     </style>
 
@@ -130,6 +139,8 @@
     <script src="{{ asset('adminLTE') }}/plugins/toastr/toastr.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('adminLTE') }}/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('adminLTE') }}/plugins/select2/js/select2.full.min.js"></script>
 
     {{-- <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('adminLTE') }}/dist/js/demo.js"></script>

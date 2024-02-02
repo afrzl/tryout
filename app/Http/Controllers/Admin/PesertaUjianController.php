@@ -17,7 +17,7 @@ class PesertaUjianController extends Controller
      */
     public function index()
     {
-        return view('peserta_ujian.index');
+        return view('admin.peserta_ujian.index');
     }
 
     public function data()
@@ -211,7 +211,7 @@ class PesertaUjianController extends Controller
     public function show($id)
     {
         $ujian = Ujian::find($id);
-        return view('peserta_ujian.show', compact('ujian'));
+        return view('admin.peserta_ujian.show', compact('ujian'));
     }
 
     public function showPeserta($id)
@@ -236,7 +236,7 @@ class PesertaUjianController extends Controller
             }
         }
 
-        return view('peserta_ujian.showPeserta', compact('pembelian', 'benar'));
+        return view('admin.peserta_ujian.showPeserta', compact('pembelian', 'benar'));
     }
 
     /**

@@ -14,7 +14,7 @@ class UjianController extends Controller
      */
     public function index()
     {
-        return view('ujian.index');
+        return view('admin.ujian.index');
     }
 
     public function data()
@@ -26,10 +26,11 @@ class UjianController extends Controller
             ->addIndexColumn()
             ->addColumn('nama', function ($ujians)
             {
-                $text = $ujians->nama;
+                $text = '<a href="#" onclick="detailForm(`' . route('admin.ujian.show', $ujians->id) . '`)">' . $ujians->nama;
                 if ($ujians->isPublished) {
                     $text .= ' <span class="badge badge-success">Published</span>';
                 }
+                $text .= '</a>';
                 return $text;
             })
             ->addColumn('waktu_pengerjaan', function ($ujians)
@@ -40,9 +41,23 @@ class UjianController extends Controller
             {
                 return '<span class="badge badge-warning">' . $ujians->lama_pengerjaan . '</span>';
             })
-            ->addColumn('harga', function ($ujians)
+            ->addColumn('jenis_ujian', function ($ujians)
             {
-                return 'Rp' . number_format( $ujians->harga , 0 , ',' , '.' );
+                switch ($ujians->jenis_ujian) {
+                    case 'mtk':
+                        return 'Matematika';
+                        break;
+                    case 'skd':
+                        return 'SKD';
+                        break;
+                    case 'lainnya':
+                        return 'LAINNYA';
+                        break;
+
+                    default:
+                        return 'LAINNYA';
+                        break;
+                }
             })
             ->addColumn('aksi', function ($ujians) {
                 $text = '';
@@ -76,22 +91,30 @@ class UjianController extends Controller
             'jenis_ujian' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
-            'jam' => 'required|min:0',
-            'menit' => 'required|min:0|max:59',
-            'detik' => 'required|min:0|max:59',
-            'harga' => 'required',
+            'lama_pengerjaan' => 'required|min:0',
             'jumlah_soal' => 'required|min:0',
+            'tipe_ujian' => 'required',
+            'tampil_kunci' => 'required',
+            'tampil_nilai' => 'required',
+            'tampil_poin' => 'required',
+            'random' => 'required',
         ]);
 
-        $lama_pengerjaan = implode(":", [$request->jam, $request->menit, $request->detik]);
         $ujian = new Ujian();
         $ujian->nama = $request->nama;
         $ujian->jenis_ujian = $request->jenis_ujian;
+        $ujian->deskripsi = $request->deskripsi;
+        $ujian->peraturan = $request->peraturan;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));
-        $ujian->lama_pengerjaan = $lama_pengerjaan;
-        $ujian->harga = $request->harga;
+        $ujian->lama_pengerjaan = $request->lama_pengerjaan;
         $ujian->jumlah_soal = $request->jumlah_soal;
+        $ujian->tipe_ujian = $request->tipe_ujian;
+        $ujian->tampil_kunci = $request->tampil_kunci;
+        $ujian->tampil_nilai = $request->tampil_nilai;
+        $ujian->tampil_poin = $request->tampil_poin;
+        $ujian->random = $request->random;
+
         $ujian->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -102,7 +125,9 @@ class UjianController extends Controller
      */
     public function show($id)
     {
-        $ujian = Ujian::find($id);
+        $ujian = Ujian::with('soal')->find($id);
+        $ujian['waktu_mulai'] = Carbon::parse($ujian['waktu_mulai'])->isoFormat('D MMMM Y HH:mm:ss');
+        $ujian['waktu_akhir'] = Carbon::parse($ujian['waktu_akhir'])->isoFormat('D MMMM Y HH:mm:ss');
 
         return response()->json($ujian);
     }
@@ -125,23 +150,30 @@ class UjianController extends Controller
             'jenis_ujian' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
-            'jam' => 'required|min:0',
-            'menit' => 'required|min:0|max:59',
-            'detik' => 'required|min:0|max:59',
-            'harga' => 'required',
+            'lama_pengerjaan' => 'required|min:0',
             'jumlah_soal' => 'required|min:0',
+            'tipe_ujian' => 'required',
+            'tampil_kunci' => 'required',
+            'tampil_nilai' => 'required',
+            'tampil_poin' => 'required',
+            'random' => 'required',
         ]);
 
-        $lama_pengerjaan = implode(":", [$request->jam, $request->menit, $request->detik]);
-        $ujian = Ujian::find($id);
+        $ujian = Ujian::findOrFail($id);
 
         $ujian->nama = $request->nama;
         $ujian->jenis_ujian = $request->jenis_ujian;
+        $ujian->deskripsi = $request->deskripsi;
+        $ujian->peraturan = $request->peraturan;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));
-        $ujian->lama_pengerjaan = $lama_pengerjaan;
-        $ujian->harga = $request->harga;
+        $ujian->lama_pengerjaan = $request->lama_pengerjaan;
         $ujian->jumlah_soal = $request->jumlah_soal;
+        $ujian->tipe_ujian = $request->tipe_ujian;
+        $ujian->tampil_kunci = $request->tampil_kunci;
+        $ujian->tampil_nilai = $request->tampil_nilai;
+        $ujian->tampil_poin = $request->tampil_poin;
+        $ujian->random = $request->random;
         $ujian->update();
 
         return response()->json('Data berhasil disimpan', 200);

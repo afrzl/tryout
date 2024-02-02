@@ -62,6 +62,9 @@ return [
     */
 
     'home' => RouteServiceProvider::HOME,
+    'redirects' => [
+        'register' => 'email/verify'
+    ],
 
     /*
     |--------------------------------------------------------------------------

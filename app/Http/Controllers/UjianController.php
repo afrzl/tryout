@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Soal;
 use App\Models\Ujian;
 use App\Models\Jawaban;
 use App\Models\Session;
 use App\Models\Pembelian;
+use App\Models\UjianUser;
+use App\Models\PaketUjian;
 use Illuminate\Http\Request;
 use App\Models\JawabanPeserta;
 use Illuminate\Support\Facades\Auth;
@@ -19,31 +22,80 @@ class UjianController extends Controller
      */
     public function index()
     {
-        if (!session('ujian')) {
-            return redirect()->route('dashboard');
-        }
-        $pembelian = Pembelian::where('ujian_id', session('ujian'))
+        $data = Pembelian::with(['paketUjian.ujian', 'paketUjian.ujian.ujianUser' => function ($query) {
+                            $query->where('user_id', auth()->user()->id);
+                        }])
                     ->where('user_id', auth()->user()->id)
+                    ->where('status', 'Sukses')
                     ->latest('updated_at')
-                    ->first();
+                    ->get();
+        $tryout = new collection();
+        foreach ($data as $dt) {
+            foreach ($dt->paketUjian->ujian as $ujian) {
+                $ujian['nama_paket'] = $dt->paketUjian->nama;
+                $tryout[] = $ujian;
+            }
+        }
 
-        if ($pembelian === null || $pembelian->status != 'Sukses') {
+        $tryout = $tryout->unique('id');
+        // return $tryout[1]->ujianUser;
+        return view('views_user.ujian.tryout', compact('data', 'tryout'));
+    }
+
+    public function ujian($id) {
+        $ujianUser = UjianUser::findOrFail($id);
+        if ($ujianUser->status == 2) {
             abort(403, 'ERROR');
         }
 
-        if ($pembelian->status_pengerjaan == 'Selesai') {
-            return redirect()->route('ujian.nilai', $pembelian->id);
-        }
+        // if ($ujianUser->status_pengerjaan == 'Selesai') {
+        //     return redirect()->route('ujian.nilai', $ujianUser->id);
+        // }
 
-        $id_pembelian = $pembelian->id;
         $preparation = JawabanPeserta::with(['soal', 'soal.jawaban' => function ($q)
         {
             $q->inRandomOrder();
         }, 'soal.ujian'])
-                ->where('pembelian_id', $id_pembelian);
+                ->where('ujian_user_id', $id);
         $ragu_ragu = $preparation->pluck('ragu_ragu');
-        $soal = $preparation->paginate(1);
-        return view('views_user.ujian.index', compact('soal', 'ragu_ragu', 'pembelian'));
+        $soal = $preparation->paginate(1, ['*'], 'no');
+        return view('views_user.ujian.index', compact('soal', 'ragu_ragu', 'ujianUser'));
+    }
+
+    public function pembahasan($id) {
+        $ujian = Ujian::with('ujianUser')->findOrFail($id);
+        if (!($ujian->ujianUser || $ujian->tampil_kunci == 1 || ($ujian->tampil_kunci == 2 && Carbon::now() > $ujian->waktu_akhir))) {
+            abort(403, 'ERROR');
+        }
+
+        // if ($ujian->status_pengerjaan == 'Selesai') {
+        //     return redirect()->route('ujian.nilai', $ujian->id);
+        // }
+
+        $preparation = Soal::with('jawaban')->where('ujian_id', $id);
+        $soal = $preparation->paginate(1, ['*'], 'no');
+        // return $soal[0];
+        return view('views_user.ujian.pembahasan', compact('soal', 'ujian'));
+    }
+
+    public function tryout() {
+        $data = Pembelian::with('paketUjian.ujian', ['paketUjian.ujian.ujianUser' => function ($query) {
+                            $query->where('user_id', auth()->user()->id);
+                        }])
+                    ->where('user_id', auth()->user()->id)
+                    ->where('status', 'Sukses')
+                    ->latest('updated_at')
+                    ->get();
+        $tryout = new collection();
+        foreach ($data as $dt) {
+            foreach ($dt->paketUjian->ujian as $ujian) {
+                $ujian['nama_paket'] = $dt->paketUjian->nama;
+                $tryout[] = $ujian;
+            }
+        }
+
+        $tryout = $tryout->unique('id');
+        return view('views_user.ujian.tryout', compact('data', 'tryout'));
     }
 
     /**
@@ -64,7 +116,7 @@ class UjianController extends Controller
             'key' => 'required',
         ]);
 
-        $jawaban_peserta = JawabanPeserta::findOrFail($request->jawaban_peserta);
+        $jawaban_peserta = JawabanPeserta::with('soal')->findOrFail($request->jawaban_peserta);
         if ($jawaban_peserta === null) {
             $store = new JawabanPeserta();
             $store->pembelian_id = $request->pembelian_id;
@@ -72,6 +124,17 @@ class UjianController extends Controller
             $store->jawaban_id = $request->key;
             $store->save();
         } else {
+            if ($jawaban_peserta->soal->jenis_soal == 'tkp') {
+                $jawaban = Jawaban::findOrFail($request->key);
+                $jawaban_peserta->poin = $jawaban->point;
+            } else {
+                if ($request->key == $jawaban_peserta->soal->kunci_jawaban) {
+                    $jawaban_peserta->poin = $jawaban_peserta->soal->poin_benar;
+                } else {
+                    $jawaban_peserta->poin = $jawaban_peserta->soal->poin_salah;
+                }
+            }
+
             $jawaban_peserta->jawaban_id = $request->key;
             $jawaban_peserta->update();
         }
@@ -85,7 +148,7 @@ class UjianController extends Controller
         $jawaban->ragu_ragu = $jawaban->ragu_ragu == 1 ? 0 : 1;
         $jawaban->update();
 
-        return response()->json('Data berhasil disimpan', 200);
+        return response()->json($jawaban, 200);
     }
 
     /**
@@ -93,18 +156,22 @@ class UjianController extends Controller
      */
     public function show($id)
     {
-        $pembelian = Pembelian::with('ujian')
-                    ->where('ujian_id', $id)
-                    ->where('user_id', auth()->user()->id)
-                    ->latest('updated_at')
-                    ->first();
-
-        if ($pembelian === null || $pembelian->status != 'Sukses') {
+        $ujian = Ujian::with('paketUjian', 'ujianUser')->find($id);
+        $cek = false;
+        foreach ($ujian->paketUjian as $paket) {
+            $paketUjian = PaketUjian::with('pembelian')->find($paket->id);
+            foreach ($paketUjian->pembelian as $pembelian) {
+                if ($pembelian->user_id === auth()->user()->id) {
+                    $cek = true;
+                    break;
+                }
+            }
+        }
+        $betweenTime = Carbon::now()->between($ujian->waktu_mulai, $ujian->waktu_akhir);
+        if (!$cek) {
             abort(403, 'ERROR');
         }
-
-        session(['ujian' => $id]);
-        return view('views_user.ujian.show', compact('pembelian'));
+        return view('views_user.ujian.show', compact('ujian', 'betweenTime'));
     }
 
     public function sessionDestroy() {
@@ -115,67 +182,131 @@ class UjianController extends Controller
         return response(200);
     }
 
+    private function generateSoal($id) {
+        $ujianUser = UjianUser::with('ujian')->findOrFail($id);
+        if ($ujianUser->ujian->jenis_ujian == 'skd') {
+            $twk = Soal::where('ujian_id', $ujianUser->ujian->id)
+                    ->where('jenis_soal', 'twk')
+                    ->limit(30)
+                    ->get();
+            $tiu = Soal::where('ujian_id', $ujianUser->ujian->id)
+                    ->where('jenis_soal', 'tiu')
+                    ->limit(35)
+                    ->get();
+            $tkp = Soal::where('ujian_id', $ujianUser->ujian->id)
+                    ->where('jenis_soal', 'tkp')
+                    ->limit(45)
+                    ->get();
+            if ($ujianUser->ujian->random) {
+                $twk = $twk->shuffle();
+                $tiu = $tiu->shuffle();
+                $tkp = $tkp->shuffle();
+            }
+            $soal = new Collection();
+            $soal = $soal->merge($twk);
+            $soal = $soal->merge($tiu);
+            $soal = $soal->merge($tkp);
+        } else {
+            $soal = Soal::where('ujian_id', $ujianUser->ujian->id)
+                    ->limit($ujianUser->ujian->jumlah_soal)
+                    ->get();
+            $soal = $ujianUser->ujian->random ? $soal->shuffle() : $soal;
+        }
+        return $soal;
+    }
+
     public function mulaiUjian($id)
     {
         $session = Session::where('user_id', auth()->user()->id)->get();
         if ($session->count() > 1) {
             return response()->json('session limit', 200);
         }
-        $pembelian = Pembelian::with('ujian')->findOrFail($id);
-        if ($pembelian->ujian->jenis_ujian == 'skd') {
-            $twk = Soal::where('ujian_id', $pembelian->ujian->id)
-                    ->where('jenis_soal', 'twk')
-                    ->inRandomOrder()
-                    ->limit(30)
-                    ->get();
-            $tiu = Soal::where('ujian_id', $pembelian->ujian->id)
-                    ->where('jenis_soal', 'tiu')
-                    ->inRandomOrder()
-                    ->limit(35)
-                    ->get();
-            $tkp = Soal::where('ujian_id', $pembelian->ujian->id)
-                    ->where('jenis_soal', 'tkp')
-                    ->inRandomOrder()
-                    ->limit(45)
-                    ->get();
-            $soal = new Collection();
-            $soal = $soal->merge($twk);
-            $soal = $soal->merge($tiu);
-            $soal = $soal->merge($tkp);
+
+        $ujianUser = UjianUser::with('ujian')
+                    ->where('ujian_id', $id)
+                    ->where('user_id', auth()->user()->id)
+                    ->latest()
+                    ->first();
+
+        if ($ujianUser == NULL) {
+            $createUjianUser = UjianUser::create([
+                'ujian_id' => $id,
+                'user_id' => auth()->user()->id,
+                'status' => 0,
+                'is_first' => 1,
+            ]);
+            $ujianUser = $createUjianUser;
+
+            $soal = $this->generateSoal($createUjianUser->id);
         } else {
-            $soal = Soal::where('ujian_id', $pembelian->ujian->id)
-                    ->inRandomOrder()
-                    ->limit($pembelian->ujian->jumlah_soal)
-                    ->get();
+            if ($ujianUser->ujian->tipe_ujian == 1) {
+                return response()->json('OK|'.$ujianUser->id, 200);
+            } else if($ujianUser->ujian->tipe_ujian == 2) {
+                if ($ujianUser->status == 2) {
+                    $createUjianUser = UjianUser::create([
+                        'ujian_id' => $id,
+                        'user_id' => auth()->user()->id,
+                        'status' => 0,
+                    ]);
+                    $ujianUser = $createUjianUser;
+
+                    $soal = $this->generateSoal($createUjianUser->id);
+                } else {
+                    return response()->json('OK|'.$ujianUser->id, 200);
+                }
+            }
         }
 
-        if ($pembelian->status_pengerjaan == 'Selesai') {
-            return response()->json('telah dikerjakan|{{ $pembelian->id }}', 200);
-        }
-
-        if ($pembelian->status_pengerjaan != 'Masih dikerjakan') {
-            $pembelian->status_pengerjaan = 'Masih dikerjakan';
-            $pembelian->waktu_mulai_pengerjaan = date('Y-m-d H:i:s');
-            $pembelian->update();
+        if ($ujianUser->status != 1) {
+            $ujianUser->status = 1;
+            $ujianUser->waktu_mulai = Carbon::now();
+            $ujianUser->waktu_akhir = Carbon::now()->addMinutes($ujianUser->ujian->lama_pengerjaan);
+            $ujianUser->update();
 
             foreach ($soal as $key => $item) {
                 $store = new JawabanPeserta();
-                $store->pembelian_id = $pembelian->id;
+                $store->ujian_user_id = $ujianUser->id;
                 $store->soal_id = $item->id;
+                $store->poin = $item->poin_kosong;
                 $store->save();
             }
         }
-        return response()->json('OK', 200);
+        return response()->json('OK|'.$ujianUser->id, 200);
     }
 
     public function selesaiUjian($id)
     {
-        $pembelian = Pembelian::findOrFail($id);
+        $ujianUser = UjianUser::with('ujian', 'jawabanPeserta', 'jawabanPeserta.soal')->findOrFail($id);
 
-        if ($pembelian->status_pengerjaan == 'Masih dikerjakan') {
-            $pembelian->status_pengerjaan = 'Selesai';
-            $pembelian->waktu_selesai_pengerjaan = date('Y-m-d H:i:s');
-            $pembelian->update();
+        if ($ujianUser->status == 1) {
+            $ujianUser->status = 2;
+            $ujianUser->waktu_akhir = date('Y-m-d H:i:s');
+            $ujianUser->nilai = $ujianUser->jawabanPeserta->sum('poin');
+            if ($ujianUser->ujian->jenis_ujian == 'skd') {
+                $ujianUser->nilai_twk = $ujianUser->jawabanPeserta->splice(0,30)->sum('poin');
+                $ujianUser->nilai_tiu = $ujianUser->jawabanPeserta->splice(0,35)->sum('poin');
+                $ujianUser->nilai_tkp = $ujianUser->jawabanPeserta->splice(0,45)->sum('poin');
+            } else {
+                $jml_benar = 0;
+                $jml_salah = 0;
+                foreach ($ujianUser->jawabanPeserta as $item) {
+                    if ($item->jawaban_id == NULL) {
+                        continue;
+                    }
+
+                    if ($item->jawaban_id === $item->soal->kunci_jawaban) {
+                        $jml_benar += 1;
+                    } else {
+                        $jml_salah += 1;
+                    }
+                }
+
+                $ujianUser->jml_benar = $jml_benar;
+                $ujianUser->jml_kosong = $ujianUser->jawabanPeserta->where('jawaban_id', NULL)->count();
+                $ujianUser->jml_salah = $jml_salah;
+            }
+
+            $ujianUser->update();
         }
 
         return response()->json('Data berhasil disimpan', 200);
@@ -183,18 +314,15 @@ class UjianController extends Controller
 
     public function nilai($id)
     {
-        $benar = 0;
-        $pembelian = Pembelian::with('ujian', 'jawabanPeserta.soal')
+        $ujian = Ujian::with(['ujianUser' => function($query) {
+            $query->where('is_first', 1)->first();
+        }, 'ujianUser.jawabanPeserta'])
                     ->findOrFail($id);
-        if ($pembelian->status_pengerjaan != 'Selesai' || $pembelian->user_id != auth()->user()->id) {
+        if ($ujian->ujianUser[0]->status != '2' || $ujian->ujianUser[0]->user_id != auth()->user()->id) {
             abort(403, 'ERROR');
         }
-        foreach ($pembelian->jawabanPeserta as $key => $jawabanPeserta) {
-            if ($jawabanPeserta->jawaban_id == $jawabanPeserta->soal->id_kunci_jawaban) {
-                $benar++;
-            }
-        }
-        return view('views_user.nilai.index', compact('pembelian', 'benar'));
+
+        return view('views_user.nilai.index', compact('ujian'));
     }
 
     /**

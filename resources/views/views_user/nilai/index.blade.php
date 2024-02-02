@@ -1,64 +1,100 @@
 @extends('layouts.user.app')
 
 @section('title')
-{{ $pembelian->ujian->nama }}
+{{ $ujian->nama }}
 @endsection
 
 @section('content')
-<div class="row" style="justify-content:center">
-    <div class="col-lg-6 col-md-8 mx-auto">
-        <div class="card mb-4">
-            <div class="card-header pb-0">
-                <h6>Nilai {{ $pembelian->ujian->nama }}</h6>
+<main id="main">
+    <div class="container mb-4" style="margin-top: 124px">
+        <div class="row" style="justify-content:center">
+            <div class="col-lg-5 mb-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3 class="card-title"><b>{{ $ujian->nama }}</b></h3>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nama peserta</h6>
+                                        <span>{{ auth()->user()->name }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Ujian</h6>
+                                        <span>{{ $ujian->nama }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Waktu Mulai Pengerjaan</h6>
+                                        <span>{{ \Carbon\Carbon::parse($ujian->ujianUser[0]->waktu_mulai)->isoFormat('D MMMM Y HH:mm:ss') }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Waktu Selesai Pengerjaan</h6>
+                                        <span>{{ \Carbon\Carbon::parse($ujian->ujianUser[0]->waktu_akhir)->isoFormat('D MMMM Y HH:mm:ss') }}</span>
+                                    </td>
+                                </tr>
+                                @if($ujian->jenis_ujian == 'skd')
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nilai TWK</h6>
+                                        <span>{{ $ujian->ujianUser[0]->nilai_twk }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nilai TIU</h6>
+                                        <span>{{ $ujian->ujianUser[0]->nilai_tiu }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nilai TKP</h6>
+                                        <span>{{ $ujian->ujianUser[0]->nilai_tkp }}</span>
+                                    </td>
+                                </tr>
+                                @endif
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Jumlah Nilai</h6>
+                                        <span>{{ $ujian->ujianUser[0]->nilai }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="card-body px-3 pt-0 pb-2">
-                <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0">
-                        <tbody>
-                            <tr>
-                                <td style="text-align: right; width: 50%">
-                                    <h6 class="mb-0 mr-6">Nama Ujian</h6>
-                                </td>
-                                <td>
-                                    <p class="font-weight-bold mb-0">{{ $pembelian->ujian->nama }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right">
-                                    <h6 class="mb-0 mr-6">Email</h6>
-                                </td>
-                                <td>
-                                    <p class="font-weight-bold mb-0">{{ auth()->user()->email }}</p>
-                                </td>
-                            </tr>
-                                <td style="text-align: right">
-                                    <h6 class="mb-0 mr-6">Waktu Selesai</h6>
-                                </td>
-                                <td>
-                                    <p class="font-weight-bold mb-0">{{ \Carbon\Carbon::parse($pembelian->updated_at)->isoFormat('D MMMM Y HH:mm:ss') }}</p>
-                                </td>
-                            </tr>
-                            </tr>
-                                <td style="text-align: right">
-                                    <h6 class="mb-0 mr-6">Status</h6>
-                                </td>
-                                <td>
-                                    <span class="badge badge-sm bg-gradient-info">{{ $pembelian->status_pengerjaan }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: right">
-                                    <h6 class="mb-0 mr-6">Jumlah Benar</h6>
-                                </td>
-                                <td>
-                                    <span class="badge badge-sm bg-gradient-success">{{ round($benar / $pembelian->ujian->jumlah_soal * 100, 2) }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">History Jawaban Ujian</h5>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:15%">No.</th>
+                                    <th>Jawaban</th>
+                                    <th>Kunci</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($ujian->ujianUser[0]->jawabanPeserta as $key => $jawaban)
+                                    <tr>
+                                        <td>{{ $key+1 }}.</td>
+                                        <td>A</td>
+                                        <td>C</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 @endsection

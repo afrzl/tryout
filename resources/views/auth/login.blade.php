@@ -1,48 +1,104 @@
-<x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+@extends('layouts.auth')
 
-        <x-validation-errors class="mb-4" />
+@section('title', 'Login')
 
-        @if (session('status'))
-            <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                {{ session('status') }}
+@push('style')
+    <!-- CSS Libraries -->
+    <link rel="stylesheet"
+        href="{{ asset('stisla/library/bootstrap-social/bootstrap-social.css') }}">
+@endpush
+
+@section('main')
+    <div class="card card-primary">
+        <div class="card-header">
+            <h4>Login</h4>
+        </div>
+
+        <div class="card-body">
+            <form method="POST"
+                action="{{ route('login') }}"
+                class="needs-validation"
+                novalidate="">
+                @csrf
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email"
+                        type="email"
+                        :value="old('email')"
+                        class="form-control"
+                        name="email"
+                        tabindex="1"
+                        required
+                        autofocus>
+                    @if($errors->has('email'))
+                        <span style="color: red">{{ $errors->first('email') }}</span>
+                    @endif
+                </div>
+
+                <div class="form-group">
+                    <div class="d-block">
+                        <label for="password"
+                            class="control-label">Password</label>
+                        <div class="float-right">
+                            <a href="{{ route('password.request') }}"
+                                class="text-small">
+                                Lupa password?
+                            </a>
+                        </div>
+                    </div>
+                    <input id="password"
+                        type="password"
+                        class="form-control"
+                        name="password"
+                        tabindex="2"
+                        required>
+                    @if($errors->has('password'))
+                        <span style="color: red">{{ $errors->first('password') }}</span>
+                    @endif
+                </div>
+
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox"
+                            id="remember_me"
+                            name="remember"
+                            class="custom-control-input"
+                            tabindex="3">
+                        <label class="custom-control-label"
+                            for="remember-me">Ingat saya</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit"
+                        class="btn btn-primary btn-lg btn-block"
+                        tabindex="4">
+                        Login
+                    </button>
+                </div>
+            </form>
+            <div class="mt-4 mb-3 text-center">
+                <div class="text-job text-muted">Login dengan</div>
             </div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-
-            <div>
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            </div>
-
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
-            </div>
-
-            <div class="block mt-4">
-                <label for="remember_me" class="flex items-center">
-                    <x-checkbox id="remember_me" name="remember" />
-                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
+            <div class="row sm-gutters">
+                <div class="col-12">
+                    <a type="button"
+                        class="btn btn-danger btn-lg btn-block"
+                        tabindex="4">
+                        <span class="fab fa-google"></span> Google
                     </a>
-                @endif
-
-                <x-button class="ml-4">
-                    {{ __('Log in') }}
-                </x-button>
+                </div>
             </div>
-        </form>
-    </x-authentication-card>
-</x-guest-layout>
+
+        </div>
+    </div>
+    <div class="text-muted mt-5 text-center">
+        Belum memiliki akun? <a href="{{ route('register') }}">Buat akun sekarang</a>
+    </div>
+@endsection
+
+@push('scripts')
+    <!-- JS Libraies -->
+
+    <!-- Page Specific JS File -->
+@endpush

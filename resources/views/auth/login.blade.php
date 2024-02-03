@@ -78,11 +78,11 @@
                 </div>
             </form>
             <div class="mt-4 mb-3 text-center">
-                <div class="text-job text-muted">Login dengan</div>
+                <div class="text-job text-muted">Login / Register dengan</div>
             </div>
             <div class="row sm-gutters">
                 <div class="col-12">
-                    <a type="button"
+                    <a href="{{ route('google.login') }}" type="button"
                         class="btn btn-danger btn-lg btn-block"
                         tabindex="4">
                         <span class="fab fa-google"></span> Google

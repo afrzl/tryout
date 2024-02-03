@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UjianController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
@@ -110,7 +111,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('/ujian/nilai/{id}', [UjianController::class, 'nilai'])->name('ujian.nilai');
 });
 
+//route ujian
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/profile/account', [UserController::class, 'account'])->name('profile.account');
+    Route::post('/profile/peserta', [UserController::class, 'peserta'])->name('profile.peserta');
+    Route::post('/profile/pendaftar', [UserController::class, 'pendaftar'])->name('profile.pendaftar');
+});
+
 Route::get('sessiondestroy', [UjianController::class, 'sessionDestroy'])->name('session_destroy');
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 
 require_once __DIR__ . '/jetstream.php';
 

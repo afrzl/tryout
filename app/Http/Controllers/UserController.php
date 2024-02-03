@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UsersDetail;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -86,9 +87,103 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show()
     {
-        //
+        $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
+
+        // $sumber = json_decode($user->usersDetail->sumber_informasi);
+        // return $sumber;
+        // return $user->usersDetail;
+        return view('profile', compact('user'));
+    }
+
+    public function account(Request $request) {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'no_hp' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'sumber' => 'required',
+        ]);
+
+        $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
+        $user->name = $request->name;
+        $user->status = 2;
+        $user->update();
+
+        if ($user->usersDetail != NULL) {
+            $usersDetail = UsersDetail::findOrFail($user->id);
+            $usersDetail->no_hp = $request->no_hp;
+            $usersDetail->sumber_informasi = $request->sumber;
+            $usersDetail->update();
+        } else {
+            $usersDetail = new UsersDetail();
+            $usersDetail->id = $user->id;
+            $usersDetail->no_hp = $request->no_hp;
+            $usersDetail->sumber_informasi = $request->sumber;
+            $usersDetail->save();
+        }
+
+        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user], 200);
+    }
+
+    public function peserta(Request $request) {
+        $request->validate([
+            'provinsi' => 'required',
+            'kabupaten' => 'required',
+            'kecamatan' => 'required',
+            'asal_sekolah' => 'required',
+            'instagram' => 'required',
+        ]);
+
+        $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
+        $user->status = 3;
+        $user->update();
+
+        if ($user->usersDetail != NULL) {
+            $usersDetail = UsersDetail::findOrFail($user->id);
+            $usersDetail->provinsi = $request->provinsi;
+            $usersDetail->kabupaten = $request->kabupaten;
+            $usersDetail->kecamatan = $request->kecamatan;
+            $usersDetail->asal_sekolah = $request->asal_sekolah;
+            $usersDetail->instagram = $request->instagram;
+            $usersDetail->update();
+        } else {
+            $usersDetail = UsersDetail::create([
+                'id' => $user->id,
+                'provinsi' => $request->provinsi,
+                'kabupaten' => $request->kabupaten,
+                'kecamatan' => $request->kecamatan,
+                'asal_sekolah' => $request->asal_sekolah,
+                'instagram' => $request->instagram,
+            ]);
+        }
+
+        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user], 200);
+    }
+
+    public function pendaftar(Request $request) {
+        $request->validate([
+            'prodi' => 'required',
+            'formasi' => 'required',
+        ]);
+
+        $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
+        $user->status = 1;
+        $user->update();
+
+        if ($user->usersDetail != NULL) {
+            $usersDetail = UsersDetail::findOrFail($user->id);
+            $usersDetail->prodi = $request->prodi;
+            $usersDetail->penempatan = $request->formasi;
+            $usersDetail->update();
+        } else {
+            $usersDetail = UsersDetail::create([
+                'prodi' => $user->prodi,
+                'penempatan' => $user->formasi,
+            ]);
+        }
+
+        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user], 200);
     }
 
     /**

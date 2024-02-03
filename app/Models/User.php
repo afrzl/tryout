@@ -8,6 +8,7 @@ use App\Models\Session;
 use App\Models\Voucher;
 use App\Models\Pembelian;
 use App\Models\UjianUser;
+use App\Models\UsersDetail;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
@@ -36,6 +37,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'google_id',
+        'email_verified_at',
+        'status',
     ];
 
     /**
@@ -114,6 +118,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function ujianUser()
     {
         return $this->hasMany(UjianUser::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the usersDetail that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function usersDetail()
+    {
+        return $this->belongsTo(UsersDetail::class, 'id');
     }
 
 }

@@ -1,14 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Laravel\Jetstream\Http\Controllers\CurrentTeamController;
-use Laravel\Jetstream\Http\Controllers\Livewire\ApiTokenController;
-use Laravel\Jetstream\Http\Controllers\Livewire\PrivacyPolicyController;
-use Laravel\Jetstream\Http\Controllers\Livewire\TeamController;
-use Laravel\Jetstream\Http\Controllers\Livewire\TermsOfServiceController;
-use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
-use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use Laravel\Jetstream\Http\Controllers\CurrentTeamController;
+use Laravel\Jetstream\Http\Controllers\Livewire\TeamController;
+use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
+use Laravel\Jetstream\Http\Controllers\Livewire\ApiTokenController;
+use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
+use Laravel\Jetstream\Http\Controllers\Livewire\PrivacyPolicyController;
+use Laravel\Jetstream\Http\Controllers\Livewire\TermsOfServiceController;
 
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
@@ -26,7 +27,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
 
     Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
         // User & Profile...
-        Route::get('/profile', [UserProfileController::class, 'show'])->name('profile.show');
+        Route::get('/profile', [UserController::class, 'show'])->name('profile.show');
 
         Route::group(['middleware' => 'verified'], function () {
             // API...

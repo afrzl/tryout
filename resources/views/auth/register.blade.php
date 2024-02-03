@@ -14,9 +14,15 @@
             <h4>Daftar Akun</h4>
         </div>
 
+
         <div class="card-body">
             <form method="POST" action="{{ route('register') }}">
                 @csrf
+                @if (\Session::has('message'))
+                    <div class="alert alert-danger">
+                        {{ \Session::get('message') }}
+                    </div>
+                @endif
                 <div class="form-group">
                     <label for="name">Nama</label>
                     <input id="name"
@@ -35,8 +41,9 @@
                         class="form-control"
                         name="email"
                         required>
-                    <div class="invalid-feedback">
-                    </div>
+                    @if($errors->has('email'))
+                        <span style="color: red">{{ $errors->first('email') }}</span>
+                    @endif
                 </div>
 
                 <div class="row">
@@ -55,6 +62,9 @@
                             <div class="bar"></div>
                             <div class="label"></div>
                         </div>
+                        @if($errors->has('password'))
+                            <span style="color: red">{{ $errors->first('password') }}</span>
+                        @endif
                     </div>
                     <div class="form-group col-6">
                         <label for="password_confirmation"
@@ -65,9 +75,6 @@
                             autocomplete="new-password"
                             name="password_confirmation"
                             required>
-                            @if($errors->has('password'))
-                                <span style="color: red">{{ $errors->first('password') }}</span>
-                            @endif
                     </div>
                 </div>
 
@@ -76,7 +83,8 @@
                         <input type="checkbox"
                             name="agree"
                             class="custom-control-input"
-                            id="agree">
+                            id="agree"
+                            required>
                         <label class="custom-control-label"
                             for="agree">Saya setuju dengan syarat dan ketentuan</label>
                     </div>

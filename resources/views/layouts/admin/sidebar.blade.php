@@ -23,7 +23,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ (request()->segment(2) == 'dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ (request()->segment(2) == 'dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
@@ -69,6 +69,22 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item ">
+                    <a href="{{ route('admin.himada.index') }}" class="nav-link {{ (request()->segment(2) == 'himada') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Himada
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.paket.index') }}" class="nav-link {{ (request()->segment(2) == 'paket') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Paket Ujian
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'ujian') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th"></i>
@@ -82,6 +98,22 @@
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             Peserta Ujian
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.pembelian.index') }}" class="nav-link {{ (request()->segment(2) == 'pembelian') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Pembelian Paket
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.voucher.index') }}" class="nav-link {{ (request()->segment(2) == 'voucher') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Voucher
                         </p>
                     </a>
                 </li>

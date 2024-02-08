@@ -1,135 +1,200 @@
-<!--
-=========================================================
-* Soft UI Dashboard - v1.0.7
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('softUI') }}/assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="{{ asset('softUI') }}/assets/img/favicon.png">
-    <title>
-        @yield('title') - {{ config('app.name', 'Laravel') }}
-    </title>
-    <!-- AlpineJS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!--     Fonts and icons     -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <!-- Nucleo Icons -->
-    <link href="{{ asset('softUI') }}/assets/css/nucleo-icons.css" rel="stylesheet" />
-    <link href="{{ asset('softUI') }}/assets/css/nucleo-svg.css" rel="stylesheet" />
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>@yield('title') - {{ config('app.name', 'Laravel') }}</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <!-- Favicons -->
+    <link href="{{ asset('Bootslander') }}/assets/img/favicon.png" rel="icon">
+    <link href="{{ asset('Bootslander') }}/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('Bootslander') }}/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="{{ asset('Bootslander') }}/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('Bootslander') }}/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('Bootslander') }}/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="{{ asset('Bootslander') }}/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="{{ asset('Bootslander') }}/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="{{ asset('Bootslander') }}/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/toastr/toastr.min.css">
+
+    <!-- Template Main CSS File -->
+    <link href="{{ asset('Bootslander') }}/assets/css/style.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link href="{{ asset('softUI') }}/assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <!-- CSS Files -->
-    <link id="pagestyle" href="{{ asset('softUI') }}/assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+    <style>
+        .btn-primary {
+            background-color: #1a1d94;
+            border-color: #232199;
+        }
+        .badge-primary {
+            background-color: #1a1d94;
+        }
+        .btn-primary:hover {
+            background-color: #23007B;
+            border-color: #23007B;
+        }
+        .btn-primary:active {
+            background-color: #23007B;
+            border-color: #23007B;
+        }
+        .btn-primary:disabled {
+            background-color: #23007B;
+            border-color: #23007B;
+        }
+
+        .form-group.required .control-label:after {
+            content:" *";
+            color:red;
+        }
+        .form-group.required .col-form-label:after {
+            content:" *";
+            color:red;
+        }
+    </style>
 
     @stack('links')
 </head>
 
-<body class="">
-    <div class="container position-sticky z-index-sticky top-0">
-        <div class="row">
-            <div class="col-12">
-                <!-- Navbar -->
-                @include('layouts.user.navbar')
-                <!-- End Navbar -->
-            </div>
-        </div>
-    </div>
-    <main class="main-content  mt-0">
-        <section>
-            <div class="page-header min-vh-50">
-                <div class="container mt-7">
-                    @yield('content')
-                </div>
-            </div>
-        </section>
-    </main>
-    <!-- -------- START FOOTER 3 w/ COMPANY DESCRIPTION WITH LINKS & SOCIAL ICONS & COPYRIGHT ------- -->
-    <footer class="footer py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mb-4 mx-auto text-center">
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                        Company
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                        About Us
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                        Team
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                        Products
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                        Blog
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-                        Pricing
-                    </a>
-                </div>
-                <div class="col-lg-8 mx-auto text-center mb-4 mt-2">
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-                        <span class="text-lg fab fa-dribbble"></span>
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-                        <span class="text-lg fab fa-twitter"></span>
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-                        <span class="text-lg fab fa-instagram"></span>
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-                        <span class="text-lg fab fa-pinterest"></span>
-                    </a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-                        <span class="text-lg fab fa-github"></span>
-                    </a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-8 mx-auto text-center mt-1">
-                    <p class="mb-0 text-secondary">
-                        Copyright © <script>
-                            document.write(new Date().getFullYear())
+<body>
 
-                        </script> Soft by Creative Tim.
-                    </p>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <div class="logo">
+                <h1><a href="{{ route('dashboard') }}"><span>{{ config('app.name', 'Laravel') }}</span></a></h1>
+                <!-- Uncomment below if you prefer to use an image logo -->
+                <!-- <a href="index.html"><img src="{{ asset('Bootslander') }}/assets/img/logo.png" alt="" class="img-fluid"></a>-->
+            </div>
+
+            @include('layouts.user.navbar')
+
+        </div>
+    </header><!-- End Header -->
+
+    <!-- ======= Hero Section ======= -->
+    @yield('content')
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-info">
+                            <h3>Bootslander</h3>
+                            <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p>
+                            <p>
+                                A108 Adam Street <br>
+                                NY 535022, USA<br><br>
+                                <strong>Phone:</strong> +1 5589 55488 55<br>
+                                <strong>Email:</strong> info@example.com<br>
+                            </p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 footer-links">
+                        <h4>Our Services</h4>
+                        <ul>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+                        <form action="" method="post">
+                            <input type="email" name="email"><input type="submit" value="Subscribe">
+                        </form>
+
+                    </div>
+
                 </div>
             </div>
         </div>
-    </footer>
-    <!-- -------- END FOOTER 3 w/ COMPANY DESCRIPTION WITH LINKS & SOCIAL ICONS & COPYRIGHT ------- -->
-    <!--   Core JS Files   -->
+
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright <strong><span>Bootslander</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                <!-- All the links in the footer should remain intact. -->
+                <!-- You can delete the links only if you purchased the pro version. -->
+                <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/bootslander-free-bootstrap-landing-page-template/ -->
+                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            </div>
+        </div>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('Bootslander') }}/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="{{ asset('Bootslander') }}/assets/vendor/aos/aos.js"></script>
+    <script src="{{ asset('Bootslander') }}/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('Bootslander') }}/assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="{{ asset('Bootslander') }}/assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="{{ asset('Bootslander') }}/assets/vendor/php-email-form/validate.js"></script>
+
     <!-- jQuery -->
     <script src="{{ asset('adminLTE') }}/plugins/jquery/jquery.min.js"></script>
 
-    <script src="{{ asset('softUI') }}/assets/js/core/popper.min.js"></script>
-    <script src="{{ asset('softUI') }}/assets/js/core/bootstrap.min.js"></script>
-    <script src="{{ asset('softUI') }}/assets/js/plugins/perfect-scrollbar.min.js"></script>
-    <script src="{{ asset('softUI') }}/assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!-- Template Main JS File -->
+    <script src="{{ asset('Bootslander') }}/assets/js/main.js"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('adminLTE') }}/plugins/sweetalert2/sweetalert2.min.js"></script>
-    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="{{ asset('softUI') }}/assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+    <!-- Toastr -->
+    <script src="{{ asset('adminLTE') }}/plugins/toastr/toastr.min.js"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('adminLTE') }}/plugins/select2/js/select2.full.min.js"></script>
+    <!-- Alpinejs -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+    <script>
+        toastr.options = {"positionClass": "toast-bottom-right"};
+    </script>
+
     @stack('scripts')
 </body>
 

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Ujian;
+use App\Models\Voucher;
+use App\Models\PaketUjian;
 use App\Models\JawabanPeserta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +22,7 @@ class Pembelian extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'ujian_id',
+        'paket_id',
         'user_id',
         'kode_pembelian',
         'batas_pembayaran',
@@ -37,13 +39,13 @@ class Pembelian extends Model
     }
 
     /**
-     * Get the ujian that owns the Pembelian
+     * Get the paket that owns the Pembelian
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function ujian()
+    public function paketUjian()
     {
-        return $this->belongsTo(Ujian::class, 'ujian_id');
+        return $this->belongsTo(PaketUjian::class, 'paket_id');
     }
 
     /**
@@ -54,5 +56,15 @@ class Pembelian extends Model
     public function jawabanPeserta()
     {
         return $this->hasMany(JawabanPeserta::class, 'pembelian_id');
+    }
+
+    /**
+     * Get the voucher that owns the Pembelian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function voucher()
+    {
+        return $this->belongsTo(Voucher::class, 'voucher_id');
     }
 }

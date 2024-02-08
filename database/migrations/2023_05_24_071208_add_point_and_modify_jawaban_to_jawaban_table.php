@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('jawaban', function (Blueprint $table) {
-            $table->smallInteger('point')->default(0)->after('jawaban');
+            $table->smallInteger('point')->default(0)->after('jawaban')->nullable();
             $table->longText('jawaban')->change();
         });
     }

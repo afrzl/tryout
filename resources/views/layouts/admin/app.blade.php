@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <title>@yield('title') - {{ config('app.name', 'Laravel') }}</title>
 
@@ -21,6 +22,11 @@
     <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/toastr/toastr.min.css">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <!-- Summernote -->
+    <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/summernote/summernote-bs4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('adminLTE') }}/dist/css/adminlte.min.css" crosso>
 
@@ -28,6 +34,14 @@
         table.center-header th{
             text-align :center;
             vertical-align: middle;
+        }
+        .form-group.required .control-label:after {
+            content:" *";
+            color:red;
+        }
+        .form-group.required .col-form-label:after {
+            content:" *";
+            color:red;
         }
     </style>
 
@@ -127,6 +141,10 @@
     <script src="{{ asset('adminLTE') }}/plugins/toastr/toastr.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('adminLTE') }}/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('adminLTE') }}/plugins/select2/js/select2.full.min.js"></script>
+    <!-- Summernote -->
+    <script src="{{ asset('adminLTE') }}/plugins/summernote/summernote-bs4.min.js"></script>
 
     {{-- <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('adminLTE') }}/dist/js/demo.js"></script>

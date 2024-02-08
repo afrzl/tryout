@@ -17,7 +17,7 @@ class SoalFactory extends Factory
     public function definition(): array
     {
         return [
-            'ujian_id' => '3c923c97-15fa-467c-8593-1dedfb72e538',
+            'ujian_id' => 'a390240c-1203-41f9-b849-876edc13dee3',
             'soal' => fake()->paragraph(3),
         ];
     }

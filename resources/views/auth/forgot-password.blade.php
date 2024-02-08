@@ -1,34 +1,46 @@
-<x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+@extends('layouts.auth')
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+@section('title', 'Lupa Password')
+
+@push('style')
+    <!-- CSS Libraries -->
+@endpush
+
+@section('main')
+    <div class="card card-primary">
+        <div class="card-header">
+            <h4>Lupa Password</h4>
         </div>
 
-        @if (session('status'))
-            <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                {{ session('status') }}
-            </div>
-        @endif
+        <div class="card-body">
+            <p class="text-muted">Link reset password akan dikirim ke email.</p>
+            <form method="POST" action="{{ route('password.email') }}">
+                @csrf
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email"
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        tabindex="1"
+                        required
+                        autofocus>
+                </div>
 
-        <x-validation-errors class="mb-4" />
+                <div class="form-group">
+                    <button type="submit"
+                        class="btn btn-primary btn-lg btn-block"
+                        tabindex="4">
+                        Kirim email reset password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
 
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
+@push('scripts')
+    <!-- JS Libraies -->
 
-            <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
-            </div>
-        </form>
-    </x-authentication-card>
-</x-guest-layout>
+    <!-- Page Specific JS File -->
+@endpush

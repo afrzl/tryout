@@ -18,11 +18,19 @@ class UjianFactory extends Factory
     {
         return [
             'nama' => fake()->sentence(4),
-            'harga' => (fake()->randomNumber(7, true) / 100),
-            'lama_pengerjaan' => fake()->time(),
+            'deskripsi' => fake()->paragraph(4),
+            'peraturan' => fake()->paragraph(4),
+            'jenis_ujian' => 'skd',
+            'lama_pengerjaan' => 100,
             'waktu_mulai' => fake()->dateTimeBetween('-1 week', '+1 week'),
             'waktu_akhir' => fake()->dateTimeBetween('+1 week', '+3 week'),
-            'jumlah_soal' => fake()->numberBetween(1, 20),
+            'jumlah_soal' => 110,
+            'isPublished' => false,
+            'tipe_ujian' => 2,
+            'tampil_kunci' => 1,
+            'tampil_nilai' => 1,
+            'tampil_poin' => 1,
+            'random' => 1,
         ];
     }
 }

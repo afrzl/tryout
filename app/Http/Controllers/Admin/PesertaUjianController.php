@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use Carbon\Carbon;
 use App\Models\Soal;
 use App\Models\Ujian;
+use GuzzleHttp\Client;
 use App\Models\Pembelian;
-use App\Models\JawabanPeserta;
+use App\Models\UjianUser;
 use Illuminate\Http\Request;
+use App\Models\JawabanPeserta;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Route;
 
 class PesertaUjianController extends Controller
 {
@@ -17,12 +20,12 @@ class PesertaUjianController extends Controller
      */
     public function index()
     {
-        return view('peserta_ujian.index');
+        return view('admin.peserta_ujian.index');
     }
 
     public function data()
     {
-        $ujians = Ujian::with('pembelian')->where('isPublished', 1)->orderBy('created_at', 'desc');
+        $ujians = Ujian::with('ujianUser')->where('isPublished', 1)->orderBy('created_at', 'desc');
 
         return datatables()
             ->eloquent($ujians)
@@ -33,11 +36,11 @@ class PesertaUjianController extends Controller
             })
             ->addColumn('jumlah_peserta', function ($ujians)
             {
-                return $ujians->pembelian->where('status', 'Sukses')->count();
+                return $ujians->ujianUser->where('is_first', 1)->count();
             })
             ->addColumn('peserta_mengerjakan', function ($ujians)
             {
-                return $ujians->pembelian->where('status_pengerjaan', 'Selesai')->count();
+                return $ujians->ujianUser->where('is_first', 1)->where('status', '2')->count();
             })
             ->addColumn('status', function ($ujians)
             {
@@ -62,56 +65,66 @@ class PesertaUjianController extends Controller
             ->make(true);
     }
 
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $ujian = Ujian::find($id);
+        return view('admin.peserta_ujian.show', compact('ujian'));
+    }
+
     public function showData($id)
     {
-        $peserta = Pembelian::with('user', 'user.sessions', 'jawabanPeserta.soal')
+        $peserta = UjianUser::with('ujian', 'user', 'user.sessions', 'jawabanPeserta.soal')
                     ->where('ujian_id', $id)
-                    ->where('status', 'Sukses')
+                    ->where('is_first', 1)
                     ->orderBy('created_at', 'desc');
 
         return datatables()
             ->eloquent($peserta)
             ->addIndexColumn()
+            ->addColumn('nama', function ($peserta)
+            {
+                return $peserta->user->name;
+            })
             ->addColumn('email', function ($peserta)
             {
                 return $peserta->user->email;
             })
-            ->addColumn('created_at', function ($peserta)
-            {
-                return Carbon::parse($peserta->created_at)->isoFormat('D MMMM Y HH:mm:ss');
-            })
             ->addColumn('waktu_pengerjaan', function ($peserta)
             {
-                if ($peserta->status_pengerjaan == 'Selesai') {
-                    $waktu_mulai = Carbon::parse($peserta->waktu_mulai_pengerjaan);
-                    $waktu_selesai = Carbon::parse($peserta->waktu_selesai_pengerjaan);
-                    return $waktu_selesai->diff($waktu_mulai)->format('%H:%I:%S');
+                if ($peserta->status == '2') {
+                    $waktu_mulai = Carbon::parse($peserta->waktu_mulai);
+                    $waktu_akhir = Carbon::parse($peserta->waktu_akhir);
+                    return $waktu_akhir->diffInMinutes($waktu_mulai) . ' Menit';
                 } else {
                     return '-';
                 }
             })
             ->addColumn('status_pengerjaan', function ($peserta)
             {
-                $class = $peserta->status_pengerjaan == 'Selesai' ? 'success' : ($peserta->status_pengerjaan == 'Masih dikerjakan' ? 'warning' : 'danger');
+                $class = $peserta->status == '2' ? 'success' : ($peserta->status == '1' ? 'warning' : 'danger');
 
-                return '<span class="badge badge-' . $class . '">' . $peserta->status_pengerjaan . '</span>';
+                return '<span class="badge badge-' . $class . '">' . $peserta->status == 1 ? 'Sedang Mengerjakan' : 'Selesai' . '</span>';
             })
             ->addColumn('nilai', function ($peserta)
             {
-                if ($peserta->status_pengerjaan == 'Selesai') {
-                    $benar = 0;
-                    foreach ($peserta->jawabanPeserta as $key => $jawabanPeserta) {
-                        if ($jawabanPeserta->jawaban_id == $jawabanPeserta->soal->id_kunci_jawaban) {
-                            $benar++;
-                        }
+                if ($peserta->status == '2') {
+                    if ($peserta->ujian->jenis_ujian == 'skd') {
+                        return "<span class='badge badge-success'>TWK : {$peserta->nilai_twk}</span>
+                                <br><span class='badge badge-success'>TIU : {$peserta->nilai_tiu}</span>
+                                <br><span class='badge badge-success'>TKP : {$peserta->nilai_tkp}</span>
+                                <br><span class='badge badge-success'>Total : {$peserta->nilai}</span>";
+                    } else {
+                        return '<span class="badge badge-success">' . $peserta->nilai . '</span>';
                     }
-                    return '<span class="badge badge-success">' . round($benar / $peserta->ujian->jumlah_soal * 100, 2) . '</span>';
                 } else {
                     return '<span class="badge badge-danger">-</span>';
                 }
             })
             ->addColumn('aksi', function ($peserta) {
-                if ($peserta->status_pengerjaan == 'Selesai') {
+                if ($peserta->status == '2') {
                     return '
                         <a href="' .
                         route('admin.peserta_ujian.show_peserta', $peserta->id) .
@@ -119,7 +132,7 @@ class PesertaUjianController extends Controller
                     ';
                 }
             })
-            ->rawColumns(['aksi', 'status_pengerjaan', 'nilai'])
+            ->rawColumns(['aksi', 'email', 'waktu_pengerjaan', 'status_pengerjaan', 'nilai'])
             ->make(true);
     }
 
@@ -170,18 +183,18 @@ class PesertaUjianController extends Controller
     }
 
     public function refresh($id) {
-        $pembelian = Pembelian::with('ujian')->where('ujian_id', $id)->get();
-        $ujian = Ujian::with('pembelian')->find($id);
-        $d = explode(':', $ujian->lama_pengerjaan);
-        $lama_pengerjaan =  ($d[0] * 3600) + ($d[1] * 60) + $d[2];
-        foreach ($ujian->pembelian as $key => $value) {
-            if ($value->status_pengerjaan == 'Masih dikerjakan') {
-                $waktu_akhir = Carbon::parse($ujian->pembelian[$key]->waktu_mulai_pengerjaan)->addSeconds($lama_pengerjaan);
-                if ($waktu_akhir->isPast()) {
-                    $pembelian = Pembelian::findOrFail($value->id);
-                    $pembelian->status_pengerjaan = "Selesai";
-                    $pembelian->waktu_selesai_pengerjaan = $waktu_akhir;
-                    $pembelian->update();
+        $ujianUser = UjianUser::where('ujian_id', $id)->get();
+        foreach ($ujianUser as $key => $value) {
+            if ($value->status != '2') {
+                if (Carbon::parse($value->waktu_akhir)->isPast()) {
+                    $client = new Client();
+                    $tokenRequest = $client->request('PUT', url('/ujian/selesaiujian/' . $value->id),);
+                    $response = Route::dispatch($tokenRequest);
+                    if($response->getStatusCode() == 200){
+                        continue;
+                    }
+                    // $request = Request::create(APPLICATION_URL . 'ujian.selesai', 'PUT', []);
+                    // $request->headers->set('X-CSRF-TOKEN', csrf_token());
                 }
             }
         }
@@ -203,15 +216,6 @@ class PesertaUjianController extends Controller
     public function store(Request $request)
     {
         //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        $ujian = Ujian::find($id);
-        return view('peserta_ujian.show', compact('ujian'));
     }
 
     public function showPeserta($id)
@@ -236,7 +240,7 @@ class PesertaUjianController extends Controller
             }
         }
 
-        return view('peserta_ujian.showPeserta', compact('pembelian', 'benar'));
+        return view('admin.peserta_ujian.showPeserta', compact('pembelian', 'benar'));
     }
 
     /**

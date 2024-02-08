@@ -1,60 +1,114 @@
-<x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+@extends('layouts.auth')
 
-        <x-validation-errors class="mb-4" />
+@section('title', 'Register')
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+@push('style')
+    <!-- CSS Libraries -->
+    <link rel="stylesheet"
+        href="{{ asset('stisla/library/selectric/public/selectric.css') }}">
+@endpush
 
-            <div>
-                <x-label for="name" value="{{ __('Name') }}" />
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            </div>
+@section('main')
+    <div class="card card-primary">
+        <div class="card-header">
+            <h4>Daftar Akun</h4>
+        </div>
 
-            <div class="mt-4">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            </div>
 
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            </div>
-
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
-            </div>
-
-            @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-                <div class="mt-4">
-                    <x-label for="terms">
-                        <div class="flex items-center">
-                            <x-checkbox name="terms" id="terms" required />
-
-                            <div class="ml-2">
-                                {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                                        'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Terms of Service').'</a>',
-                                        'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Privacy Policy').'</a>',
-                                ]) !!}
-                            </div>
-                        </div>
-                    </x-label>
+        <div class="card-body">
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                @if (\Session::has('message'))
+                    <div class="alert alert-danger">
+                        {{ \Session::get('message') }}
+                    </div>
+                @endif
+                <div class="form-group">
+                    <label for="name">Nama</label>
+                    <input id="name"
+                        type="text"
+                        value="{{ old('name') }}"
+                        class="form-control"
+                        name="name"
+                        autofocus>
                 </div>
-            @endif
 
-            <div class="flex items-center justify-end mt-4">
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                    {{ __('Already registered?') }}
-                </a>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email"
+                        type="email"
+                        value="{{ old('email') }}"
+                        class="form-control"
+                        name="email"
+                        required>
+                    @if($errors->has('email'))
+                        <span style="color: red">{{ $errors->first('email') }}</span>
+                    @endif
+                </div>
 
-                <x-button class="ml-4">
-                    {{ __('Register') }}
-                </x-button>
-            </div>
-        </form>
-    </x-authentication-card>
-</x-guest-layout>
+                <div class="row">
+                    <div class="form-group col-6">
+                        <label for="password"
+                            class="d-block">Password</label>
+                        <input id="password"
+                            type="password"
+                            autocomplete="new-password"
+                            class="form-control pwstrength"
+                            data-indicator="pwindicator"
+                            name="password"
+                            required>
+                        <div id="pwindicator"
+                            class="pwindicator">
+                            <div class="bar"></div>
+                            <div class="label"></div>
+                        </div>
+                        @if($errors->has('password'))
+                            <span style="color: red">{{ $errors->first('password') }}</span>
+                        @endif
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="password_confirmation"
+                            class="d-block">Konfirmasi Password</label>
+                        <input id="password_confirmation"
+                            type="password"
+                            class="form-control"
+                            autocomplete="new-password"
+                            name="password_confirmation"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox"
+                            name="agree"
+                            class="custom-control-input"
+                            id="agree"
+                            required>
+                        <label class="custom-control-label"
+                            for="agree">Saya setuju dengan syarat dan ketentuan</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit"
+                        class="btn btn-primary btn-lg btn-block">
+                        Register
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="text-muted mt-5 text-center">
+        Sudah memiliki akun? <a href="{{ route('login') }}">Login sekarang</a>
+    </div>
+@endsection
+
+@push('scripts')
+    <!-- JS Libraies -->
+    <script src="{{ asset('stisla/library/selectric/public/jquery.selectric.min.js') }}"></script>
+    <script src="{{ asset('stisla/library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
+
+    <!-- Page Specific JS File -->
+    <script src="{{ asset('stisla/js/page/auth-register.js') }}"></script>
+@endpush

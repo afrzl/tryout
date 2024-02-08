@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Models\Soal;
+use App\Models\User;
 use App\Traits\Uuids;
 use App\Models\Pembelian;
+use App\Models\UjianUser;
+use App\Models\PaketUjian;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,19 +24,20 @@ class Ujian extends Model
      */
      protected $fillable = [
         'nama',
-        'harga',
-        'waktu_pengerjaan',
+        'deskripsi',
+        'peraturan',
+        'jenis_ujian',
+        'lama_pengerjaan',
         'waktu_mulai',
         'waktu_akhir',
+        'isPublished',
+        'tipe_ujian',
+        'tampil_kunci',
+        'tampil_nilai',
+        'tampil_poin',
+        'random',
+        'jumlah_soal'
     ];
-
-    /**
-     * Add a mutator to ensure hashed passwords
-     */
-    public function setPasswordAttribute($password)
-    {
-        $this->attributes['password'] = bcrypt($password);
-    }
 
     /**
      * Get all of the soal for the Ujian
@@ -53,5 +57,25 @@ class Ujian extends Model
     public function pembelian()
     {
         return $this->hasMany(Pembelian::class, 'ujian_id');
+    }
+
+    /**
+     * The paketUjian that belong to the Ujian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function paketUjian()
+    {
+        return $this->belongsToMany(PaketUjian::class);
+    }
+
+    /**
+     * Get all of the ujianUser for the Ujian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ujianUser()
+    {
+        return $this->hasMany(UjianUser::class, 'ujian_id', 'id');
     }
 }

@@ -13,6 +13,7 @@
         "laravel/framework": "^10.0",
         "laravel/jetstream": "^3.2",
         "laravel/sanctum": "^3.2",
+        "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^2.11",
         "michaloravec/laravel-paginateroute": "^1.0",

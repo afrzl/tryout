@@ -23,9 +23,9 @@ class SoalController extends Controller
             $twk = $ujian->soal->where('jenis_soal', 'twk');
             $tiu = $ujian->soal->where('jenis_soal', 'tiu');
             $tkp = $ujian->soal->where('jenis_soal', 'tkp');
-            return view('soal.index', compact('ujian', 'twk', 'tiu', 'tkp'));
+            return view('admin.soal.index', compact('ujian', 'twk', 'tiu', 'tkp'));
         }
-        return view('soal.index', compact('ujian'));
+        return view('admin.soal.index', compact('ujian'));
     }
 
     public function data(Request $request, $id)
@@ -42,11 +42,12 @@ class SoalController extends Controller
                 $soal = $soals->soal . '</br><table>';
                 foreach ($soals->jawaban as $key => $jawaban) {
                     $soal .= '<tr><td style="border: none">';
-                    if ($jawaban->point == $soals->jawaban->max('point')) {
+                    if ($jawaban->id == $soals->kunci_jawaban) {
                         $soal .= '<span class="badge badge-success">' . chr($key+65) . '. </span>';
                     } else {
                         $soal .= chr($key+65) . '.';
                     }
+
                     if ($soals->jenis_soal == 'tkp') {
                         $soal .= '</td><td style="border: none"><font color="green">(' . $jawaban->point . ')</font> ' . $jawaban->jawaban . '</td></tr>';
                     } else {
@@ -99,7 +100,7 @@ class SoalController extends Controller
             abort(404);
         }
         $action = 'admin.ujian.soal.store';
-        return view('soal.form', compact('ujian', 'soal', 'action'));
+        return view('admin.soal.form', compact('ujian', 'soal', 'action'));
     }
 
     /**
@@ -110,26 +111,41 @@ class SoalController extends Controller
         $request->validate([
             'jenis_soal' => 'required_if:jenis_ujian,skd',
             'soal' => 'required',
-            'jawaban.*' => 'required'
+            'jawaban.*' => 'required',
+            'kunci_jawaban' => 'required_if:jenis_ujian,!=,skd|required_if:jenis_soal,!=,tkp',
+            'point.*' => 'required_if:jenis_ujian,tkp',
         ], [
-            'jenis_soal.required' => 'Jenis soal tidak boleh kosong.',
+            'jenis_soal.required_if' => 'Jenis soal tidak boleh kosong.',
             'soal.required' => 'Soal tidak boleh kosong.',
             'jawaban.*.required' => 'Jawaban tidak boleh kosong.',
+            'kunci_jawaban.required_if' => 'Kunci jawaban tidak boleh kosong.',
+            'point.*.required_if' => 'Point tidak boleh kosong.'
         ]);
 
         $soal = new Soal();
         $soal->ujian_id = $id;
         $soal->soal = $request->soal;
         $soal->jenis_soal = $request->jenis_ujian == 'skd' ? $request->jenis_soal : null;
+        $soal->poin_benar = $request->nilai_benar ? $request->nilai_benar : 0;
+        $soal->poin_salah = $request->nilai_salah ? $request->nilai_salah : 0;
+        $soal->poin_kosong = $request->nilai_kosong ? $request->nilai_kosong : 0;
+        $soal->pembahasan = $request->pembahasan;
         $soal->save();
 
         foreach ($request->jawaban as $key => $jawaban) {
             $jawaban = new Jawaban();
             $jawaban->soal_id = $soal->id;
             $jawaban->jawaban = $request->jawaban[$key];
-            $jawaban->point = $request->point[$key] ? $request->point[$key] : 0;
-
+            if ($request->jenis_soal == 'tkp') {
+                $jawaban->point = $request->point[$key] ? $request->point[$key] : 0;
+            }
             $jawaban->save();
+
+            if ($key == $request->kunci_jawaban) {
+                $inputKunci = Soal::findOrFail($soal->id);
+                $inputKunci->kunci_jawaban = $jawaban->id;
+                $inputKunci->update();
+            }
         }
 
         return redirect()->route('admin.ujian.soal.index', $id)->with('message','Data berhasil disimpan');
@@ -157,7 +173,7 @@ class SoalController extends Controller
         }
         $ujian = $soal->ujian;
         $action = 'admin.soal.update';
-        return view('soal.form', compact('soal', 'ujian', 'action'));
+        return view('admin.soal.form', compact('soal', 'ujian', 'action'));
     }
 
     /**
@@ -179,6 +195,12 @@ class SoalController extends Controller
         $soal = Soal::with('jawaban')->findOrFail($id);
         $soal->soal = $request->soal;
         $soal->jenis_soal = $request->jenis_ujian == 'skd' ? $request->jenis_soal : null;
+        if ($soal->jenis_soal != 'tkp') {
+            $soal->poin_benar = $request->nilai_benar;
+            $soal->poin_salah = $request->nilai_salah;
+            $soal->poin_kosong = $request->nilai_kosong;
+            $soal->kunci_jawaban = $request->kunci_jawaban;
+        }
         $soal->update();
 
         foreach ($request->id_jawaban as $key => $id_jawaban) {

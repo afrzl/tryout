@@ -11,6 +11,13 @@ $ada_jawaban = false;
 <main id="main">
     <div class="container mb-4" style="margin-top: 124px">
         <div class="row" style="justify-content:center">
+            @if (\Session::has('message'))
+            <div class="col-lg-12">
+                <div class="alert alert-danger">
+                    {{ \Session::get('message') }}
+                </div>
+            </div>
+            @endif
             <div class="col-lg-4 mb-3">
                 <div class="card mb-3">
                     <div class="card-body d-flex row">
@@ -28,7 +35,7 @@ $ada_jawaban = false;
                         </div>
                     </div>
                 </div>
-                <div class="card mb-3">
+                <div class="card mb-2">
                     <div class="card-body">
                         <h5 class="card-title">Data Pendaftar</h5>
                         <form id="formPendaftar" action="{{ route('profile.pendaftar') }}" method="post">

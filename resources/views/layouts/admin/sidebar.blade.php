@@ -102,6 +102,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.pembelian.index') }}" class="nav-link {{ (request()->segment(2) == 'pembelian') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Pembelian Paket
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.voucher.index') }}" class="nav-link {{ (request()->segment(2) == 'voucher') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th"></i>
                         <p>

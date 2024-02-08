@@ -10,9 +10,6 @@ Data Soal Ujian {{ $ujian->nama }}
 <li class="breadcrumb-item active"><a href="{{ route('admin.ujian.soal.index', $ujian->id) }}">Soal {{ $ujian->nama }}</a></li>
 @endsection
 
-@push('links')
-<link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/summernote/summernote-bs4.min.css">
-@endpush
 
 @section('content')
 <script type="text/javascript">
@@ -149,6 +146,16 @@ Data Soal Ujian {{ $ujian->nama }}
                                         </div>
                                     @enderror
                                 </div>
+                                <div class="form-group">
+                                    <label for="pembahasan" class="col-sm-3 col-form-label">Pembahasan</label>
+                                    <textarea id="pembahasan" class="@error('pembahasan') is-invalid @enderror" autofocus hidden name="pembahasan">{{ old('pembahasan', $soal->pembahasan) }}
+                                    </textarea>
+                                    @error('pembahasan')
+                                        <div class="invalid-feedback">
+                                            <h6>{{ $message }}</h6>
+                                        </div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-outline-success mt-3 float-right">Save</button>
@@ -171,7 +178,6 @@ Data Soal Ujian {{ $ujian->nama }}
 @endsection
 
 @push('scripts')
-<script src="{{ asset('adminLTE') }}/plugins/summernote/summernote-bs4.min.js"></script>
 <script type="text/javascript">
     let countPilihan = 1;
     document.body.classList.add('sidebar-collapse');
@@ -187,6 +193,9 @@ Data Soal Ujian {{ $ujian->nama }}
     $(function() {
         $('#soal').summernote({
             height: 250,
+        });
+        $('#pembahasan').summernote({
+            height: 150,
         });
         $('.jawaban').summernote({
             height: 100,

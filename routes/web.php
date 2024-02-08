@@ -10,11 +10,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Admin\HimadaController;
-use App\Http\Controllers\admin\VoucherController;
+use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\PaketUjianController;
 use App\Http\Controllers\Admin\PesertaUjianController;
 use App\Http\Controllers\Admin\SoalController as SoalController_Admin;
 use App\Http\Controllers\Admin\UjianController as UjianController_Admin;
+use App\Http\Controllers\Admin\PembelianController as PembelianController_Admin;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +69,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('ujian', UjianController_Admin::class);
 });
 
+//route data pembelian
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/pembelian/data', [PembelianController_Admin::class, 'data'])->name('pembelian.data');
+    Route::get('/pembelian/dataPaket', [PembelianController_Admin::class, 'dataPaket'])->name('pembelian.dataPaket');
+    // Route::get('/pembelian/{id}/publish', [PembelianController_Admin::class, 'publish'])->name('pembelian.publish');
+    Route::resource('pembelian', PembelianController_Admin::class);
+});
+
 //route data peserta ujian
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/peserta_ujian/data', [PesertaUjianController::class, 'data'])->name('peserta_ujian.data');
@@ -86,18 +95,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 });
 
 //route pembelian
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('pembelian', PembelianController::class);
+Route::middleware(['auth', 'verified', 'profiled'])->group(function () {
+    Route::resource('pembelian', PembelianController::class, ['only' => ['index', 'store', 'show']]);
     Route::post('/pembelian/pay', [PembelianController::class, 'pay'])->name('pembelian.pay');
     Route::post('/pembelian/applyVoucher', [PembelianController::class, 'applyVoucher'])->name('pembelian.applyVoucher');
 });
 
 //route tryout
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/tryout', [UjianController::class, 'tryout'])->name('tryout');
+Route::middleware(['auth', 'verified', 'profiled'])->group(function () {
+    Route::get('/{id?}/tryout', [UjianController::class, 'index'])->name('tryout.index');
+    Route::get('/tryout/{id}', [UjianController::class, 'show'])->name('tryout.show');
+    Route::post('/tryout', [UjianController::class, 'post'])->name('tryout.post');
     Route::get('/tryout/{id}/pembahasan', [UjianController::class, 'pembahasan'])->name('tryout.pembahasan');
     Route::get('/tryout/{id}/nilai', [UjianController::class, 'nilai'])->name('tryout.nilai');
-    Route::resource('tryout', UjianController::class);
+    // Route::resource('tryout', UjianController::class);
     Route::paginate('tryout', [UjianController::class, 'index'])->name('ujian.page');
 });
 

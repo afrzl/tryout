@@ -132,33 +132,45 @@ Dashboard
             </div>
 
             <div class="row" data-aos="fade-left">
-                @foreach ($pakets as $paket)
-                <div class="col-lg-3 col-md-6 mt-4 mb-4 mt-lg-0">
-                    <div class="box" data-aos="zoom-in" data-aos-delay="400">
-                        @if($paket->id == '03dfc817-3ee3-404c-b162-e1a4acb8ff73')
-                            <span class="advanced">Terlaris</span>
-                        @endif
-                        <h3>{{ $paket->nama }}</h3>
-                        <h4><sup>Rp</sup>{{ number_format($paket->harga , 0 , ',' , '.' ) }}</h4>
-                        <ul>
-                            <li>Aida dere</li>
-                            <li>Nec feugiat nisl</li>
-                            <li>Nulla at volutpat dola</li>
-                            <li>Pharetra massa</li>
-                            <li>Massa ultricies mi</li>
-                        </ul>
-                        <div class="btn-wrap">
-                            <form method="post" action="{{ route('pembelian.store') }}">
-                            @csrf
-                            @method('post')
-                            <input type="hidden" name="paket_id" value="{{ $paket->id }}">
-
-                            <button type="submit" class="btn-buy">Beli Paket</button>
-                            </form>
+                @if($pakets->isEmpty())
+                    <div class="alert alert-primary" role="alert">Paket Ujian belum tersedia</div>
+                @else
+                    @foreach ($pakets as $paket)
+                    <div class="col-lg-3 col-md-6 mt-4 mb-4 mt-lg-0">
+                        <div class="box" data-aos="zoom-in" data-aos-delay="400">
+                            @if($paket->id == '03dfc817-3ee3-404c-b162-e1a4acb8ff73')
+                                <span class="advanced">Terlaris</span>
+                            @endif
+                            <h3>{{ $paket->nama }}</h3>
+                            <h4><sup>Rp</sup>{{ number_format($paket->harga , 0 , ',' , '.' ) }}</h4>
+                            {{-- <ul>
+                                <li>Aida dere</li>
+                                <li>Nec feugiat nisl</li>
+                                <li>Nulla at volutpat dola</li>
+                                <li>Pharetra massa</li>
+                                <li>Massa ultricies mi</li>
+                            </ul> --}}
+                            {!! $paket->deskripsi !!}
+                            <div class="btn-wrap">
+                                @if($paket->pembelian->isEmpty())
+                                    @if(Carbon\Carbon::now()->between($paket->waktu_mulai, $paket->waktu_akhir))
+                                        <form method="post" action="{{ route('pembelian.store') }}">
+                                        @csrf
+                                        @method('post')
+                                        <input type="hidden" name="paket_id" value="{{ $paket->id }}">
+                                        <button type="submit" class="btn-buy">Beli Paket</button>
+                                    @else
+                                        <button type="button" style="background-color: grey; border-color: black" class="btn-buy">Belum tersedia</button>
+                                    @endif
+                                @else
+                                    <a href="{{ route('tryout.index', $paket->id) }}" type="button" style="background-color: grey; border-color: black" class="btn-buy">Lihat Paket</a>
+                                @endif
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
+                    @endforeach
+                @endif
             </div>
 
         </div>

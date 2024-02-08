@@ -12,7 +12,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
+                    <div class="form-group row required">
                         <label for="Nama" class="col-sm-3 col-form-label">Nama</label>
                         <div class="col-sm-9">
                             <input type="text" name="nama" id="Nama" class="form-control" placeholder="Nama Paket Ujian" required autofocus>
@@ -21,16 +21,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row required">
                         <label for="Deskripsi" class="col-sm-3 col-form-label">Deskripsi</label>
                         <div class="col-sm-9">
-                            <input type="text" name="deskripsi" id="Deskripsi" class="form-control" placeholder="Deskripsi Paket Ujian" required autofocus>
+                            <textarea id="deskripsi" hidden required name="deskripsi"></textarea>
                             <div class="invalid-feedback">
                                 Kolom deskripsi tidak boleh kosong.
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row required">
                         <label for="Harga" class="col-sm-3 col-form-label">Harga</label>
                         <div class="col-sm-9">
                             <input type="number" name="harga" id="Harga" class="form-control" placeholder="Harga Ujian" required>
@@ -39,7 +39,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row required">
                         <label for="Waktu_mulai" class="col-sm-3 col-form-label datetimepicker-input">Mulai Pendaftaran</label>
                         <div class="col-sm-9">
                             <input type="text" name="waktu_mulai" id="Waktu_mulai" class="form-control datetimepicker-input" placeholder="Mulai Ujian" data-toggle="datetimepicker" data-target="#Waktu_mulai" required>
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row required">
                         <label for="Waktu_akhir" class="col-sm-3 col-form-label datetimepicker-input">Selesai Pendaftaran</label>
                         <div class="col-sm-9">
                             <input type="text" name="waktu_akhir" id="Waktu_akhir" class="form-control datetimepicker-input" placeholder="Selesai Ujian" data-toggle="datetimepicker" data-target="#Waktu_akhir" required>

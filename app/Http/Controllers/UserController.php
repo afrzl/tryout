@@ -178,8 +178,9 @@ class UserController extends Controller
             $usersDetail->update();
         } else {
             $usersDetail = UsersDetail::create([
-                'prodi' => $user->prodi,
-                'penempatan' => $user->formasi,
+                'id' => $user->id,
+                'prodi' => $request->prodi,
+                'penempatan' => $request->formasi,
             ]);
         }
 

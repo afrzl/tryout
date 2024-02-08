@@ -191,7 +191,7 @@ $ada_jawaban = false;
                         },
                         success: function(response) {
                             console.log('success');
-                            window.location.href = `/ujian/nilai/` + '{{ $soal[0]->ujian_user_id }}';
+                            window.location.href = `/tryout/` + '{{ $soal[0]->soal->ujian_id }}' + '/nilai';
                         },
                         error: function(error) {
                             console.log('error')
@@ -305,7 +305,7 @@ $ada_jawaban = false;
                     '_method': 'put'
                 })
                 .done((response) => {
-                    window.location.href = `/ujian/nilai/` + '{{ $ujianUser->id }}'
+                    window.location.href = `/tryout/` + '{{ $soal[0]->soal->ujian_id }}' + '/nilai';
                 })
                 .fail((response) => {
                     toastr.error('Tidak dapat menghapus data.');

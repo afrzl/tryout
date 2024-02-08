@@ -57,16 +57,22 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td style="text-align: right">
+                                            <h6 class="mt-2 mr-6">Voucher</h6>
+                                        </td>
+                                        @if($pembelian->status == 'Sukses')
+                                        <td>
+                                            <span class="badge badge-primary">{{ $pembelian->voucher ? 'Rp' . number_format($pembelian->voucher->diskon, 0 , ',' , '.') : '' }}</span>
+                                        </td>
+                                        @else
                                         <form method="post" id="applyVoucher" action="{{ route('pembelian.applyVoucher') }}">
                                             @csrf
                                             @method('post')
-                                            <td style="text-align: right">
-                                                <h6 class="mt-2 mr-6">Voucher</h6>
-                                            </td>
                                             <td>
                                                 <div class="row">
                                                     <div class="col-lg-9">
                                                         <input type="hidden" required name="id" value="{{ $pembelian->id }}">
+
                                                         <input type="text" @if($pembelian->voucher_id) @readonly(true) value="{{ $pembelian->voucher->kode }}" @endif class="form-control" id="voucher" name="voucher" val placeholder="Masukkan voucher disini">
                                                     </div>
                                                     @if($pembelian->status == 'Belum dibayar')
@@ -82,6 +88,31 @@
                                                 @endif
                                             </td>
                                         </form>
+                                        @endif
+
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right">
+                                            <h6 class="mb-0 mr-6">Metode Pembayaran</h6>
+                                        </td>
+                                        <td>
+                                            @if($pembelian->status != 'Sukses')
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="metode_pembayaran" id="metode_pembayaran1" value="shopeepay-qris" checked>
+                                                <label class="form-check-label" for="metode_pembayaran1">
+                                                    QRIS
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="metode_pembayaran" id="metode_pembayaran2" value="bank-transfer">
+                                                <label class="form-check-label" for="metode_pembayaran2">
+                                                    Transfer Bank (+ Admin 4500)
+                                                </label>
+                                            </div>
+                                            @else
+                                            <p class="font-weight-bold mb-0">{{ $pembelian->jenis_pembayaran }}</p>
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td></td>
@@ -90,11 +121,11 @@
                                             <form method="post" action="{{ route('pembelian.store') }}">
                                                 @csrf
                                                 @method('post')
-                                                <input type="hidden" name="id_paketUjian" value="{{ $pembelian->paketUjian_id }}">
+                                                <input type="hidden" name="paket_id" value="{{ $pembelian->paket_id }}">
                                                 <button type="submit" class="btn btn-warning mt-4 mb-0">Ulangi Bayar</button>
                                             </form>
                                             @elseif($pembelian->status == 'Sukses')
-                                                <a href="{{ route('tryout.index') }}"><button type="button" class="btn btn-primary mt-4 mb-0">Mulai Tryout</button></a>
+                                                <a href="{{ route('tryout.index', $pembelian->paket_id) }}" type="button" class="btn btn-primary mt-4 mb-0">Mulai Tryout</a>
                                             @else
                                             <button type="button" onClick="pay()" class="btn btn-success mt-4 mb-0">Bayar</button>
                                             @endif
@@ -112,10 +143,7 @@
 @endsection
 
 @push('scripts')
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-
 @if($pembelian->status != 'Gagal')
-
 <script>
     $.ajaxSetup({
         headers: {
@@ -130,29 +158,12 @@
         {
             "_token": "{{ csrf_token() }}",
             _method: 'post',
-            id: '{{ $pembelian->id }}'
+            id: '{{ $pembelian->id }}',
+            metode: document.querySelector('input[name="metode_pembayaran"]:checked').value,
         })
         .done((response) => {
-            snap.pay(response, {
-                // Optional
-                onSuccess: function(result) {
-                    /* You may add your own js here, this is just example */
-                    // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-                    location.reload();
-                },
-                // Optional
-                onPending: function(result) {
-                    /* You may add your own js here, this is just example */
-                    // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-                    location.reload();
-                },
-                // Optional
-                onError: function(result) {
-                    /* You may add your own js here, this is just example */
-                    // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-                    location.reload();
-                }
-            });
+            console.log(response);
+            window.location.href = `https://app.sandbox.midtrans.com/snap/v3/redirection/${response.snapToken}#/${response.metode}`;
         })
         .fail((response) => {
             toastr.options = {"positionClass": "toast-bottom-right"};

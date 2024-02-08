@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             // PaketUjianSeeder::class,
             // UjianSeeder::class,
             // SoalJawabanSeeder::class,
-            \Database\Seeders\RolesAndPermissionsSeeder::class,
+            // \Database\Seeders\RolesAndPermissionsSeeder::class,
+            \Database\Seeders\PaketUjianSeeder::class,
         ]);
 
         // \App\Models\User::factory()->create([

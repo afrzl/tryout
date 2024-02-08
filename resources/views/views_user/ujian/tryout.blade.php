@@ -320,40 +320,44 @@
 
 @section('content')
     <main id="main">
-        <div class="container mb-5" style="margin-top: 124px">
+        <div class="container mb-5" style="margin-top: 124px; min-height: 300px">
             <div class="row">
-                @foreach ($tryout as $to)
+                @if($tryout->isEmpty())
+                <div class="alert alert-primary" role="alert">Tryout kosong. Silahkan beli paket terlebih dahulu</div>
+                @else
+                    @foreach ($tryout as $to)
                     <div class="col-lg-4">
                         <div class="card card-margin">
-                            <div class="card-header no-border">
-                                <h5 class="card-title">{{ $to->nama_paket }}</h5>
-                            </div>
-                            <div class="card-body pt-0">
-                                <div class="widget-49">
-                                    <div class="widget-49-title-wrapper">
-                                        <div class="widget-49-date-primary">
-                                            <span class="widget-49-date-day">{{ $to->jumlah_soal }}</span>
-                                            <span class="widget-49-date-month">Soal</span>
+                                <div class="card-header no-border">
+                                    <h5 class="card-title">{{ $to->nama }}</h5>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="widget-49">
+                                        <div class="widget-49-title-wrapper">
+                                            <div class="widget-49-date-primary">
+                                                <span class="widget-49-date-day">{{ $to->jumlah_soal }}</span>
+                                                <span class="widget-49-date-month">Soal</span>
+                                            </div>
+                                            <div class="widget-49-meeting-info">
+                                                <span class="widget-49-pro-title">{{ $to->nama_paket }}</span>
+                                                <span class="widget-49-meeting-time">{{ Carbon\Carbon::parse($to->waktu_mulai)->isoFormat('D MMM Y HH:mm:ss') }} - {{ Carbon\Carbon::parse($to->waktu_akhir)->isoFormat('D MMM Y HH:mm:ss');}}</span>
+                                            </div>
                                         </div>
-                                        <div class="widget-49-meeting-info">
-                                            <span class="widget-49-pro-title">{{ $to->nama }}</span>
-                                            <span class="widget-49-meeting-time">{{ Carbon\Carbon::parse($to->waktu_mulai)->isoFormat('D MMM Y HH:mm:ss') }} - {{ Carbon\Carbon::parse($to->waktu_akhir)->isoFormat('D MMM Y HH:mm:ss');}}</span>
+                                        <div class="widget-49-meeting-points">
+                                            {{ $to->deskripsi }}
                                         </div>
-                                    </div>
-                                    <div class="widget-49-meeting-points">
-                                        {{ $to->deskripsi }}
-                                    </div>
-                                    <div class="widget-49-meeting-action mt-2 {{ $to->ujianUser->count() > 0 ? 'd-flex justify-content-between' : '' }}">
-                                        @if($to->ujianUser->count() > 0)
-                                            <a href="{{ route('tryout.nilai', $to->id) }}" class="btn btn-success">Nilai</a>
-                                        @endif
-                                        <a href="{{ route('tryout.show', $to->id) }}" class="btn btn-primary">Kerjakan</a>
+                                        <div class="widget-49-meeting-action mt-2 {{ $to->ujianUser->count() > 0 ? 'd-flex justify-content-between' : '' }}">
+                                            @if($to->ujianUser->count() > 0)
+                                                <a href="{{ route('tryout.nilai', $to->id) }}" class="btn btn-success">Nilai</a>
+                                            @endif
+                                            <a href="{{ route('tryout.show', $to->id) }}" class="btn btn-primary">Kerjakan</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                @endif
             </div>
         </div>
     </main>

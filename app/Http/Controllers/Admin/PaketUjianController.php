@@ -21,7 +21,7 @@ class PaketUjianController extends Controller
 
     public function data()
     {
-        $pakets = PaketUjian::with('ujian')->orderBy('created_at', 'desc');
+        $pakets = PaketUjian::with('ujian')->orderBy('created_at', 'asc');
 
         return datatables()
             ->eloquent($pakets)
@@ -43,9 +43,12 @@ class PaketUjianController extends Controller
                 return $ujians;
             })
             ->addColumn('aksi', function ($pakets) {
-                $text = '<button onclick="editData(`' . route('admin.paket.update', $pakets->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
+                if ($pakets->id == '0df8c9b0-d352-448b-9611-abadffc4f46d' || $pakets->id == '33370256-b734-470a-afe9-c7ca8421f1b3' ||$pakets->id == '981ae5b5-a48d-47e6-9cc7-9e79994a3ef0' || $pakets->id == '0be570c6-7edf-4970-bd99-304d0626f9ff') {
+                    return '<button onclick="editData(`' . route('admin.paket.update', $pakets->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>';
+                }
+
+                return '<button onclick="editData(`' . route('admin.paket.update', $pakets->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
                         <button onclick="deleteData(`' . route('admin.paket.destroy', $pakets->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
-                return $text;
             })
             ->rawColumns(['harga', 'waktu_pendaftaran', 'ujian', 'aksi'])
             ->make(true);
@@ -66,7 +69,6 @@ class PaketUjianController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'deskripsi' => 'required',
             'harga' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
@@ -110,7 +112,6 @@ class PaketUjianController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'deskripsi' => 'required',
             'harga' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',

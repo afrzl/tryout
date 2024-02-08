@@ -16,7 +16,9 @@ class PembelianController extends Controller
      */
     public function index()
     {
-        //
+        $id = explode('-', request()->order_id);
+        $order_id = $id[0];
+        return redirect()->route('pembelian.show', $order_id);
     }
 
     /**
@@ -45,7 +47,6 @@ class PembelianController extends Controller
             $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
             $pembelian->harga = $paketUjian->harga;
             $pembelian->save();
-
             $id_pembelian = $pembelian->id;
         } else {
             if ($cek->status == 'Gagal') {
@@ -117,16 +118,42 @@ class PembelianController extends Controller
     public function pay(Request $request) {
         $pembelian = Pembelian::findOrFail($request->id);
         $snapToken = $pembelian->kode_pembelian;
+        $total = 0;
+        $item_details[] = array(
+            'id' => $pembelian->paketUjian->id,
+            'price' => $pembelian->harga,
+            'quantity' => 1,
+            'name' => $pembelian->paketUjian->nama,
+        );
+        $total += $pembelian->harga;
+
+        if ($request->metode == 'bank-transfer') {
+            $item_details[] = array(
+                'id' => 999999,
+                'price' => 4500,
+                'quantity' => 1,
+                'name' => 'Biaya admin',
+            );
+            $total += 4500;
+        }
+
+        $midtrans = new CreateSnapTokenService($pembelian, $request->metode, $item_details, $total);
+        $snapToken = $midtrans->getSnapToken($request->metode_pembayaran);
+
+        $pembelian->kode_pembelian = $snapToken;
+        $pembelian->update();
+
+        return response()->json(array(
+            'snapToken' => $snapToken,
+            'metode' => $request->metode,
+        ), 200);
+
         if (is_null($snapToken)) {
-            $midtrans = new CreateSnapTokenService($pembelian);
-            $snapToken = $midtrans->getSnapToken();
-
-            $pembelian->kode_pembelian = $snapToken;
-            $pembelian->update();
-
-            return response()->json($snapToken, 200);
         } else {
-            return response()->json($snapToken, 200);
+            return response()->json(array(
+                'snapToken' => $snapToken,
+                'metode' => $request->metode,
+            ), 200);
         }
         return response()->json('Tidak dapat membayar, silahkan hubungi admin.', 300);
     }
@@ -160,22 +187,68 @@ class PembelianController extends Controller
         $serverKey = config('midtrans.server_key');
         $hashed = hash("sha512", $request->order_id.$request->status_code.$request->gross_amount.$serverKey);
 
+        $id = explode('-', $request->order_id);
+        $order_id = $id[0];
         if ($hashed == $request->signature_key) {
             if ($request->transaction_status == 'capture' || $request->transaction_status == 'settlement') {
-                $pembelian = Pembelian::find($request->order_id);
+                $pembelian = Pembelian::find($order_id);
                 $pembelian->status = 'Sukses';
                 $pembelian->jenis_pembayaran = $request->payment_type;
                 $pembelian->update();
+                $user_id = $pembelian->user_id;
+
+                if ($pembelian->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
+                    $bundling = Pembelian::where('paket_id', '33370256-b734-470a-afe9-c7ca8421f1b3')
+                                ->where('user_id', $user_id)
+                                ->where('status', 'Sukses')
+                                ->first();
+                    if (!$bundling) {
+                        $pembelian = new Pembelian();
+                        $pembelian->paket_id = '33370256-b734-470a-afe9-c7ca8421f1b3';
+                        $pembelian->user_id = $user_id;
+                        $pembelian->status = 'Sukses';
+                        $pembelian->harga = 0;
+                        $pembelian->jenis_pembayaran = 'Bundling';
+                        $pembelian->save();
+                    }
+                }
+
+                if ($pembelian->paket_id == '33370256-b734-470a-afe9-c7ca8421f1b3') {
+                    $bundling = Pembelian::where('paket_id', '981ae5b5-a48d-47e6-9cc7-9e79994a3ef0')
+                                ->where('user_id', $user_id)
+                                ->where('status', 'Sukses')
+                                ->first();
+                    if (!$bundling) {
+                        $pembelian = new Pembelian();
+                        $pembelian->paket_id = '981ae5b5-a48d-47e6-9cc7-9e79994a3ef0';
+                        $pembelian->user_id = $user_id;
+                        $pembelian->status = 'Sukses';
+                        $pembelian->harga = 0;
+                        $pembelian->jenis_pembayaran = 'Bundling';
+                        $pembelian->save();
+                    }
+                }
+
+                if ($pembelian->paket_id == '981ae5b5-a48d-47e6-9cc7-9e79994a3ef0') {
+                    $bundling = Pembelian::where('paket_id', '0be570c6-7edf-4970-bd99-304d0626f9ff')
+                                ->where('user_id', $user_id)
+                                ->where('status', 'Sukses')
+                                ->first();
+                    if (!$bundling) {
+                        $pembelian = new Pembelian();
+                        $pembelian->paket_id = '0be570c6-7edf-4970-bd99-304d0626f9ff';
+                        $pembelian->user_id = $user_id;
+                        $pembelian->status = 'Sukses';
+                        $pembelian->harga = 0;
+                        $pembelian->jenis_pembayaran = 'Bundling';
+                        $pembelian->save();
+                    }
+                }
             } else if ($request->transaction_status == 'deny' || $request->transaction_status == 'cancel' || $request->transaction_status == 'expire') {
-                $pembelian = Pembelian::find($request->order_id);
-                $pembelian->status = 'Gagal';
+                $pembelian = Pembelian::find($order_id);
+                $pembelian->status = $pembelian->status == 'Sukses' ? $pembelian->status : 'Gagal';
                 $pembelian->update();
             }
-        }
-        else {
-            $pembelian = Pembelian::find($request->order_id);
-            $pembelian->status = 'Gagal';
-            $pembelian->update();
         }
     }
 }

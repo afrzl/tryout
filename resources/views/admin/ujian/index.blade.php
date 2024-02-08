@@ -12,8 +12,6 @@ Data Ujian
 @push('links')
 <!-- Popperjs -->
 <link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-<!-- Summernote -->
-<link rel="stylesheet" href="{{ asset('adminLTE') }}/plugins/summernote/summernote-bs4.min.css">
 @endpush
 
 @section('content')
@@ -66,10 +64,6 @@ Data Ujian
 <script src="{{ asset('adminLTE') }}/plugins/moment/moment.min.js" defer></script>
 
 <script src="{{ asset('adminLTE') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js" defer></script>
-
-{{-- Summernote --}}
-<script src="{{ asset('adminLTE') }}/plugins/summernote/summernote-bs4.min.js"></script>
-
 <script>
     let tableUjian;
     $(function() {

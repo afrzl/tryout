@@ -8,6 +8,24 @@
 <main id="main">
     <div class="container mb-4" style="margin-top: 124px">
         <div class="row" style="justify-content:center">
+            <div class="col-lg-12">
+                @if(Carbon\Carbon::now() > $ujian->waktu_akhir)
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3 class="card-title"><b>Peringkat Peserta</b></h3>
+                        <p class="card-text" style="font-size: 17px">
+                            Peringkat Nasional : <span class="badge badge-primary">{{ $rank }} dari {{ $totalRank }}</span> peserta
+                            <br />
+                            Peringkat Formasi : <span class="badge bg-success">{{ $rankUserFormasi }} dari {{ $totalRankFormasi }}</span> peserta
+                        </p>
+                    </div>
+                </div>
+                @else
+                <div class="alert alert-primary" role="alert">
+                    Pemeringkatan nasional maupun formasi akan tersedia mulai {{ Carbon\Carbon::parse($ujian->waktu_akhir)->isoFormat('D MMMM Y HH:mm:ss') }}
+                </div>
+                @endif
+            </div>
             <div class="col-lg-5 mb-3">
                 <div class="card mb-3">
                     <div class="card-body">
@@ -28,14 +46,14 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Waktu Mulai Pengerjaan</h6>
-                                        <span>{{ \Carbon\Carbon::parse($ujian->ujianUser[0]->waktu_mulai)->isoFormat('D MMMM Y HH:mm:ss') }}</span>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Waktu Pengerjaan</h6>
+                                        <span>{{ \Carbon\Carbon::parse($ujian->ujianUser[0]->waktu_mulai)->isoFormat('D MMM Y HH:mm:ss') }} - {{ \Carbon\Carbon::parse($ujian->ujianUser[0]->waktu_akhir)->isoFormat('D MMM Y HH:mm:ss') }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Waktu Selesai Pengerjaan</h6>
-                                        <span>{{ \Carbon\Carbon::parse($ujian->ujianUser[0]->waktu_akhir)->isoFormat('D MMMM Y HH:mm:ss') }}</span>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Soal Terjawab</h6>
+                                        <span>{{ $ujian->ujianUser[0]->jawabanPeserta->where('jawaban_id', '!=', NULL)->count() }} / {{ $ujian->ujianUser[0]->jawabanPeserta->count() }}</span>
                                     </td>
                                 </tr>
                                 @if($ujian->jenis_ujian == 'skd')
@@ -85,8 +103,26 @@
                                 @foreach ($ujian->ujianUser[0]->jawabanPeserta as $key => $jawaban)
                                     <tr>
                                         <td>{{ $key+1 }}.</td>
-                                        <td>A</td>
-                                        <td>C</td>
+                                        @if($jawaban->jawaban_id == NULL)
+                                            <td>-</td>
+                                        @else
+                                            @foreach ($jawaban->soal->jawaban as $key => $jwb)
+                                                @if($jwb->id == $jawaban->jawaban_id)
+                                                <td>{{ chr($key+65) }}</td>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                        @foreach ($jawaban->soal->jawaban as $key => $jwb)
+                                            @if($jawaban->soal->jenis_soal == 'tkp')
+                                                @if($jwb->point == 5)
+                                                    <td>{{ chr($key+65) }}</td>
+                                                @endif
+                                            @else
+                                                @if($jwb->id == $jawaban->soal->kunci_jawaban)
+                                                    <td>{{ chr($key+65) }}</td>
+                                                @endif
+                                            @endif
+                                        @endforeach
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -96,9 +96,9 @@ Data Paket Ujian
             , buttons: [
                 'copy', 'excel', 'pdf'
             ]
-            // , columnDefs: [
-            //     { className: 'text-center', targets: [0, 2, 3, 4, 5, 6] },
-            // ]
+            , columnDefs: [
+                { className: 'text-center', targets: [0, 2, 3, 5] },
+            ]
         });
 
         'use strict'
@@ -209,6 +209,9 @@ Data Paket Ujian
     $(function() {
         //Initialize Select2 Elements
         $('.ujians').select2()
+        $('#deskripsi').summernote({
+            height: 100,
+        });
         $('#Waktu_mulai').datetimepicker({
             icons: { time: 'far fa-clock' },
             format: 'DD/MM/YYYY HH:mm'

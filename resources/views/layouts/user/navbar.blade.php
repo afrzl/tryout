@@ -2,9 +2,9 @@
     <ul>
         <li><a class="nav-link scrollto {{ (request()->segment(1) == '') ? 'active' : '' }}" href="{{ (request()->segment(1) == '') ? '#hero' : route('dashboard') }}">Home</a></li>
         <li><a class="nav-link scrollto" href="{{ (request()->segment(1) == '') ? '#pricing' : route('dashboard') . '/#pricing' }}">Paket Ujian</a></li>
-        <li><a class="nav-link scrollto {{ (request()->segment(1) == 'tryout') ? 'active' : '' }}" href="{{ route('tryout.index') }}">Tryout</a></li>
+        <li><a class="nav-link scrollto {{ (request()->segment(1) == 'tryout' || request()->segment(2) == 'tryout') ? 'active' : '' }}" href="{{ route('tryout.index') }}">Tryout</a></li>
         @hasrole('admin')
-            <li><a class="nav-link scrollto" href="{{ route('admin.dashboard') }}">Admin</a></li>
+            <li><a class="nav-link scrollto" href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
         @endhasrole
 
         @auth

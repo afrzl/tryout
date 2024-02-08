@@ -129,6 +129,7 @@ class SoalController extends Controller
         $soal->poin_benar = $request->nilai_benar ? $request->nilai_benar : 0;
         $soal->poin_salah = $request->nilai_salah ? $request->nilai_salah : 0;
         $soal->poin_kosong = $request->nilai_kosong ? $request->nilai_kosong : 0;
+        $soal->pembahasan = $request->pembahasan;
         $soal->save();
 
         foreach ($request->jawaban as $key => $jawaban) {

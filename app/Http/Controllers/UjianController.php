@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Soal;
+use App\Models\User;
 use App\Models\Ujian;
 use App\Models\Jawaban;
 use App\Models\Session;
@@ -20,25 +21,34 @@ class UjianController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($id = null)
     {
-        $data = Pembelian::with(['paketUjian.ujian', 'paketUjian.ujian.ujianUser' => function ($query) {
+        $data = Pembelian::with([
+                        'paketUjian.ujian' => function ($query) {
+                            $query->where('isPublished', 1);
+                        },
+                        'paketUjian.ujian.ujianUser' => function ($query) {
                             $query->where('user_id', auth()->user()->id);
                         }])
                     ->where('user_id', auth()->user()->id)
                     ->where('status', 'Sukses')
-                    ->latest('updated_at')
-                    ->get();
+                    ->latest('updated_at');
+        if ($id == NULL) {
+            $data = $data->get();
+        } else {
+            $data =  $data->where('paket_id', $id)->get();
+        }
+
         $tryout = new collection();
         foreach ($data as $dt) {
             foreach ($dt->paketUjian->ujian as $ujian) {
+                $ujian['id_paket'] = $dt->paketUjian->id;
                 $ujian['nama_paket'] = $dt->paketUjian->nama;
                 $tryout[] = $ujian;
             }
         }
 
         $tryout = $tryout->unique('id');
-        // return $tryout[1]->ujianUser;
         return view('views_user.ujian.tryout', compact('data', 'tryout'));
     }
 
@@ -47,10 +57,6 @@ class UjianController extends Controller
         if ($ujianUser->status == 2) {
             abort(403, 'ERROR');
         }
-
-        // if ($ujianUser->status_pengerjaan == 'Selesai') {
-        //     return redirect()->route('ujian.nilai', $ujianUser->id);
-        // }
 
         $preparation = JawabanPeserta::with(['soal', 'soal.jawaban' => function ($q)
         {
@@ -68,34 +74,9 @@ class UjianController extends Controller
             abort(403, 'ERROR');
         }
 
-        // if ($ujian->status_pengerjaan == 'Selesai') {
-        //     return redirect()->route('ujian.nilai', $ujian->id);
-        // }
-
         $preparation = Soal::with('jawaban')->where('ujian_id', $id);
         $soal = $preparation->paginate(1, ['*'], 'no');
-        // return $soal[0];
         return view('views_user.ujian.pembahasan', compact('soal', 'ujian'));
-    }
-
-    public function tryout() {
-        $data = Pembelian::with('paketUjian.ujian', ['paketUjian.ujian.ujianUser' => function ($query) {
-                            $query->where('user_id', auth()->user()->id);
-                        }])
-                    ->where('user_id', auth()->user()->id)
-                    ->where('status', 'Sukses')
-                    ->latest('updated_at')
-                    ->get();
-        $tryout = new collection();
-        foreach ($data as $dt) {
-            foreach ($dt->paketUjian->ujian as $ujian) {
-                $ujian['nama_paket'] = $dt->paketUjian->nama;
-                $tryout[] = $ujian;
-            }
-        }
-
-        $tryout = $tryout->unique('id');
-        return view('views_user.ujian.tryout', compact('data', 'tryout'));
     }
 
     /**
@@ -157,6 +138,11 @@ class UjianController extends Controller
     public function show($id)
     {
         $ujian = Ujian::with('paketUjian', 'ujianUser')->find($id);
+
+        if ($ujian->isPublished != 1) {
+            abort(404);
+        }
+
         $cek = false;
         foreach ($ujian->paketUjian as $paket) {
             $paketUjian = PaketUjian::with('pembelian')->find($paket->id);
@@ -315,14 +301,28 @@ class UjianController extends Controller
     public function nilai($id)
     {
         $ujian = Ujian::with(['ujianUser' => function($query) {
-            $query->where('is_first', 1)->first();
-        }, 'ujianUser.jawabanPeserta'])
+                            $query->where('is_first', 1)->where('user_id', auth()->user()->id)->first();
+                        }, 'ujianUser.jawabanPeserta', 'ujianUser.jawabanPeserta.soal.jawaban'])
                     ->findOrFail($id);
         if ($ujian->ujianUser[0]->status != '2' || $ujian->ujianUser[0]->user_id != auth()->user()->id) {
             abort(403, 'ERROR');
         }
 
-        return view('views_user.nilai.index', compact('ujian'));
+        $ujianUser = UjianUser::with('user.usersDetail')
+                        ->where('ujian_id', $id)
+                        ->where('is_first', 1)
+                        ->orderBy('nilai', 'desc')
+                        ->get();
+        $totalRank = $ujianUser->count();
+        $rankUser = $ujianUser->where('user_id', auth()->user()->id);
+        $rank = $rankUser->keys()->first() + 1;
+
+        $userFormasi = $ujianUser->where('user.usersDetail.penempatan', auth()->user()->usersDetail->penempatan)->values();
+        $totalRankFormasi = $userFormasi->count();
+        $rankUserFormasi = $userFormasi->where('user_id', auth()->user()->id);
+        $rankUserFormasi = $rankUserFormasi->keys()->first() + 1;
+
+        return view('views_user.nilai.index', compact('ujian', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi'));
     }
 
     /**

@@ -23,7 +23,7 @@ class HimadaController extends Controller
                     ->select('id', 'email')
                     ->with('roles')
                     ->where('email', 'like', '%'.$request->search.'%')
-                    ->whereDoesntHave('roles', fn ($user) => $user->where('name', 'himada'))
+                    ->whereDoesntHave('roles')
                     ->limit(3)
                     ->get();
 

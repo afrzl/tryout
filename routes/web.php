@@ -9,6 +9,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\HimadaController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\PaketUjianController;
@@ -38,9 +39,19 @@ Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->midd
 //route data user
 Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
+    Route::get('/user/showDetails/{id}', [UserController::class, 'showDetails'])->name('user.showDetails');
     Route::resource('user', UserController::class);
     Route::post('/user/resetPassword/{id}', [UserController::class, 'resetPassword'])->name('user.resetpassword');
     Route::post('/user/makeAdmin/{action}/{id}', [UserController::class, 'makeAdmin'])->name('user.makeAdmin');
+});
+
+//route data admin
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/admin/data', [AdminController::class, 'data'])->name('admin.data');
+    Route::post('/admin/getUser', [AdminController::class, 'getUser'])->name('admin.getUser');
+    Route::resource('admin', AdminController::class);
+    Route::post('/admin/resetPassword/{id}', [UserController::class, 'resetPassword'])->name('admin.resetpassword');
+    Route::post('/admin/makeAdmin/{action}/{id}', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
 });
 
 //route data himada

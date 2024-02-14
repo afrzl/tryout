@@ -33,7 +33,8 @@ class RolesAndPermissionsSeeder extends Seeder
         // $role = Role::create(['name' => 'admin'])
         //     ->givePermissionTo(['view ujian', 'create ujian', 'update ujian', 'delete ujian']);
 
-        $role = Role::create(['name' => 'himada']);
+        // $role = Role::create(['name' => 'himada']);
+        $role = Role::create(['name' => 'panitia']);
         // $role->givePermissionTo(Permission::all());
     }
 }

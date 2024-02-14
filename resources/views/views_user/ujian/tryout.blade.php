@@ -350,7 +350,7 @@
                                             @if($to->ujianUser->count() > 0)
                                                 <a href="{{ route('tryout.nilai', $to->id) }}" class="btn btn-success">Nilai</a>
                                             @endif
-                                            <a href="{{ route('tryout.show', $to->id) }}" class="btn btn-primary">Kerjakan</a>
+                                            <a href="{{ route('tryout.show', $to->id) }}" class="btn btn-primary">Masuk</a>
                                         </div>
                                     </div>
                                 </div>

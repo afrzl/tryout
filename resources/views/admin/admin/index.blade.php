@@ -1,12 +1,12 @@
 @extends('layouts/admin/app')
 
 @section('title')
-Data User
+Data Admin
 @endsection
 
 @section('breadcrumb')
 @parent
-<li class="breadcrumb-item active">User</li>
+<li class="breadcrumb-item active">Data Admin</li>
 @endsection
 
 @section('content')
@@ -16,7 +16,7 @@ Data User
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <button onclick="addForm('{{ route('user.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
+                    <button onclick="addForm('{{ route('admin.admin.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -29,6 +29,7 @@ Data User
                                     <th>Nama</th>
                                     <th>Email</th>
                                     <th>No HP</th>
+                                    <th>Roles</th>
                                     <th style="width: 15%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
@@ -49,9 +50,9 @@ Data User
     <!-- /.row -->
 </div>
 
-@includeIf('admin.user.form')
-@includeIf('admin.user.reset')
-@includeIf('admin.user.detail')
+@includeIf('admin.admin.form')
+@includeIf('admin.admin.reset')
+@includeIf('admin.admin.detail')
 
 @endsection
 
@@ -59,13 +60,37 @@ Data User
 <script>
     let tableUser;
     $(function() {
+        $('#user').select2({
+            minimumInputLength: 3,
+            ajax: {
+                url: "{{ route('admin.admin.getUser') }}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: '{{ csrf_token() }}',
+                        search: params.term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+    });
+
+    $(function() {
         tableUser = $('#Table-User').DataTable({
             processing: true
             , serverside: true
             , responsive: true
             , autoWidth: false
             , ajax: {
-                url: '{{ route('user.data') }}'
+                url: '{{ route('admin.admin.data') }}'
             , }
             , columns: [{
                     data: 'DT_RowIndex'
@@ -82,6 +107,9 @@ Data User
                     data: 'no_hp'
                 }
                 , {
+                    data: 'roles'
+                }
+                , {
                     data: 'aksi'
                     , searchable: false
                     , sortable: false
@@ -92,7 +120,7 @@ Data User
                 'copy', 'excel', 'pdf'
             ]
             , columnDefs: [
-                { className: 'text-center', targets: [0, 3, 4] },
+                { className: 'text-center', targets: [0, 3, 4, 5] },
             ]
         });
 
@@ -150,7 +178,7 @@ Data User
 
     function addForm(url) {
         $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Tambah User');
+        $('#modal-form .modal-title').text('Tambah Admin');
 
         $('#modal-form form')[0].classList.remove('was-validated');
         $('#modal-form form')[0].reset();

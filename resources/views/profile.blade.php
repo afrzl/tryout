@@ -4,7 +4,7 @@ $ada_jawaban = false;
 @extends('layouts.user.app')
 
 @section('title')
-{{ $user->name }}
+Profile
 @endsection
 
 @section('content')

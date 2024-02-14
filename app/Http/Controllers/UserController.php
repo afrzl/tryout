@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\UsersDetail;
 use Illuminate\Http\Request;
@@ -18,25 +19,18 @@ class UserController extends Controller
 
     public function data()
     {
-        $users = User::with('roles')->orderBy('created_at', 'asc');
+        $users = User::with('usersDetail')
+                ->doesntHave('roles')
+                ->orderBy('created_at', 'asc');
 
         return datatables()
             ->eloquent($users)
             ->addIndexColumn()
-            ->addColumn('role', function ($users)
-            {
-                if ($users->id === Auth()->user()->id) {
-                    return '<span class="badge badge-danger">Logged in!</span>';
-                } else {
-                    return ($users->hasRole('admin') ?
-                    '<button onclick="makeAdmin(`' .
-                            route('user.makeAdmin', ['action' => 'revoke', 'id' => $users->id]) .
-                            '`)" type="button" data-action="revoke" class="btn btn-outline-danger"><i class="fa fa-minus-circle"></i> Revoke Admin</button>'
-                    :
-                    '<button onclick="makeAdmin(`' .
-                            route('user.makeAdmin', ['action' => 'make', 'id' => $users->id]) .
-                            '`)" type="button" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Make Admin</button>');
-                }
+            ->addColumn('name', function ($user) {
+                return '<a href="javascript:void(0);" onclick="detailForm(`' . route('user.showDetails', $user->id) . '`)">' . $user->name;
+            })
+            ->addColumn('no_hp', function ($user) {
+                return $user->usersDetail ? $user->usersDetail->no_hp : '-';
             })
             ->addColumn('aksi', function ($users) {
                 if ($users->id === Auth()->user()->id) {
@@ -47,17 +41,24 @@ class UserController extends Controller
                         <button onclick="deleteData(`' .
                         route('user.destroy', $users->id) .
                         '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
-                        <button onclick="showDetail(`' .
-                        route('user.show', $users->id) .
-                        '`)" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></button>
                         <button onclick="resetPassword(`' .
                         route('user.resetpassword', $users->id) .
                         '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-key"></i></button>
                     ';
                 }
             })
-            ->rawColumns(['aksi', 'role'])
+            ->rawColumns(['name', 'aksi'])
             ->make(true);
+    }
+
+    public function showDetails($id) {
+        $user = User::with('usersDetail', 'sessions')->find($id);
+
+        foreach ($user->sessions as $session) {
+            $session->last_activity = Carbon::parse($session->last_activity)->diffForHumans();
+        }
+
+        return response()->json($user);
     }
 
     /**
@@ -91,9 +92,6 @@ class UserController extends Controller
     {
         $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
 
-        // $sumber = json_decode($user->usersDetail->sumber_informasi);
-        // return $sumber;
-        // return $user->usersDetail;
         return view('profile', compact('user'));
     }
 

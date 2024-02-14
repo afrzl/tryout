@@ -26,7 +26,7 @@ class UjianController extends Controller
             ->addIndexColumn()
             ->addColumn('nama', function ($ujians)
             {
-                $text = '<a href="#" onclick="detailForm(`' . route('admin.ujian.show', $ujians->id) . '`)">' . $ujians->nama;
+                $text = '<a href="javascript:void(0);" onclick="detailForm(`' . route('admin.ujian.show', $ujians->id) . '`)">' . $ujians->nama;
                 if ($ujians->isPublished) {
                     $text .= ' <span class="badge badge-success">Published</span>';
                 }

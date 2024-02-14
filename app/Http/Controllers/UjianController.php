@@ -137,7 +137,9 @@ class UjianController extends Controller
      */
     public function show($id)
     {
-        $ujian = Ujian::with('paketUjian', 'ujianUser')->find($id);
+        $ujian = Ujian::with(['ujianUser' => function ($query) {
+            return $query->where('is_first', 1)->where('user_id', auth()->user()->id)->first();
+        }], 'paketUjian')->find($id);
 
         if ($ujian->isPublished != 1) {
             abort(404);

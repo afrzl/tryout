@@ -5,14 +5,13 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>@yield('title') - {{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title') &mdash; {{ config('app.name', 'Laravel') }}</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <!-- Favicons -->
-    <link href="{{ asset('Bootslander') }}/assets/img/favicon.png" rel="icon">
-    <link href="{{ asset('Bootslander') }}/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -43,30 +42,36 @@
             background-color: #1a1d94;
             border-color: #232199;
         }
+
         .badge-primary {
             background-color: #1a1d94;
         }
+
         .btn-primary:hover {
             background-color: #23007B;
             border-color: #23007B;
         }
+
         .btn-primary:active {
             background-color: #23007B;
             border-color: #23007B;
         }
+
         .btn-primary:disabled {
             background-color: #23007B;
             border-color: #23007B;
         }
 
         .form-group.required .control-label:after {
-            content:" *";
-            color:red;
+            content: " *";
+            color: red;
         }
+
         .form-group.required .col-form-label:after {
-            content:" *";
-            color:red;
+            content: " *";
+            color: red;
         }
+
     </style>
 
     @stack('links')
@@ -78,10 +83,13 @@
     <header id="header" class="fixed-top d-flex align-items-center">
         <div class="container d-flex align-items-center justify-content-between">
 
-            <div class="logo">
-                <h1><a href="{{ route('dashboard') }}"><span>{{ config('app.name', 'Laravel') }}</span></a></h1>
-                <!-- Uncomment below if you prefer to use an image logo -->
-                <!-- <a href="index.html"><img src="{{ asset('Bootslander') }}/assets/img/logo.png" alt="" class="img-fluid"></a>-->
+            <div class="logo ">
+                <h1>
+                    <a href="{{ route('dashboard') }}">
+                        <img src="{{ asset('img/logo.png') }}" alt="Logo Bimbel">
+                        <span class="align-middle"> {{ config('app.name', 'Laravel') }}</span>
+                    </a>
+                </h1>
             </div>
 
             @include('layouts.user.navbar')
@@ -192,7 +200,10 @@
     <!-- Alpinejs -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
     <script>
-        toastr.options = {"positionClass": "toast-bottom-right"};
+        toastr.options = {
+            "positionClass": "toast-bottom-right"
+        };
+
     </script>
 
     @stack('scripts')

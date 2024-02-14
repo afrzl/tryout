@@ -21,7 +21,7 @@ class PaketUjianController extends Controller
 
     public function data()
     {
-        $pakets = PaketUjian::with('ujian')->orderBy('created_at', 'asc');
+        $pakets = PaketUjian::with('ujian')->orderBy('nama', 'asc');
 
         return datatables()
             ->eloquent($pakets)

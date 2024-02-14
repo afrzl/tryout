@@ -195,6 +195,7 @@ class SoalController extends Controller
         $soal = Soal::with('jawaban')->findOrFail($id);
         $soal->soal = $request->soal;
         $soal->jenis_soal = $request->jenis_ujian == 'skd' ? $request->jenis_soal : null;
+        $soal->pembahasan = $request->pembahasan;
         if ($soal->jenis_soal != 'tkp') {
             $soal->poin_benar = $request->nilai_benar;
             $soal->poin_salah = $request->nilai_salah;

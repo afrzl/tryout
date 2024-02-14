@@ -76,7 +76,7 @@
                             </tbody>
                         </table>
                         <div class="d-grid gap-2">
-                            @if(isset($ujian->ujianUser->status) == 2 && (($ujian->tampil_kunci == 1) || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir )))
+                            @if(isset($ujian->ujianUser[0]->status) == 2 && (($ujian->tampil_kunci == 1) || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir )))
                                 <a href="/tryout/{{ $ujian->id }}/pembahasan?no=1" class="btn btn-primary" type="button">Pembahasan</a>
                             @endif
                             <button id="kerjakan" onclick="kerjakan('{{ $ujian->id }}')" class="btn btn-success {{ !$betweenTime ? 'disabled' : '' }}" type="button">Kerjakan</button>

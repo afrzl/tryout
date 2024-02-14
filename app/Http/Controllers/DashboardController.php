@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Ujian;
 use App\Models\Pembelian;
 use App\Models\PaketUjian;
@@ -25,9 +26,21 @@ class DashboardController extends Controller
 
     public function adminIndex()
     {
-        if (auth()->user()->hasRole('admin')) {
-            return view('admin.dashboard');
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403, 'Error!');
         }
-        abort(403, 'Error!');
+
+        $data['paketUjian'] = PaketUjian::count();
+        $data['ujian'] = Ujian::count();
+        $data['ujianActive'] = Ujian::where('waktu_mulai', '<=', now())
+                                ->where('waktu_akhir', '>=', now())
+                                ->where('isPublished', 1)
+                                ->count();
+        $data['pembelian'] = Pembelian::where('status', 'Sukses')
+                                ->where('jenis_pembayaran', '!=', 'Bundling')
+                                ->count();
+        $data['user'] = User::doesntHave('roles')->count();
+
+        return view('admin.dashboard', compact('data'));
     }
 }

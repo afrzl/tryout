@@ -34,7 +34,8 @@ use App\Http\Controllers\Admin\PembelianController as PembelianController_Admin;
 // });
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->middleware('auth', 'verified', 'role:admin')->name('admin.dashboard');
+Route::post('/sendEmail', [DashboardController::class, 'sendEmail'])->name('sendEmail');
+Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->middleware('auth', 'verified', 'role:admin|panitia')->name('admin.dashboard');
 
 //route data user
 Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -74,25 +75,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 });
 
 //route data ujian
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia'])->group(function () {
     Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');
     Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
     Route::resource('ujian', UjianController_Admin::class);
 });
 
 //route data pembelian
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia'])->group(function () {
     Route::get('/pembelian/data', [PembelianController_Admin::class, 'data'])->name('pembelian.data');
+    Route::post('/pembelian/getUser', [PembelianController_Admin::class, 'getUser'])->name('pembelian.getUser');
     Route::get('/pembelian/dataPaket', [PembelianController_Admin::class, 'dataPaket'])->name('pembelian.dataPaket');
-    // Route::get('/pembelian/{id}/publish', [PembelianController_Admin::class, 'publish'])->name('pembelian.publish');
+    Route::get('/pembelian/getSummary/{id}', [PembelianController_Admin::class, 'getSummary'])->name('pembelian.getSummary');
     Route::resource('pembelian', PembelianController_Admin::class);
 });
 
 //route data peserta ujian
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia'])->group(function () {
     Route::get('/peserta_ujian/data', [PesertaUjianController::class, 'data'])->name('peserta_ujian.data');
     Route::get('/peserta_ujian/showdata/{id}', [PesertaUjianController::class, 'showData'])->name('peserta_ujian.show_data');
-    Route::get('/peserta_ujian/pembelian/{id}', [PesertaUjianController::class, 'showPeserta'])->name('peserta_ujian.show_peserta');
+    Route::get('/peserta_ujian/{id}/rekap', [PesertaUjianController::class, 'showPeserta'])->name('peserta_ujian.show_peserta');
     Route::get('/peserta_ujian/showdatapeserta/{id}', [PesertaUjianController::class, 'showDataPeserta'])->name('peserta_ujian.show_data_peserta');
     Route::get('/peserta_ujian/{id}/refresh', [PesertaUjianController::class, 'refresh'])->name('peserta_ujian.refresh');
     Route::resource('peserta_ujian', PesertaUjianController::class);
@@ -138,6 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/account', [UserController::class, 'account'])->name('profile.account');
     Route::post('/profile/peserta', [UserController::class, 'peserta'])->name('profile.peserta');
     Route::post('/profile/pendaftar', [UserController::class, 'pendaftar'])->name('profile.pendaftar');
+    // Route::post('/profile/photo', [UserController::class, 'photo'])->name('profile.photo');
 });
 
 Route::get('sessiondestroy', [UjianController::class, 'sessionDestroy'])->name('session_destroy');

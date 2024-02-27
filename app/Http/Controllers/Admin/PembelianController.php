@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Pembelian;
 use App\Models\PaketUjian;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class PembelianController extends Controller
         $pembelians = Pembelian::with('user')
                         ->with('voucher')
                         ->where('paket_id', $request->paket_ujian)
+                        ->orderBy('status', 'desc')
                         ->orderBy('created_at', 'desc');
 
         return datatables()
@@ -30,7 +32,7 @@ class PembelianController extends Controller
             ->addIndexColumn()
             ->addColumn('email', function ($pembelians)
             {
-                return $pembelians->user->email;
+                return '<a href="javascript:void(0);" onclick="detailForm(`' . route('admin.pembelian.show', $pembelians->id) . '`)">' . $pembelians->user->email;
             })
             ->addColumn('nama', function ($pembelians)
             {
@@ -63,12 +65,42 @@ class PembelianController extends Controller
                     return '<span class="badge badge-danger">Gagal</span>';
                 }
             })
-            ->rawColumns(['aksi', 'tanggal', 'voucher', 'status'])
+            ->rawColumns(['aksi', 'email', 'tanggal', 'voucher', 'status'])
             ->make(true);
     }
 
+    public function getSummary($id) {
+        $paket = PaketUjian::with(['pembelian' => function($query) {
+                            $query->where('status', 'Sukses');
+                        }])->findOrFail($id);
+        $data = [
+            'paketUjian' => ': ' . $paket->nama,
+            'totalPembelian' => ': ' . $paket->pembelian->count(),
+            'totalPembayaran' => ': Rp' . number_format($paket->pembelian->sum('harga'), 0 , ',' , '.' ),
+        ];
+        return response()->json($data);
+    }
+
+    public function getUser(Request $request) {
+        $users = User::orderBy('email', 'ASC')
+                    ->select('id', 'email')
+                    ->with('roles')
+                    ->where('email', 'like', '%'.$request->search.'%')
+                    ->limit(3)
+                    ->get();
+
+        $response = array();
+        foreach ($users as $user) {
+            $response[] = array(
+                "id" => $user->id,
+                "text" => $user->email
+            );
+        }
+        return response()->json($response);
+    }
+
     public function dataPaket() {
-        $data = PaketUjian::get();
+        $data = PaketUjian::orderBy('created_at', 'asc')->get();
         return response()->json($data, 200);
     }
 
@@ -86,15 +118,73 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $cek = Pembelian::where('user_id', $request->user)
+                ->where('paket_id', $request->paket)
+                ->latest('updated_at')
+                ->first();
+        $paketUjian = PaketUjian::find($request->paket);
+
+        if (!$cek) {
+            $pembelian = new Pembelian();
+            $pembelian->paket_id = $request->paket;
+            $pembelian->user_id = $request->user;
+            $pembelian->status = 'Sukses';
+            $pembelian->jenis_pembayaran = 'Manual';
+            $pembelian->harga = $paketUjian->harga;
+
+            //kalo udah beli tobar batch 1
+            if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
+                $tobar = Pembelian::where('user_id', $request->user)
+                        ->where('paket_id', '33370256-b734-470a-afe9-c7ca8421f1b3')
+                        ->where('status', 'Sukses')
+                        ->latest('updated_at')
+                        ->first();
+                if ($tobar) {
+                    $pembelian->harga = $paketUjian->harga - $tobar->harga;
+                }
+            }
+
+            $pembelian->save();
+            return response()->json('Berhasil menambahkan peserta', 200);
+        } else {
+            if ($cek->status == 'Gagal') {
+                $pembelian = new Pembelian();
+                $pembelian->paket_id = $request->paket;
+                $pembelian->user_id = $request->user;
+                $pembelian->status = 'Sukses';
+                $pembelian->jenis_pembayaran = 'Manual';
+                $pembelian->harga = $paketUjian->harga;
+                //kalo udah beli tobar batch 1
+                if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
+                    $tobar = Pembelian::where('user_id', $request->user)
+                            ->where('paket_id', '33370256-b734-470a-afe9-c7ca8421f1b3')
+                            ->where('status', 'Sukses')
+                            ->latest('updated_at')
+                            ->first();
+                    if ($tobar) {
+                        $pembelian->harga = $paketUjian->harga - $tobar->harga;
+                    }
+                }
+
+                $pembelian->save();
+
+                return response()->json('Berhasil menambahkan peserta', 200);
+            } else {
+                return response()->json('Peserta sudah membeli paket', 200);
+            }
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Pembelian $pembelian)
+    public function show($id)
     {
-        //
+        $pembelian = Pembelian::with('paketUjian', 'user', 'voucher', 'user.usersDetail')->findOrFail($id);
+        $pembelian->idTransaksi = '#' . sprintf('%06d', $pembelian->id);
+        $pembelian->tanggalTransaksi = Carbon::parse($pembelian->created_at)->isoFormat('D MMMM Y HH:mm:ss');
+        $pembelian->hargaTotal = 'Rp' . number_format($pembelian->harga , 0 , ',' , '.' );
+        return response()->json($pembelian);
     }
 
     /**

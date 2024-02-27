@@ -27,9 +27,10 @@ Data Voucher
                                 <tr>
                                     <th style="width: 5%">No</th>
                                     <th>Kode</th>
+                                    <th>Paket Ujian</th>
                                     <th>Diskon</th>
                                     <th>Sisa Kuota</th>
-                                    <th style="width: 5%"><i class="fa fa-cog"></i></th>
+                                    <th style="width: 10%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
                         </table>
@@ -50,6 +51,7 @@ Data Voucher
 </div>
 
 @includeIf('admin.voucher.form')
+@includeIf('admin.voucher.addKuota')
 
 @endsection
 
@@ -60,6 +62,8 @@ Data Voucher
     var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 
     $(function() {
+        $('#Paket').select2()
+
         tableUser = $('#Table-User').DataTable({
             processing: true
             , serverside: true
@@ -75,6 +79,9 @@ Data Voucher
                 }
                 , {
                     data: 'kode'
+                }
+                , {
+                    data: 'paket-ujian'
                 }
                 , {
                     data: 'diskon'
@@ -134,6 +141,23 @@ Data Voucher
                 }
             }
         );
+
+        $('#modal-addKuota form').on('submit', function(e) {
+            if (! e.preventDefault()) {
+                $.post($('#modal-addKuota form').attr('action'), $('#modal-addKuota form').serialize())
+                .done((response) => {
+                    $('#modal-addKuota').modal('hide');
+                    tableUser.ajax.reload();
+                    toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success(response);
+                })
+                .fail((errors) => {
+                    toastr.error('Tidak dapat menyimpan data.');
+                    return;
+                });
+                }
+            }
+        )
     });
 
     function addForm(url) {
@@ -145,6 +169,25 @@ Data Voucher
         $('#modal-form form').attr('action', url);
         $('#modal-form [name=_method]').val('post');
         $('#modal-form [name=name]').focus();
+    }
+
+    function addKuota(url) {
+        $('#modal-addKuota').modal('show');
+        $('#modal-addKuota .modal-title').text('Tambah Kuota Voucher');
+
+        $('#modal-addKuota form')[0].reset();
+        $('#modal-addKuota form').attr('action', url);
+        $('#modal-addKuota [name=_method]').val('put');
+        $('#modal-addKuota [name=name]').focus();
+
+        $.get(url)
+            .done((response) => {
+                $('#modal-addKuota [name=kode]').val(response.kode);
+            })
+            .fail((errors) => {
+                alert('Tidak dapat menampilkan data.');
+                return;
+            })
     }
 
     function deleteData(url) {

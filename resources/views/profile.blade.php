@@ -22,7 +22,7 @@ Profile
                 <div class="card mb-3">
                     <div class="card-body d-flex row">
                         <div class="col-lg-3 col-md-2">
-                            <img alt="image" width="75px" height="75px" src="{{ $user->profile_photo_url }}" class="rounded-circle profile-widget-picture">
+                            <img alt="image" width="75px" height="75px" id="infoPhoto" src="{{ $user->profile_photo_url }}" class="rounded-circle profile-widget-picture">
                         </div>
                         <div class="col-lg-9 col-md-10 align-self-center">
                             <span style="font-size: 20px" class="card-title" id="infoName">
@@ -71,7 +71,7 @@ Profile
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Data Akun</h5>
-                        <form id="formAccount" action="{{ route('profile.account') }}" method="post">
+                        <form id="formAccount" action="{{ route('profile.account') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             @method('post')
                             <div class="form-group required mb-2">
@@ -105,7 +105,15 @@ Profile
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                                 <div class="invalid-feedback">
-                                    Kolom No HP tidak boleh kosong.
+                                    Kolom sumber informasi tidak boleh kosong.
+                                </div>
+                            </div>
+                            <div class="form-group required mb-2">
+                                <label for="sumber" class="col-form-label">Foto Profil</label>
+                                <input type="file" name="image" placeholder="Pilih Foto Profil" class="form-control" id="image">
+                                <span style="color: red; font-size: 12px">*Foto formal dengan ekstensi .jpeg atau .png maksimal 2MB</span>
+                                <div class="invalid-feedback">
+                                    Kolom foto profil tidak boleh kosong.
                                 </div>
                             </div>
                             <button type="submit" id="submitAccount" class="btn btn-primary mt-4 mb-0 float-end">Simpan</button>
@@ -196,22 +204,35 @@ Profile
 
                 $('#submitAccount').html('Loading <div class="spinner-border spinner-border-sm" role="status"></div>');
                 $('#submitAccount').attr('type', 'button');
-                $.post($('#formAccount').attr('action'), $('#formAccount').serialize())
-                .done((response) => {
-                    $('#submitAccount').html(submitAccount);
-                    $('#submitAccount').attr('type', 'submit');
-                    $('#infoName').html('<b>' + response.data.name + '</b>');
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.success(response.message);
+                var formData = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('profile.account') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        $('#submitAccount').html(submitAccount);
+                        $('#submitAccount').attr('type', 'submit');
+                        if ($.isEmptyObject(response.error)) {
+                            $('#infoName').html('<b>' + response.data.name + '</b>');
+                            $("#infoPhoto").attr("src", response.data.profile_photo_url);
+                            toastr.options = {"positionClass": "toast-bottom-right"};
+                            toastr.success(response.message);
+                        } else {
+                            $.each(response.error, function (key, val) {
+                                toastr.options = {"positionClass": "toast-bottom-right"};
+                                toastr.error(val);
+                            });
+                        }
+                    },
                 })
-                .fail((errors) => {
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.error(errors);
-                    return;
-                });
-                }
             }
-        );
+        });
 
         @if ($user->usersDetail != NULL)
             @if ($user->usersDetail->provinsi != NULL && $user->usersDetail->kabupaten != NULL && $user->usersDetail->kecamatan != NULL)

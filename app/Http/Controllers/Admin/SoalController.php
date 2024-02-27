@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Soal;
 use App\Models\Ujian;
 use App\Models\Jawaban;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Collection;
 
 class SoalController extends Controller
 {
@@ -62,6 +64,18 @@ class SoalController extends Controller
             {
                 return strtoupper($soals->jenis_soal);
             })
+            ->addColumn('point', function ($soals)
+            {
+                if ($soals->jenis_soal == 'tkp') {
+                    return '-';
+                } else {
+                    return (
+                        '<span class="badge badge-success">Benar: ' . $soals->poin_benar . '</span>' .
+                        '<span class="badge badge-info">Kosong: ' . $soals->poin_kosong . '</span>' .
+                        '<span class="badge badge-danger">Salah: ' . $soals->poin_salah . '</span>'
+                    );
+                }
+            })
             ->addColumn('aksi', function ($soals) {
                 if ($soals->ujian->isPublished) {
                     return '<span class="badge badge-success">Published</span>';
@@ -85,7 +99,7 @@ class SoalController extends Controller
                     });
                 }
             })
-            ->rawColumns(['aksi', 'soal'])
+            ->rawColumns(['aksi', 'soal', 'point'])
             ->make(true);
     }
 
@@ -112,7 +126,7 @@ class SoalController extends Controller
             'jenis_soal' => 'required_if:jenis_ujian,skd',
             'soal' => 'required',
             'jawaban.*' => 'required',
-            'kunci_jawaban' => 'required_if:jenis_ujian,!=,skd|required_if:jenis_soal,!=,tkp',
+            'kunci_jawaban' => 'required_unless:jenis_ujian,skd|required_unless:jenis_soal,tkp',
             'point.*' => 'required_if:jenis_ujian,tkp',
         ], [
             'jenis_soal.required_if' => 'Jenis soal tidak boleh kosong.',
@@ -122,13 +136,36 @@ class SoalController extends Controller
             'point.*.required_if' => 'Point tidak boleh kosong.'
         ]);
 
+        $ujian = Ujian::with('soal')->findOrFail($id);
+        if ($ujian->jumlah_soal == $ujian->soal->count()) {
+            return redirect()->back()->withInput()->with('message','Soal sudah penuh.');
+        }
+
+        if ($ujian->jenis_ujian == 'skd') {
+            if ($request->jenis_soal == 'twk') {
+                if ($ujian->soal->where('jenis_soal', $request->jenis_soal)->count() == 30) {
+                    return redirect()->back()->withInput()->with('message','Soal sudah penuh.');
+                }
+            } elseif ($request->jenis_soal == 'tiu') {
+                if ($ujian->soal->where('jenis_soal', $request->jenis_soal)->count() == 35) {
+                    return redirect()->back()->withInput()->with('message','Soal sudah penuh.');
+                }
+            } elseif ($request->jenis_soal == 'tkp') {
+                if ($ujian->soal->where('jenis_soal', $request->jenis_soal)->count() == 45) {
+                    return redirect()->back()->withInput()->with('message','Soal sudah penuh.');
+                }
+            }
+        }
+
         $soal = new Soal();
         $soal->ujian_id = $id;
         $soal->soal = $request->soal;
         $soal->jenis_soal = $request->jenis_ujian == 'skd' ? $request->jenis_soal : null;
-        $soal->poin_benar = $request->nilai_benar ? $request->nilai_benar : 0;
-        $soal->poin_salah = $request->nilai_salah ? $request->nilai_salah : 0;
-        $soal->poin_kosong = $request->nilai_kosong ? $request->nilai_kosong : 0;
+        if ($request->jenis_soal != 'tkp') {
+            $soal->poin_benar = $request->nilai_benar ? $request->nilai_benar : 0;
+            $soal->poin_salah = $request->nilai_salah ? $request->nilai_salah : 0;
+            $soal->poin_kosong = $request->nilai_kosong ? $request->nilai_kosong : 0;
+        }
         $soal->pembahasan = $request->pembahasan;
         $soal->save();
 
@@ -141,10 +178,12 @@ class SoalController extends Controller
             }
             $jawaban->save();
 
-            if ($key == $request->kunci_jawaban) {
-                $inputKunci = Soal::findOrFail($soal->id);
-                $inputKunci->kunci_jawaban = $jawaban->id;
-                $inputKunci->update();
+            if ($request->jenis_soal != 'tkp') {
+                if ($key == $request->kunci_jawaban) {
+                    $inputKunci = Soal::findOrFail($soal->id);
+                    $inputKunci->kunci_jawaban = $jawaban->id;
+                    $inputKunci->update();
+                }
             }
         }
 
@@ -185,11 +224,14 @@ class SoalController extends Controller
             'jenis_soal' => 'required_if:jenis_ujian,skd',
             'soal' => 'required',
             'jawaban.*' => 'required',
-            'id_jawaban.*' => 'required'
+            'kunci_jawaban' => 'required_unless:jenis_ujian,skd|required_unless:jenis_soal,tkp',
+            'point.*' => 'required_if:jenis_ujian,tkp',
         ], [
-            'jenis_soal.required' => 'Jenis soal tidak boleh kosong.',
+            'jenis_soal.required_if' => 'Jenis soal tidak boleh kosong.',
             'soal.required' => 'Soal tidak boleh kosong.',
             'jawaban.*.required' => 'Jawaban tidak boleh kosong.',
+            'kunci_jawaban.required_if' => 'Kunci jawaban tidak boleh kosong.',
+            'point.*.required_if' => 'Point tidak boleh kosong.'
         ]);
 
         $soal = Soal::with('jawaban')->findOrFail($id);
@@ -206,7 +248,9 @@ class SoalController extends Controller
 
         foreach ($request->id_jawaban as $key => $id_jawaban) {
             $jawaban = Jawaban::findOrFail($id_jawaban);
-            $jawaban->jawaban = $request->jawaban[$key];
+            if ($request->jenis_soal != 'tkp') {
+                $jawaban->jawaban = $request->jawaban[$key];
+            }
             $jawaban->point = $request->point[$key];
             $jawaban->update();
         }

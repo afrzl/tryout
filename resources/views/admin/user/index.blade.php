@@ -266,6 +266,7 @@ Data User
                 $('#modal-detail .modal-title').text(response.name);
                 $('#modal-detail .text').text("");
                 $('#modal-detail [id=idPeserta]').text(response.id);
+                $('#modal-detail [id=fotoProfile]').html('<img id="fotoPeserta" src="' + response.profile_photo_url + '" alt="" width="100px">');
                 $('#modal-detail [id=nama]').text(response.name);
                 $('#modal-detail [id=email]').text(response.email);
 
@@ -293,9 +294,18 @@ Data User
                         console.log(error);
                     }
 
+                    let penempatan = "";
+
+                    try {
+                        const result = await getProvince(response.users_detail.penempatan)
+                        penempatan = result.data.nama;
+                    } catch (error) {
+                        console.log(error);
+                    }
+
                     $('#modal-detail [id=alamat]').text(alamat);
                     $('#modal-detail [id=asalSekolah]').text(response.users_detail.asal_sekolah);
-                    $('#modal-detail [id=penempatan]').text(response.users_detail.penempatan);
+                    $('#modal-detail [id=penempatan]').text(penempatan);
                     $('#modal-detail [id=instagram]').text(response.users_detail.instagram);
                     $('#modal-detail [id=sumber]').text(response.users_detail.sumber_informasi);
                 }

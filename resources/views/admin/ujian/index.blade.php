@@ -182,6 +182,7 @@ Data Ujian
                 $('#modal-detail [id=peraturan]').html(response.peraturan);
                 $('#modal-detail [id=waktuMulai]').text(response.waktu_mulai);
                 $('#modal-detail [id=waktuAkhir]').text(response.waktu_akhir);
+                $('#modal-detail [id=waktuPengumuman]').text(response.waktu_pengumuman);
                 $('#modal-detail [id=published]').text(response.isPublished == 0 ? 'Belum Publish' : 'Published');
                 $('#modal-detail [id=jumlahSoal]').text(response.jumlah_soal);
                 $('#modal-detail [id=jumlahSoalTerisi]').text(response.soal.length);
@@ -190,6 +191,7 @@ Data Ujian
                 $('#modal-detail [id=tampilkanNilai]').text(response.tampil_nilai == 0 ? 'Tidak' : (response.tampil_kunci == 1 ? 'Ya' : 'Ya, setelah ditutup'));
                 $('#modal-detail [id=tampilPoin]').text(response.tampil_poin == 0 ? 'Tidak' : 'Tampilkan');
                 $('#modal-detail [id=acakSoal]').text(response.random == 0 ? 'Tidak' : 'Acak');
+                $('#modal-detail [id=acakPilihan]').text(response.random_pilihan == 0 ? 'Tidak' : 'Acak');
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data.');
@@ -216,6 +218,7 @@ Data Ujian
                 $('#modal-form [name=peraturan]').summernote('code', response.peraturan);
                 $('#modal-form [name=waktu_mulai]').val(moment(response.waktu_mulai).format('D/MM/YYYY HH:mm'));
                 $('#modal-form [name=waktu_akhir]').val(moment(response.waktu_akhir).format('D/MM/YYYY HH:mm'));
+                $('#modal-form [name=waktu_pengumuman]').val(moment(response.waktu_pengumuman).format('D/MM/YYYY HH:mm'));
                 $('#modal-form [name=lama_pengerjaan]').val(parseInt(response.lama_pengerjaan));
                 $('#modal-form [name=jumlah_soal]').val(response.jumlah_soal);
                 $('#modal-form [name=tipe_ujian]').val(response.tipe_ujian);
@@ -223,6 +226,7 @@ Data Ujian
                 $('#modal-form [name=tampil_nilai]').val(response.tampil_nilai);
                 $('#modal-form [name=tampil_poin]').val(response.tampil_poin);
                 $('#modal-form [name=random]').val(response.random);
+                $('#modal-form [name=random_pilihan]').val(response.random_pilihan);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data.');
@@ -261,10 +265,16 @@ Data Ujian
     //date time picker
     $(function () {
         $('#Waktu_mulai').datetimepicker({
+            useCurrent: false,
             icons: { time: 'far fa-clock' },
             format: 'DD/MM/YYYY HH:mm'
         });
         $('#Waktu_akhir').datetimepicker({
+            useCurrent: false,
+            icons: { time: 'far fa-clock' },
+            format: 'DD/MM/YYYY HH:mm'
+        });
+        $('#Waktu_pengumuman').datetimepicker({
             useCurrent: false,
             icons: { time: 'far fa-clock' },
             format: 'DD/MM/YYYY HH:mm'
@@ -274,6 +284,7 @@ Data Ujian
         });
         $("#Waktu_akhir").on("change.datetimepicker", function (e) {
             $('#Waktu_mulai').datetimepicker('maxDate', e.date);
+            $('#Waktu_pengumuman').datetimepicker('minDate', e.date);
         });
 
         $('#deskripsi').summernote({

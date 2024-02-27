@@ -25,7 +25,7 @@ class UjianController extends Controller
     {
         $data = Pembelian::with([
                         'paketUjian.ujian' => function ($query) {
-                            $query->where('isPublished', 1);
+                            $query->orderBy('created_at', 'asc');
                         },
                         'paketUjian.ujian.ujianUser' => function ($query) {
                             $query->where('user_id', auth()->user()->id);
@@ -39,7 +39,7 @@ class UjianController extends Controller
             $data =  $data->where('paket_id', $id)->get();
         }
 
-        $tryout = new collection();
+        $tryout = new Collection();
         foreach ($data as $dt) {
             foreach ($dt->paketUjian->ujian as $ujian) {
                 $ujian['id_paket'] = $dt->paketUjian->id;
@@ -53,14 +53,20 @@ class UjianController extends Controller
     }
 
     public function ujian($id) {
-        $ujianUser = UjianUser::findOrFail($id);
-        if ($ujianUser->status == 2) {
-            abort(403, 'ERROR');
+        $ujianUser = UjianUser::with('ujian')->findOrFail($id);
+        if ($ujianUser->user_id != auth()->user()->id) {
+            abort(404);
         }
 
-        $preparation = JawabanPeserta::with(['soal', 'soal.jawaban' => function ($q)
+        if ($ujianUser->status == 2) {
+            abort(403, 'Anda sudah mengerjakan ujian ini');
+        }
+
+        $preparation = JawabanPeserta::with(['soal', 'soal.jawaban' => function ($q) use ($ujianUser)
         {
-            $q->inRandomOrder();
+            if ($ujianUser->ujian->random_pilihan == 1) {
+                $q->inRandomOrder();
+            }
         }, 'soal.ujian'])
                 ->where('ujian_user_id', $id);
         $ragu_ragu = $preparation->pluck('ragu_ragu');
@@ -310,11 +316,14 @@ class UjianController extends Controller
             abort(403, 'ERROR');
         }
 
+        $user = User::with('usersDetail')->find(auth()->user()->id);
+
         $ujianUser = UjianUser::with('user.usersDetail')
                         ->where('ujian_id', $id)
                         ->where('is_first', 1)
                         ->orderBy('nilai', 'desc')
                         ->get();
+        $ujianUser = $ujianUser->where('user.usersDetail.prodi', $user->usersDetail->prodi)->values();
         $totalRank = $ujianUser->count();
         $rankUser = $ujianUser->where('user_id', auth()->user()->id);
         $rank = $rankUser->keys()->first() + 1;
@@ -323,8 +332,9 @@ class UjianController extends Controller
         $totalRankFormasi = $userFormasi->count();
         $rankUserFormasi = $userFormasi->where('user_id', auth()->user()->id);
         $rankUserFormasi = $rankUserFormasi->keys()->first() + 1;
+        // return $userFormasi;
 
-        return view('views_user.nilai.index', compact('ujian', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi'));
+        return view('views_user.nilai.index', compact('ujian', 'ujianUser', 'userFormasi', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi'));
     }
 
     /**

@@ -46,6 +46,19 @@ class PembelianController extends Controller
             $pembelian->user_id = auth()->user()->id;
             $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
             $pembelian->harga = $paketUjian->harga;
+
+            //kalo udah beli tobar batch 1
+            if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
+                $tobar = Pembelian::where('user_id', auth()->user()->id)
+                        ->where('paket_id', '33370256-b734-470a-afe9-c7ca8421f1b3')
+                        ->where('status', 'Sukses')
+                        ->latest('updated_at')
+                        ->first();
+                if ($tobar) {
+                    $pembelian->harga = $paketUjian->harga - $tobar->harga;
+                }
+            }
+
             $pembelian->save();
             $id_pembelian = $pembelian->id;
         } else {
@@ -55,6 +68,18 @@ class PembelianController extends Controller
                 $pembelian->user_id = auth()->user()->id;
                 $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
                 $pembelian->harga = $paketUjian->harga;
+                //kalo udah beli tobar batch 1
+                if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
+                    $tobar = Pembelian::where('user_id', auth()->user()->id)
+                            ->where('paket_id', '33370256-b734-470a-afe9-c7ca8421f1b3')
+                            ->where('status', 'Sukses')
+                            ->latest('updated_at')
+                            ->first();
+                    if ($tobar) {
+                        $pembelian->harga = $paketUjian->harga - $tobar->harga;
+                    }
+                }
+
                 $pembelian->save();
 
                 $id_pembelian = $pembelian->id;
@@ -85,12 +110,13 @@ class PembelianController extends Controller
             return response()->json('Invalid.', 300);
         }
 
-        $voucher = Voucher::where('kode', $request->voucher)->first();
-        if (!$voucher) {
-            return response()->json('Voucher invalid.', 300);
-        }
-
         if ($pembelian->voucher_id == NULL) {
+            $voucher = Voucher::where('kode', $request->voucher)
+                            ->where('paket_ujian_id', $pembelian->paket_id)
+                            ->first();
+            if (!$voucher) {
+                return response()->json('Voucher invalid.', 300);
+            }
             if ($voucher->himada_id != NULL || $voucher->kuota > 0) {
                 $voucher->kuota = $voucher->himada_id == NULL ? $voucher->kuota - 1 : 0;
                 $voucher->update();
@@ -100,10 +126,12 @@ class PembelianController extends Controller
 
                 return response()->json('Voucher berhasil dipakai.', 200);
             } else {
-                return response()->json('Voucher invalid.', 300);
+                return response()->json('Voucher sudah habis.', 300);
             }
         } else {
+            $voucher = Voucher::findOrFail($pembelian->voucher_id);
             $pembelian->voucher_id = NULL;
+            $pembelian->harga += $voucher->diskon;
             $pembelian->update();
 
             $voucher->kuota = $voucher->himada_id == NULL ? $voucher->kuota + 1 : 0;

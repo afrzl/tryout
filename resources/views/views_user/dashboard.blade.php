@@ -133,36 +133,42 @@ Dashboard
 
             <div class="row" data-aos="fade-left">
                 @if($pakets->isEmpty())
-                    <div class="alert alert-primary" role="alert">Paket Ujian belum tersedia</div>
+                <div class="alert alert-primary" role="alert">Paket Ujian belum tersedia</div>
                 @else
-                    @foreach ($pakets as $paket)
-                    <div class="col-lg-3 col-md-6 mt-4 mb-4 mt-lg-0">
-                        <div class="box" data-aos="zoom-in" data-aos-delay="400">
-                            @if($paket->id == '03dfc817-3ee3-404c-b162-e1a4acb8ff73')
-                                <span class="advanced">Terlaris</span>
-                            @endif
-                            <h3>{{ $paket->nama }}</h3>
-                            <h4><sup>Rp</sup>{{ number_format($paket->harga , 0 , ',' , '.' ) }}</h4>
-                            {!! $paket->deskripsi !!}
-                            <div class="btn-wrap">
-                                @if($paket->pembelian->isEmpty() || !auth()->check())
-                                    @if(Carbon\Carbon::now()->between($paket->waktu_mulai, $paket->waktu_akhir))
-                                        <form method="post" action="{{ route('pembelian.store') }}">
-                                        @csrf
-                                        @method('post')
-                                        <input type="hidden" name="paket_id" value="{{ $paket->id }}">
-                                        <button type="submit" class="btn-buy">Beli Paket</button>
-                                    @else
-                                        <button type="button" style="background-color: grey; border-color: black" class="btn-buy">Belum tersedia</button>
-                                    @endif
+                @foreach ($pakets as $paket)
+                <div class="col-lg-4 col-md-6 mt-4 mb-4 mt-lg-0">
+                    <div class="box" data-aos="zoom-in" data-aos-delay="400">
+                        @if($paket->id == '03dfc817-3ee3-404c-b162-e1a4acb8ff73')
+                        <span class="advanced">Terlaris</span>
+                        @endif
+                        <h3>{{ $paket->nama }}</h3>
+                        <h4><sup>Rp</sup>{{ number_format($paket->harga , 0 , ',' , '.' ) }}</h4>
+                        {!! $paket->deskripsi !!}
+                        <div class="btn-wrap">
+                            @if($paket->pembelian->isEmpty() || !auth()->check())
+                            @if(Carbon\Carbon::now()->between($paket->waktu_mulai, $paket->waktu_akhir))
+                            <form method="post" action="{{ route('pembelian.store') }}">
+                                @csrf
+                                @method('post')
+                                <input type="hidden" name="paket_id" value="{{ $paket->id }}">
+                                <button type="submit" class="btn-buy">Beli Paket</button>
                                 @else
-                                    <a href="{{ route('tryout.index', $paket->id) }}" type="button" style="background-color: grey; border-color: black" class="btn-buy">Lihat Paket</a>
+                                <button type="button" style="background-color: grey; border-color: black" class="btn-buy">Belum tersedia</button>
                                 @endif
-                                </form>
-                            </div>
+                                @else
+                                @if($paket->pembelian[0]->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')
+                                <a href="https://bius.ukmbimbelstisofficial.com" target="_blank" type="button" style="width: 12rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Website BIUS</a>
+                                <a href="https://chat.whatsapp.com/GQefjygQnl82v9OlXwpPbL" target="_blank" type="button" style="width: 10rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Grup WA</a>
+                                @else
+                                <a href="https://chat.whatsapp.com/BzxL0RHOfXd1QhukyYzXTz" target="_blank" type="button" style="width: 10rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Grup WA</a>
+                                @endif
+                                <a href="{{ route('tryout.index', $paket->id) }}" type="button" style="width: 10rem; background-color: grey; border: 2px solid; border-color: black" class="btn-buy">Lihat Paket</a>
+                                @endif
+                            </form>
                         </div>
                     </div>
-                    @endforeach
+                </div>
+                @endforeach
                 @endif
             </div>
 
@@ -306,19 +312,19 @@ Dashboard
                         <div class="phone">
                             <i class="bi bi-phone"></i>
                             <h4>Contact Person 1:</h4>
-                            <p><a style="color: inherit;" href="https://wa.me/6282163859215">082163859215 (Fira)</a></p>
+                            <p><a style="color: inherit;" target="_blank" href="https://wa.me/6282163859215">082163859215 (Fira)</a></p>
                         </div>
 
                         <div class="phone">
                             <i class="bi bi-phone"></i>
                             <h4>Contact Person 2:</h4>
-                            <p><a style="color: inherit;" href="https://wa.me/6285813626170">085813626170 (Nayya)</a></p>
+                            <p><a style="color: inherit;" target="_blank" href="https://wa.me/6285813626170">085813626170 (Nayya)</a></p>
                         </div>
 
                         <div class="phone">
                             <i class="bi bi-phone"></i>
                             <h4>Contact Person 3:</h4>
-                            <p><a style="color: inherit;" href="https://wa.me/682259524985">082259524985 (Rafli)</a></p>
+                            <p><a style="color: inherit;" target="_blank" href="https://wa.me/6282259524985">082259524985 (Rafli)</a></p>
                         </div>
 
                     </div>
@@ -327,7 +333,9 @@ Dashboard
 
                 <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
 
-                    <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+                    <form action="{{ route('sendEmail') }}" method="post" role="form" class="php-email-form">
+                        @csrf
+                        @method('post')
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <input type="text" name="name" class="form-control" id="name" placeholder="Nama Lengkap" required>
@@ -359,3 +367,76 @@ Dashboard
 
 </main><!-- End #main -->
 @endsection
+
+@push('scripts')
+<script>
+    (function() {
+        "use strict";
+
+        let forms = document.querySelectorAll(".php-email-form");
+
+        forms.forEach(function(e) {
+            e.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                let thisForm = this;
+
+                let action = thisForm.getAttribute("action");
+                let recaptcha = thisForm.getAttribute("data-recaptcha-site-key");
+
+                if (!action) {
+                    displayError(thisForm, "The form action property is not set!");
+                    return;
+                }
+                thisForm.querySelector(".loading").classList.add("d-block");
+                thisForm.querySelector(".error-message").classList.remove("d-block");
+                thisForm.querySelector(".sent-message").classList.remove("d-block");
+
+                let formData = new FormData(thisForm);
+
+                if (recaptcha) {
+                    if (typeof grecaptcha !== "undefined") {
+                        grecaptcha.ready(function() {
+                            try {
+                                grecaptcha.execute(recaptcha, {
+                                    action: "php_email_form_submit"
+                                }).then((token) => {
+                                    formData.set("recaptcha-response", token);
+                                    php_email_form_submit(thisForm, action, formData);
+                                });
+                            } catch (error) {
+                                displayError(thisForm, error);
+                            }
+                        });
+                    } else {
+                        displayError(thisForm, "The reCaptcha javascript API url is not loaded!");
+                    }
+                } else {
+                    php_email_form_submit(thisForm, action, formData);
+                }
+            });
+        });
+
+        function php_email_form_submit(thisForm, action, formData) {
+            fetch(action, {
+                method: "POST"
+                , body: formData
+                , headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            , }).then((response) => {
+                thisForm.querySelector(".loading").classList.remove("d-block");
+                thisForm.querySelector(".sent-message").classList.add("d-block");
+                thisForm.reset();
+            });
+        }
+
+        function displayError(thisForm, error) {
+            thisForm.querySelector(".loading").classList.remove("d-block");
+            thisForm.querySelector(".error-message").innerHTML = error;
+            thisForm.querySelector(".error-message").classList.add("d-block");
+        }
+    })();
+
+</script>
+@endpush

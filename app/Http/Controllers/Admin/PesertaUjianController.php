@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\JawabanPeserta;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Database\Eloquent\Collection;
 
 class PesertaUjianController extends Controller
 {
@@ -25,7 +26,10 @@ class PesertaUjianController extends Controller
 
     public function data()
     {
-        $ujians = Ujian::with('ujianUser')->where('isPublished', 1)->orderBy('created_at', 'desc');
+        $ujians = Ujian::with(['ujianUser', 'paketUjian', 'paketUjian.pembelian' => function($query) {
+                                            $query->where('status', 'Sukses');
+                                        }])
+                ->orderBy('created_at', 'desc');
 
         return datatables()
             ->eloquent($ujians)
@@ -36,7 +40,15 @@ class PesertaUjianController extends Controller
             })
             ->addColumn('jumlah_peserta', function ($ujians)
             {
-                return $ujians->ujianUser->where('is_first', 1)->count();
+                // return $ujians->ujianUser->where('is_first', 1)->count();
+                $user = new Collection();
+                foreach ($ujians->paketUjian as $paket) {
+                    foreach ($paket->pembelian as $pembelian) {
+                        $user[] = $pembelian;
+                    }
+                }
+                $user = $user->unique('user_id')->values();
+                return $user->count();
             })
             ->addColumn('peserta_mengerjakan', function ($ujians)
             {
@@ -79,10 +91,23 @@ class PesertaUjianController extends Controller
         $peserta = UjianUser::with('ujian', 'user', 'user.sessions', 'jawabanPeserta.soal')
                     ->where('ujian_id', $id)
                     ->where('is_first', 1)
-                    ->orderBy('created_at', 'desc');
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        $ujians = Ujian::with(['ujianUser', 'paketUjian.pembelian' => function($query) {
+                                            $query->where('status', 'Sukses');
+                                        }])
+                ->findOrFail($id);
+        foreach ($ujians->paketUjian as $paket) {
+            foreach ($paket->pembelian as $pembelian) {
+                $pembelian->status = '0';
+                $peserta[] = $pembelian;
+            }
+        }
+        $peserta = $peserta->unique('user_id')->values();
 
         return datatables()
-            ->eloquent($peserta)
+            ->collection($peserta)
             ->addIndexColumn()
             ->addColumn('nama', function ($peserta)
             {
@@ -106,7 +131,7 @@ class PesertaUjianController extends Controller
             {
                 $class = $peserta->status == '2' ? 'success' : ($peserta->status == '1' ? 'warning' : 'danger');
 
-                return '<span class="badge badge-' . $class . '">' . $peserta->status == 1 ? 'Sedang Mengerjakan' : 'Selesai' . '</span>';
+                return '<span class="badge badge-' . $class . '">' . ($peserta->status == 1 ? 'Sedang Mengerjakan' : ($peserta->status == 0 ? 'Belum Mengerjakan' : 'Selesai')) . '</span>';
             })
             ->addColumn('nilai', function ($peserta)
             {
@@ -115,7 +140,7 @@ class PesertaUjianController extends Controller
                         return "<span class='badge badge-success'>TWK : {$peserta->nilai_twk}</span>
                                 <br><span class='badge badge-success'>TIU : {$peserta->nilai_tiu}</span>
                                 <br><span class='badge badge-success'>TKP : {$peserta->nilai_tkp}</span>
-                                <br><span class='badge badge-success'>Total : {$peserta->nilai}</span>";
+                                <br><span class='badge badge-info'>Total : {$peserta->nilai}</span>";
                     } else {
                         return '<span class="badge badge-success">' . $peserta->nilai . '</span>';
                     }
@@ -136,40 +161,57 @@ class PesertaUjianController extends Controller
             ->make(true);
     }
 
+    public function showPeserta($id)
+    {
+        $data = UjianUser::with('ujian', 'user', 'jawabanPeserta.soal.jawaban')
+                    ->find($id);
+
+        return view('admin.peserta_ujian.showPeserta', compact('data'));
+    }
+
     public function showDataPeserta($id)
     {
-        $jawaban = JawabanPeserta::with(['pembelian', 'soal', 'soal.jawaban'])
-                    ->where('pembelian_id', $id)
-                    ->get();
+        $data = UjianUser::with('jawabanPeserta.soal.jawaban')
+                    ->find($id);
+        $data = $data->jawabanPeserta;
 
         return datatables()
-            ->of($jawaban)
+            ->of($data)
             ->addIndexColumn()
-            ->addColumn('soal', function ($jawaban)
+            ->addColumn('soal', function ($data)
             {
-                $text = $jawaban->soal->soal . '</br><table>';
-                foreach ($jawaban->soal->jawaban as $key => $item) {
+                $text = $data->soal->soal . '</br><table>';
+                foreach ($data->soal->jawaban as $key => $item) {
                     $text .= '<tr><td style="border: none">';
-                    if ($item->id == $jawaban->jawaban_id) {
-                        $text .= '<span class="badge badge-warning">' . chr($key+65) . '. </span>';
+                    if ($item->id == $data->soal->kunci_jawaban) {
+                        $text .= '<span class="badge badge-success">' . chr($key+65) . '. </span>';
                     } else {
                         $text .= chr($key+65) . '.';
                     }
                     $text .= '</td><td style="border: none">';
-                    if ($item->id == $jawaban->soal->id_kunci_jawaban) {
+                    if ($item->id == $data->jawaban_id) {
                         $text .= '<font color="red"><b>'. $item->jawaban .'</b></font>';
                     } else {
                         $text .= $item->jawaban;
                     }
+
+                    if ($data->soal->jenis_soal == 'tkp') {
+                        $text .= ' <font color="green"><i>('. $item->point .')</i></font>';
+                    }
+
                     $text .= '</td></tr>';
                 }
                 $text .= '</table>';
 
                 return $text;
             })
-            ->addColumn('status', function ($jawaban) {
-                if ($jawaban->jawaban_id != 0) {
-                    if ($jawaban->soal->id_kunci_jawaban == $jawaban->jawaban_id) {
+            ->addColumn('status', function ($data) {
+                if ($data->soal->jenis_soal == 'tkp') {
+                    return '-';
+                }
+
+                if ($data->jawaban_id != NULL) {
+                    if ($data->soal->kunci_jawaban == $data->jawaban_id) {
                         return '<span class="badge badge-success">Benar</span>';
                     } else {
                         return '<span class="badge badge-danger">Salah</span>';
@@ -193,8 +235,6 @@ class PesertaUjianController extends Controller
                     if($response->getStatusCode() == 200){
                         continue;
                     }
-                    // $request = Request::create(APPLICATION_URL . 'ujian.selesai', 'PUT', []);
-                    // $request->headers->set('X-CSRF-TOKEN', csrf_token());
                 }
             }
         }
@@ -216,31 +256,6 @@ class PesertaUjianController extends Controller
     public function store(Request $request)
     {
         //
-    }
-
-    public function showPeserta($id)
-    {
-        // $pembelian = Pembelian::with([
-        //                 'ujian.soal.jawaban',
-        //                 'ujian.soal.jawabanPeserta' => function ($query) use ($id)
-        //                 {
-        //                     $query->where('jawaban_peserta.pembelian_id', $id);
-        //                 }
-        //                 ])
-        //             ->find($id);
-        // return $pembelian->ujian->soal;
-
-        $pembelian = Pembelian::with('ujian', 'user', 'jawabanPeserta.soal')
-                    ->find($id);
-
-        $benar = 0;
-        foreach ($pembelian->jawabanPeserta as $key => $jawabanPeserta) {
-            if ($jawabanPeserta->jawaban_id == $jawabanPeserta->soal->id_kunci_jawaban) {
-                $benar++;
-            }
-        }
-
-        return view('admin.peserta_ujian.showPeserta', compact('pembelian', 'benar'));
     }
 
     /**

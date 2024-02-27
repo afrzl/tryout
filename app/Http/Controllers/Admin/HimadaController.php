@@ -90,7 +90,8 @@ class HimadaController extends Controller
             'kode' => $request->kode,
             'diskon' => 0,
             'himada_id' => $user->id,
-            'is_active' => true
+            'is_active' => true,
+            'paket_ujian_id' => 'd5f57505-fb5a-4f59-a301-3722ef581844'
         ]);
 
         return response()->json('Berhasil menambahkan himada', 200);

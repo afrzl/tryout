@@ -30,12 +30,14 @@ class Ujian extends Model
         'lama_pengerjaan',
         'waktu_mulai',
         'waktu_akhir',
+        'waktu_pengumuman',
         'isPublished',
         'tipe_ujian',
         'tampil_kunci',
         'tampil_nilai',
         'tampil_poin',
         'random',
+        'random_pilihan',
         'jumlah_soal'
     ];
 

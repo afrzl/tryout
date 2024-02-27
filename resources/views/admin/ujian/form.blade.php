@@ -66,6 +66,15 @@
                         </div>
                     </div>
                     <div class="form-group row required">
+                        <label for="Waktu_pengumuman" class="col-sm-3 col-form-label control-label datetimepicker-input">Pengumuman Ujian</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="waktu_pengumuman" id="Waktu_pengumuman" class="form-control datetimepicker-input" placeholder="Pengumuman Ujian" data-toggle="datetimepicker" data-target="#Waktu_pengumuman" required>
+                            <div class="invalid-feedback">
+                                Kolom pengumuman ujian tidak boleh kosong.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row required">
                         <label for="lama_pengerjaan" class="col-sm-3 col-form-label control-label">Lama Pengerjaan</label>
                         <div class="col-sm-9">
                             <input type="number" name="lama_pengerjaan" id="lama_pengerjaan" class="form-control" placeholder="Lama Pengerjaan" required>
@@ -142,6 +151,18 @@
                             </select>
                             <div class="invalid-feedback">
                                 Kolom acak soal tidak boleh kosong.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row required">
+                        <label for="Random_pilihan" class="col-sm-3 col-form-label control-label">Acak Pilihan</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="random_pilihan" id="Random_pilihan" required>
+                                <option value="0">Tidak</option>
+                                <option value="1">Ya</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Kolom acak pilihan tidak boleh kosong.
                             </div>
                         </div>
                     </div>

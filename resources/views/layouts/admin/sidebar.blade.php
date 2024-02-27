@@ -56,7 +56,9 @@
                         </p>
                     </a>
                 </li>
+                @endrole
                 <li class="nav-header">Data Ujian</li>
+                @role('admin')
                 <li class="nav-item">
                     <a href="{{ route('admin.paket.index') }}" class="nav-link {{ (request()->segment(2) == 'paket') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cubes"></i>
@@ -65,6 +67,7 @@
                         </p>
                     </a>
                 </li>
+                @endrole
                 <li class="nav-item">
                     <a href="{{ route('admin.ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'ujian') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-book"></i>
@@ -73,6 +76,7 @@
                         </p>
                     </a>
                 </li>
+                @hasrole('admin')
                 <li class="nav-item">
                     <a href="{{ route('admin.voucher.index') }}" class="nav-link {{ (request()->segment(2) == 'voucher') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-ticket"></i>
@@ -81,6 +85,7 @@
                         </p>
                     </a>
                 </li>
+                @endrole
                 <li class="nav-header">Data Peserta Ujian</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.peserta_ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'peserta_ujian') ? 'active' : '' }}">
@@ -98,8 +103,6 @@
                         </p>
                     </a>
                 </li>
-
-                @endrole
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

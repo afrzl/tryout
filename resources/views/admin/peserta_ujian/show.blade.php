@@ -116,8 +116,9 @@ Data Peserta Ujian
                 'copy', 'excel', 'pdf'
             ]
             , columnDefs: [
-                { className: 'text-center', targets: [0, 3, 4, 6] },
+                { className: 'text-center', targets: [0, 3, 4, 5, 6] },
             ]
+            , order: [[3, 'desc']]
         });
     });
 
@@ -128,8 +129,8 @@ Data Peserta Ujian
                 tableShow.ajax.reload();
                 toastr.options = {
                     "positionClass": "toast-bottom-right",
-                    "closeButton" : true,
-                    "progressBar" : true
+                    "closeButton": true,
+                    "progressBar": true
                 };
                 toastr.success('Data berhasil diperbarui.');
             }

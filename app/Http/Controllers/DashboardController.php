@@ -3,22 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Mail\Message;
 use App\Models\Ujian;
 use App\Models\Pembelian;
 use App\Models\PaketUjian;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Response;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         if (!auth()->check()) {
-            $pakets = PaketUjian::orderBy('waktu_mulai', 'asc')->get();
+            $pakets = PaketUjian::orderBy('created_at', 'asc')->get();
             return view('views_user.dashboard', compact('pakets'));
         } else {
             $pakets = PaketUjian::with(['pembelian' => function($query) {
                             $query->where('user_id', auth()->user()->id)->where('status', "Sukses");
-                        }])->orderBy('waktu_mulai', 'asc')->get();
+                        }])->orderBy('created_at', 'asc')->get();
             // return $pakets;
             return view('views_user.dashboard', compact('pakets'));
         }
@@ -26,7 +29,7 @@ class DashboardController extends Controller
 
     public function adminIndex()
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (!(auth()->user()->hasRole('admin') || auth()->user()->hasRole('panitia'))) {
             abort(403, 'Error!');
         }
 
@@ -42,5 +45,13 @@ class DashboardController extends Controller
         $data['user'] = User::doesntHave('roles')->count();
 
         return view('admin.dashboard', compact('data'));
+    }
+
+    public function sendEmail(Request $request) {
+        Mail::to('pj3prokerbesar@gmail.com')->send(new Message($request));
+
+        return response()->json([
+            'message' => 'Sukses'
+        ], 200); // Status code here
     }
 }

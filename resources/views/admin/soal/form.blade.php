@@ -146,16 +146,16 @@ Data Soal Ujian {{ $ujian->nama }}
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group">
-                                    <label for="pembahasan" class="col-sm-3 col-form-label">Pembahasan</label>
-                                    <textarea id="pembahasan" class="@error('pembahasan') is-invalid @enderror" autofocus hidden name="pembahasan">{{ old('pembahasan', $soal->pembahasan) }}
-                                    </textarea>
-                                    @error('pembahasan')
-                                        <div class="invalid-feedback">
-                                            <h6>{{ $message }}</h6>
-                                        </div>
-                                    @enderror
-                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pembahasan" class="col-sm-3 col-form-label">Pembahasan</label>
+                                <textarea id="pembahasan" class="@error('pembahasan') is-invalid @enderror" autofocus hidden name="pembahasan">{{ old('pembahasan', $soal->pembahasan) }}
+                                </textarea>
+                                @error('pembahasan')
+                                    <div class="invalid-feedback">
+                                        <h6>{{ $message }}</h6>
+                                    </div>
+                                @enderror
                             </div>
                         </div>
                         <button type="submit" class="btn btn-outline-success mt-3 float-right">Save</button>
@@ -218,5 +218,15 @@ Data Soal Ujian {{ $ujian->nama }}
         $('.point').attr('hidden', true);
         $('.nontkp').attr('hidden', false);
     }
+
+    @if(Session::has('message'))
+    toastr.options =
+    {
+        "positionClass": "toast-bottom-right",
+        "closeButton" : true,
+        "progressBar" : true
+    }
+        toastr.success("{{ session('message') }}");
+    @endif
 </script>
 @endpush

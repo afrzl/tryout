@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Pembelian;
+use App\Models\PaketUjian;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -23,6 +24,7 @@ class Voucher extends Model
         'diskon',
         'himada_id',
         'kuota',
+        'paket_ujian_id',
     ];
 
     /**
@@ -43,5 +45,15 @@ class Voucher extends Model
     public function pembelian()
     {
         return $this->hasMany(Pembelian::class, 'voucher_id', 'id');
+    }
+
+    /**
+     * Get the paketUjian that owns the Voucher
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function paketUjian()
+    {
+        return $this->belongsTo(PaketUjian::class);
     }
 }

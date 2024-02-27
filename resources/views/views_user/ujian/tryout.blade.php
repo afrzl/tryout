@@ -344,13 +344,17 @@
                                             </div>
                                         </div>
                                         <div class="widget-49-meeting-points">
-                                            {{ $to->deskripsi }}
+                                            {!! $to->deskripsi !!}
                                         </div>
                                         <div class="widget-49-meeting-action mt-2 {{ $to->ujianUser->count() > 0 ? 'd-flex justify-content-between' : '' }}">
                                             @if($to->ujianUser->count() > 0)
                                                 <a href="{{ route('tryout.nilai', $to->id) }}" class="btn btn-success">Nilai</a>
                                             @endif
-                                            <a href="{{ route('tryout.show', $to->id) }}" class="btn btn-primary">Masuk</a>
+                                            @if(Carbon\Carbon::now() > $to->waktu_mulai)
+                                                <a href="{{ route('tryout.show', $to->id) }}" class="btn btn-primary">Masuk</a>
+                                            @else
+                                                <button class="btn btn-danger">Ujian Belum Dimulai</button>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

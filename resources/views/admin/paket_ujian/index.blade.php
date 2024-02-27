@@ -125,8 +125,8 @@ Data Paket Ujian
                 .done((response) => {
                     $('#modal-form').modal('hide');
                     tableUjian.ajax.reload();
-                    toastr.success('Data berhasil disimpan.');
                     toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success('Data berhasil disimpan.');
                 })
                 .fail((errors) => {
                     toastr.error('Tidak dapat menyimpan data.');

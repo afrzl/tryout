@@ -8,24 +8,6 @@
 <main id="main">
     <div class="container mb-4" style="margin-top: 124px">
         <div class="row" style="justify-content:center">
-            <div class="col-lg-12">
-                @if(Carbon\Carbon::now() > $ujian->waktu_akhir)
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h3 class="card-title"><b>Peringkat Peserta</b></h3>
-                        <p class="card-text" style="font-size: 17px">
-                            Peringkat Nasional : <span class="badge badge-primary">{{ $rank }} dari {{ $totalRank }}</span> peserta
-                            <br />
-                            Peringkat Formasi : <span class="badge bg-success">{{ $rankUserFormasi }} dari {{ $totalRankFormasi }}</span> peserta
-                        </p>
-                    </div>
-                </div>
-                @else
-                <div class="alert alert-primary" role="alert">
-                    Pemeringkatan nasional maupun formasi akan tersedia mulai {{ Carbon\Carbon::parse($ujian->waktu_akhir)->isoFormat('D MMMM Y HH:mm:ss') }}
-                </div>
-                @endif
-            </div>
             <div class="col-lg-5 mb-3">
                 <div class="card mb-3">
                     <div class="card-body">
@@ -88,6 +70,78 @@
                 </div>
             </div>
             <div class="col-lg-7">
+                <div class="col-lg-12">
+                    @if(Carbon\Carbon::now() > $ujian->waktu_pengumuman)
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="card-title"><b>Peringkat Peserta</b></h3>
+                            <p class="card-text" style="font-size: 17px">
+                                Peringkat Nasional : <span class="badge badge-primary">{{ $rank }} dari {{ $totalRank }}</span> peserta
+                                <br />
+                                Peringkat Formasi : <span class="badge bg-success">{{ $rankUserFormasi }} dari {{ $totalRankFormasi }}</span> peserta
+                            </p>
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="nasional-tab" data-bs-toggle="tab" data-bs-target="#nasional" type="button" role="tab" aria-controls="nasional" aria-selected="true">Pemeringkatan Nasional</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="formasi-tab" data-bs-toggle="tab" data-bs-target="#formasi" type="button" role="tab" aria-controls="formasi" aria-selected="false">Pemeringkatan Formasi</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="nasional" role="tabpanel" aria-labelledby="nasional-tab">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 15%">Peringkat</th>
+                                                <th>Nama Peserta</th>
+                                                <th>Nilai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($ujianUser as $no => $user)
+                                            @if ($no < 3 || $no==$rank - 1)
+                                            <tr>
+                                                <td style="text-align: center">@if($no == $rank - 1) <b>{{ $no+1 }}.</b> @else {{ $no+1 }}. @endif</td>
+                                                <td>@if($no == $rank - 1) <b>{{ $user->user->name }}</b> @else {{ $user->user->name }} @endif</td>
+                                                <td>@if($no == $rank - 1) <b>{{ $user->nilai }}</b> @else {{ $user->nilai }} @endif</td>
+                                            </tr>
+                                            @endif
+                                                @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="formasi" role="tabpanel" aria-labelledby="formasi-tab">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 15%">Peringkat</th>
+                                                <th>Nama Peserta</th>
+                                                <th>Nilai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($userFormasi as $no => $user)
+                                            @if ($no < 3 || $no==$rankUserFormasi - 1)
+                                            <tr>
+                                                <td style="text-align: center">@if($no == $rankUserFormasi - 1) <b>{{ $no+1 }}.</b> @else {{ $no+1 }}. @endif</td>
+                                                <td>@if($no == $rankUserFormasi - 1) <b>{{ $user->user->name }}</b> @else {{ $user->user->name }} @endif</td>
+                                                <td>@if($no == $rankUserFormasi - 1) <b>{{ $user->nilai }}</b> @else {{ $user->nilai }} @endif</td>
+                                            </tr>
+                                            @endif
+                                                @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                    <div class="alert alert-primary" role="alert">
+                        Pemeringkatan nasional maupun formasi akan tersedia mulai {{ Carbon\Carbon::parse($ujian->waktu_pengumuman)->isoFormat('D MMMM Y HH:mm:ss') }}
+                    </div>
+                    @endif
+                </div>
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">History Jawaban Ujian</h5>
@@ -96,34 +150,38 @@
                                 <tr>
                                     <th style="width:15%">No.</th>
                                     <th>Jawaban</th>
+                                    @if($ujian->tampil_kunci == 1 || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir))
                                     <th>Kunci</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($ujian->ujianUser[0]->jawabanPeserta as $key => $jawaban)
-                                    <tr>
-                                        <td>{{ $key+1 }}.</td>
-                                        @if($jawaban->jawaban_id == NULL)
-                                            <td>-</td>
-                                        @else
-                                            @foreach ($jawaban->soal->jawaban as $key => $jwb)
-                                                @if($jwb->id == $jawaban->jawaban_id)
-                                                <td>{{ chr($key+65) }}</td>
-                                                @endif
-                                            @endforeach
-                                        @endif
-                                        @foreach ($jawaban->soal->jawaban as $key => $jwb)
-                                            @if($jawaban->soal->jenis_soal == 'tkp')
-                                                @if($jwb->point == 5)
-                                                    <td>{{ chr($key+65) }}</td>
-                                                @endif
-                                            @else
-                                                @if($jwb->id == $jawaban->soal->kunci_jawaban)
-                                                    <td>{{ chr($key+65) }}</td>
-                                                @endif
-                                            @endif
-                                        @endforeach
-                                    </tr>
+                                <tr>
+                                    <td>{{ $key+1 }}.</td>
+                                    @if($jawaban->jawaban_id == NULL)
+                                    <td>-</td>
+                                    @else
+                                    @foreach ($jawaban->soal->jawaban as $key => $jwb)
+                                    @if($jwb->id == $jawaban->jawaban_id)
+                                    <td>{{ chr($key+65) }}</td>
+                                    @endif
+                                    @endforeach
+                                    @endif
+                                    @if($ujian->tampil_kunci == 1 || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir))
+                                    @foreach ($jawaban->soal->jawaban as $key => $jwb)
+                                    @if($jawaban->soal->jenis_soal == 'tkp')
+                                    @if($jwb->point == 5)
+                                    <td>{{ chr($key+65) }}</td>
+                                    @endif
+                                    @else
+                                    @if($jwb->id == $jawaban->soal->kunci_jawaban)
+                                    <td>{{ chr($key+65) }}</td>
+                                    @endif
+                                    @endif
+                                    @endforeach
+                                    @endif
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>

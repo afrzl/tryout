@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Ujian;
 use App\Traits\Uuids;
+use App\Models\Voucher;
 use App\Models\Pembelian;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,6 +46,16 @@ class PaketUjian extends Model
     public function pembelian()
     {
         return $this->hasMany(Pembelian::class, 'paket_id', 'id');
+    }
+
+    /**
+     * Get all of the voucher for the PaketUjian
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function voucher()
+    {
+        return $this->hasMany(Voucher::class, 'paket_ujian_id', 'id');
     }
 
 }

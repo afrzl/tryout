@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\UsersDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -21,7 +22,7 @@ class UserController extends Controller
     {
         $users = User::with('usersDetail')
                 ->doesntHave('roles')
-                ->orderBy('created_at', 'asc');
+                ->orderBy('created_at', 'desc');
 
         return datatables()
             ->eloquent($users)
@@ -55,7 +56,7 @@ class UserController extends Controller
         $user = User::with('usersDetail', 'sessions')->find($id);
 
         foreach ($user->sessions as $session) {
-            $session->last_activity = Carbon::parse($session->last_activity)->diffForHumans();
+            $session->last_activity = Carbon::createFromTimestamp($session->last_activity)->diffForHumans();
         }
 
         return response()->json($user);
@@ -80,7 +81,12 @@ class UserController extends Controller
             'password' => 'required|min:8',
         ]);
 
-        $user = User::create($request->all());
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+            'email_verified_at' => Carbon::now()
+        ]);
 
         return response()->json('Data berhasil disimpan', 200);
     }
@@ -96,17 +102,45 @@ class UserController extends Controller
     }
 
     public function account(Request $request) {
-        $request->validate([
+        $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
+        $rules = [
             'name' => 'required',
             'email' => 'required|email',
             'no_hp' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
             'sumber' => 'required',
-        ]);
+        ];
+        $notification = [
+            'name.required' => 'Nama tidak boleh kosong.',
+            'email.required' => 'Email tidak boleh kosong.',
+            'no_hp.required' => 'No. HP tidak boleh kosong.',
+            'no_hp.regex' => 'Format No. HP harus sesuai.',
+            'sumber.required' => 'Sumber mendapatkan tryout tidak boleh kosong.',
+        ];
+        if ($user->profile_photo_path == NULL || $request->image != NULL) {
+            $rules['image'] = 'required|mimes:jpeg,png,jpg|max:2048';
+            $notification['image.required'] = 'Foto tidak boleh kosong.';
+            $notification['image.max'] = 'Ukuran foto maksimal 2 MB.';
+            $notification['image.mimes'] = 'Foto harus berekstensi .jpeg atau .png.';
+        }
+        $validator = Validator::make($request->all(), $rules, $notification);
 
-        $user = User::with('usersDetail')->findOrFail(auth()->user()->id);
-        $user->name = $request->name;
-        $user->status = 2;
-        $user->update();
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all(),
+            ]);
+        }
+
+        if ($request->image != NULL) {
+            if ($files = $request->file('image')) {
+                $fileName =  "image-" . time() . '.' . $request->image->getClientOriginalExtension();
+                $request->image->storeAs('public/photo-profile', $fileName);
+
+                $user->profile_photo_path = 'photo-profile/' . $fileName;
+                $user->name = $request->name;
+                $user->status = 2;
+                $user->update();
+            }
+        }
 
         if ($user->usersDetail != NULL) {
             $usersDetail = UsersDetail::findOrFail($user->id);

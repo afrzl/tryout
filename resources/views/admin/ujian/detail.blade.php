@@ -100,6 +100,16 @@
                             <td style="width: 3%">:</td>
                             <td id="acakSoal">Acak</td>
                         </tr>
+                        <tr>
+                            <td style="width: 25%">Acak Pilihan</td>
+                            <td style="width: 3%">:</td>
+                            <td id="acakPilihan">Acak</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 25%">Waktu Pengumuman</td>
+                            <td style="width: 3%">:</td>
+                            <td id="waktuPengumuman">5 September 2023 10:00:00</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

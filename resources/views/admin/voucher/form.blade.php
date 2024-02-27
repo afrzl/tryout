@@ -20,6 +20,18 @@
                         </div>
                     </div>
                     <div class="form-group required">
+                        <label for="Paket" class="col-form-label">Paket Ujian</label>
+                        <select class="form-control paket" id="Paket" name="paket" data-placeholder="Daftar Paket Ujian" style="width: 100%;">
+                            <option value=""></option>
+                            @foreach ($pakets as $paket)
+                                <option value="{{ $paket->id }}">{{ $paket->nama }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback">
+                            Kolom paket ujian tidak boleh kosong.
+                        </div>
+                    </div>
+                    <div class="form-group required">
                         <label for="Diskon" class="col-form-label">Diskon</label>
                         <input type="number" name="diskon" id="Diskon" class="form-control" placeholder="Diskon voucher">
                         <div class="invalid-feedback">

@@ -19,9 +19,6 @@ Data Peserta Ujian
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <button onclick="addForm('{{ route('admin.ujian.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
-                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <form action="" method="post" class="form-member">

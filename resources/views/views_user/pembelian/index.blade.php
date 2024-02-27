@@ -44,8 +44,8 @@
                                         <td style="text-align: right">
                                             <h6 class="mb-0 mr-6">Harga</h6>
                                         </td>
-                                        <td>
-                                            <p class="font-weight-bold mb-0">Rp{{ number_format( $pembelian->paketUjian->harga , 0 , ',' , '.' ) }}</p>
+                                        <td id="harga">
+                                            <p class="font-weight-bold mb-0">Rp{{ number_format( $pembelian->harga , 0 , ',' , '.' ) }}</p>
                                         </td>
                                     </tr>
                                     <tr>
@@ -72,20 +72,21 @@
                                                 <div class="row">
                                                     <div class="col-lg-9">
                                                         <input type="hidden" required name="id" value="{{ $pembelian->id }}">
-
                                                         <input type="text" @if($pembelian->voucher_id) @readonly(true) value="{{ $pembelian->voucher->kode }}" @endif class="form-control" id="voucher" name="voucher" val placeholder="Masukkan voucher disini">
                                                     </div>
                                                     @if($pembelian->status == 'Belum dibayar')
                                                     <div class="col-lg-3">
-                                                        <button type="submit" class="btn btn-{{ $pembelian->voucher_id ? 'danger' : 'primary' }}"><i class="fa fa-{{ $pembelian->voucher_id ? 'times' : 'check' }}"></i></button>
+                                                        <button id="apply" type="submit" class="btn btn-{{ $pembelian->voucher_id ? 'danger' : 'primary' }}"><i class="fa fa-{{ $pembelian->voucher_id ? 'times' : 'check' }}"></i></button>
                                                     </div>
                                                     @endif
                                                 </div>
-                                                @if($pembelian->voucher_id)
+                                                <div id="deskripsi">
+                                                    @if($pembelian->voucher_id)
                                                     @if($pembelian->voucher->diskon > 0)
-                                                        <span style="color: green; font-size: 12px">Anda mendapatkan diskon Rp{{ number_format( $pembelian->voucher->diskon , 0 , ',' , '.' ) }}</span>
+                                                    <span style="color: green; font-size: 12px">Anda mendapatkan diskon Rp{{ number_format( $pembelian->voucher->diskon , 0 , ',' , '.' ) }}</span>
                                                     @endif
-                                                @endif
+                                                    @endif
+                                                </div>
                                             </td>
                                         </form>
                                         @endif
@@ -98,7 +99,7 @@
                                         <td>
                                             @if($pembelian->status != 'Sukses')
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="metode_pembayaran" id="metode_pembayaran1" value="shopeepay-qris" checked>
+                                                <input class="form-check-input" type="radio" name="metode_pembayaran" id="metode_pembayaran1" value="other-qris" checked>
                                                 <label class="form-check-label" for="metode_pembayaran1">
                                                     QRIS
                                                 </label>
@@ -163,7 +164,11 @@
         })
         .done((response) => {
             console.log(response);
+            @if (env("MIDTRANS_TIPE") == 'production')
+            window.location.href = `https://app.midtrans.com/snap/v3/redirection/${response.snapToken}#/${response.metode}`;
+            @else
             window.location.href = `https://app.sandbox.midtrans.com/snap/v3/redirection/${response.snapToken}#/${response.metode}`;
+            @endif
         })
         .fail((response) => {
             toastr.options = {"positionClass": "toast-bottom-right"};
@@ -177,14 +182,18 @@
             if (! e.preventDefault()) {
                 $.post($('#applyVoucher').attr('action'), $('#applyVoucher').serialize())
                 .done((response) => {
-                    $( "#transaction" ).load(window.location.href + " #transaction" );
                     toastr.options = {"positionClass": "toast-bottom-right"};
                     toastr.success(response);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
                 })
                 .fail((response) => {
-                    $( "#transaction" ).load(window.location.href + " #transaction" );
                     toastr.options = {"positionClass": "toast-bottom-right"};
                     toastr.error(response.responseJSON);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
                     return;
                 });
                 }

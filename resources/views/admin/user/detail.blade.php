@@ -16,6 +16,11 @@
                             <td></td>
                         </tr>
                         <tr>
+                            <td style="width: 25%">Foto Profil</td>
+                            <td style="width: 3%">:</td>
+                            <td class="text" id="fotoProfile"></td>
+                        </tr>
+                        <tr>
                             <td style="width: 25%">ID Peserta</td>
                             <td style="width: 3%">:</td>
                             <td class="text" id="idPeserta"></td>

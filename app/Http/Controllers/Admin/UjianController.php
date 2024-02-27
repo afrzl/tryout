@@ -91,6 +91,7 @@ class UjianController extends Controller
             'jenis_ujian' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
+            'waktu_pengumuman' => 'required',
             'lama_pengerjaan' => 'required|min:0',
             'jumlah_soal' => 'required|min:0',
             'tipe_ujian' => 'required',
@@ -98,6 +99,7 @@ class UjianController extends Controller
             'tampil_nilai' => 'required',
             'tampil_poin' => 'required',
             'random' => 'required',
+            'random_pilihan' => 'required',
         ]);
 
         $ujian = new Ujian();
@@ -107,6 +109,7 @@ class UjianController extends Controller
         $ujian->peraturan = $request->peraturan;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));
+        $ujian->waktu_pengumuman = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_pengumuman)));
         $ujian->lama_pengerjaan = $request->lama_pengerjaan;
         $ujian->jumlah_soal = $request->jumlah_soal;
         $ujian->tipe_ujian = $request->tipe_ujian;
@@ -114,6 +117,7 @@ class UjianController extends Controller
         $ujian->tampil_nilai = $request->tampil_nilai;
         $ujian->tampil_poin = $request->tampil_poin;
         $ujian->random = $request->random;
+        $ujian->random_pilihan = $request->random_pilihan;
 
         $ujian->save();
 
@@ -128,6 +132,7 @@ class UjianController extends Controller
         $ujian = Ujian::with('soal')->find($id);
         $ujian['waktu_mulai'] = Carbon::parse($ujian['waktu_mulai'])->isoFormat('D MMMM Y HH:mm:ss');
         $ujian['waktu_akhir'] = Carbon::parse($ujian['waktu_akhir'])->isoFormat('D MMMM Y HH:mm:ss');
+        $ujian['waktu_pengumuman'] = Carbon::parse($ujian['waktu_pengumuman'])->isoFormat('D MMMM Y HH:mm:ss');
 
         return response()->json($ujian);
     }
@@ -150,6 +155,7 @@ class UjianController extends Controller
             'jenis_ujian' => 'required',
             'waktu_mulai' => 'required',
             'waktu_akhir' => 'required',
+            'waktu_pengumuman' => 'required',
             'lama_pengerjaan' => 'required|min:0',
             'jumlah_soal' => 'required|min:0',
             'tipe_ujian' => 'required',
@@ -157,6 +163,7 @@ class UjianController extends Controller
             'tampil_nilai' => 'required',
             'tampil_poin' => 'required',
             'random' => 'required',
+            'random_pilihan' => 'required',
         ]);
 
         $ujian = Ujian::findOrFail($id);
@@ -167,6 +174,7 @@ class UjianController extends Controller
         $ujian->peraturan = $request->peraturan;
         $ujian->waktu_mulai = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_mulai)));
         $ujian->waktu_akhir = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_akhir)));
+        $ujian->waktu_pengumuman = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $request->waktu_pengumuman)));
         $ujian->lama_pengerjaan = $request->lama_pengerjaan;
         $ujian->jumlah_soal = $request->jumlah_soal;
         $ujian->tipe_ujian = $request->tipe_ujian;
@@ -174,6 +182,7 @@ class UjianController extends Controller
         $ujian->tampil_nilai = $request->tampil_nilai;
         $ujian->tampil_poin = $request->tampil_poin;
         $ujian->random = $request->random;
+        $ujian->random_pilihan = $request->random_pilihan;
         $ujian->update();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -184,7 +193,7 @@ class UjianController extends Controller
      */
     public function destroy($id)
     {
-        $ujian = Ujian::find($id);
+        $ujian = Ujian::findOrFail($id);
         $ujian->delete();
 
         return response(null, 204);
@@ -192,11 +201,14 @@ class UjianController extends Controller
 
     public function publish($id)
     {
-        $ujian = Ujian::findorFail($id);
-        $ujian->isPublished = $ujian->isPublished ? 0 : 1;
+        $ujian = Ujian::with('soal')->findorFail($id);
+        if ($ujian->soal->count() == $ujian->jumlah_soal) {
+            $ujian->isPublished = $ujian->isPublished ? 0 : 1;
 
-        $ujian->update();
+            $ujian->update();
 
-        return response()->json('Data berhasil disimpan', 200);
+            return response()->json('Data berhasil disimpan', 200);
+        }
+        return response()->json('Tidak dapat mempublish', 300);
     }
 }

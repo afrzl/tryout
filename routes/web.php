@@ -101,7 +101,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 });
 
 //route data soal
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia'])->group(function () {
     Route::get('/ujian/soal/data/{id}', [SoalController_Admin::class, 'data'])->name('soal.data');
     // Route::get('/ujian/soal/{id}', [SoalController::class, 'index'])->name('soal.index');
     Route::resource('ujian.soal', SoalController_Admin::class)->shallow();

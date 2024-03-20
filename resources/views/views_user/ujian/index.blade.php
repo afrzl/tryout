@@ -63,7 +63,7 @@ $ada_jawaban = false;
                                                         " class="btn mb-0 mx-2 ps-3 pe-3 py-2 button-jawaban" :class="{{ $jawaban->id }} == $store.getJawaban.jawaban ? 'btn-primary' : 'btn-outline-primary'">{{ chr($key + 65) }}</a>
                                                 </td>
                                                 <td>
-                                                    {{ $jawaban->jawaban }}
+                                                    {!! $jawaban->jawaban !!}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -140,7 +140,7 @@ $ada_jawaban = false;
                     <div class="card-body">
                         <div id="divNomor">
                             @for ($i = 1; $i <= $soal->total(); $i++)
-                                <a id="nav_{{ $i }}" x-data class="btn btn-nav mb-2" style="width: 53px; font-size: 15px" :class="{{ $i }} == {{ $soal->currentPage() }} ? 'btn-primary' : {{ $ragu_ragu[$i-1] }} ? 'btn-warning' : 'btn-outline-primary'" @if($i != $soal->currentPage()) onclick="fetch_data({{ $i }})" @endif>{{ $i }}</a>
+                                <a id="nav_{{ $i }}" x-data class="btn btn-nav mb-2 {{ ($i == $soal->currentPage() ? 'btn-primary' : ($ragu_ragu[$i-1] ? 'btn-warning' : (!empty($rekap_jawaban[$i-1]) ? 'btn-success' : 'btn-outline-primary' ))) }}" style="width: 53px; font-size: 15px" @if($i != $soal->currentPage()) onclick="fetch_data({{ $i }})" @endif>{{ $i }}</a>
                             @endfor
                         </div>
                     </div>

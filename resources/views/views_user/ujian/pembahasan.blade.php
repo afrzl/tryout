@@ -46,7 +46,7 @@ $ada_jawaban = false;
                                                     <button style="pointer-events: none" type="button" class="btn mb-0 mx-2 ps-3 pe-3 py-2 {{ $jawaban->id == $soal[0]->kunci_jawaban ? 'btn-primary' : 'btn-outline-primary' }}">{{ chr($key + 65) }}</button>
                                                 </td>
                                                 <td>
-                                                    {{ $jawaban->jawaban }}
+                                                    {!! $jawaban->jawaban !!}
                                                 </td>
                                             </tr>
                                         </tbody>

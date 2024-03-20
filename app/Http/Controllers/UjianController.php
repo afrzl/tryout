@@ -70,8 +70,9 @@ class UjianController extends Controller
         }, 'soal.ujian'])
                 ->where('ujian_user_id', $id);
         $ragu_ragu = $preparation->pluck('ragu_ragu');
+        $rekap_jawaban = $preparation->pluck('jawaban_id');
         $soal = $preparation->paginate(1, ['*'], 'no');
-        return view('views_user.ujian.index', compact('soal', 'ragu_ragu', 'ujianUser'));
+        return view('views_user.ujian.index', compact('soal', 'ragu_ragu', 'ujianUser', 'rekap_jawaban'));
     }
 
     public function pembahasan($id) {

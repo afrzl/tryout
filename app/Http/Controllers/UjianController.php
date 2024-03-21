@@ -25,7 +25,7 @@ class UjianController extends Controller
     {
         $data = Pembelian::with([
                         'paketUjian.ujian' => function ($query) {
-                            $query->orderBy('created_at', 'asc');
+                            $query->orderBy('nama', 'asc');
                         },
                         'paketUjian.ujian.ujianUser' => function ($query) {
                             $query->where('user_id', auth()->user()->id);

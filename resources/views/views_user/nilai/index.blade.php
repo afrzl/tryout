@@ -38,23 +38,29 @@
                                         <span>{{ $ujian->ujianUser[0]->jawabanPeserta->where('jawaban_id', '!=', NULL)->count() }} / {{ $ujian->ujianUser[0]->jawabanPeserta->count() }}</span>
                                     </td>
                                 </tr>
+                                @if($ujian->tampil_nilai == 1 || ($ujian->tampil_nilai == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir))
                                 @if($ujian->jenis_ujian == 'skd')
+                                @php
+                                    $twk = ($ujian->ujianUser[0]->nilai_twk >= 65);
+                                    $tiu = ($ujian->ujianUser[0]->nilai_tiu >= 80);
+                                    $tkp = ($ujian->ujianUser[0]->nilai_tkp >= 166);
+                                @endphp
                                 <tr>
                                     <td>
                                         <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nilai TWK</h6>
-                                        <span>{{ $ujian->ujianUser[0]->nilai_twk }}</span>
+                                        <span class="badge bg-{{ $twk ? 'success' : 'danger' }}">{{ $ujian->ujianUser[0]->nilai_twk }} </span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nilai TIU</h6>
-                                        <span>{{ $ujian->ujianUser[0]->nilai_tiu }}</span>
+                                        <span class="badge bg-{{ $tiu ? 'success' : 'danger' }}">{{ $ujian->ujianUser[0]->nilai_tiu }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Nilai TKP</h6>
-                                        <span>{{ $ujian->ujianUser[0]->nilai_tkp }}</span>
+                                        <span class="badge bg-{{ $tkp ? 'success' : 'danger' }}">{{ $ujian->ujianUser[0]->nilai_tkp }}</span>
                                     </td>
                                 </tr>
                                 @endif
@@ -64,6 +70,23 @@
                                         <span>{{ $ujian->ujianUser[0]->nilai }}</span>
                                     </td>
                                 </tr>
+                                @if($ujian->jenis_ujian == 'skd')
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Status Nilai</h6>
+                                        <span class="badge bg-{{ $twk && $tiu && $tkp ? 'success' : 'danger' }}">{{ $twk && $tiu && $tkp ? 'Memenuhi ambang batas' : 'Tidak memenuhi ambang batas' }}</span>
+                                    </td>
+                                </tr>
+                                @endif
+                                @if($ujian->jenis_ujian == 'mtk')
+                                <tr>
+                                    <td>
+                                        <h6 style="font-size: 80%" class="card-subtitle mb-1 text-muted">Status Nilai</h6>
+                                        <span class="badge bg-{{ $ujian->ujianUser[0]->nilai >= 65 ? 'success' : 'danger' }}">{{ $ujian->ujianUser[0]->nilai >= 65 ? 'Memenuhi ambang batas' : 'Tidak memenuhi ambang batas' }}</span>
+                                    </td>
+                                </tr>
+                                @endif
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -96,6 +119,9 @@
                                                 <th style="width: 15%">Peringkat</th>
                                                 <th>Nama Peserta</th>
                                                 <th>Nilai</th>
+                                                @if ($ujian->jenis_ujian == 'skd' || $ujian->jenis_ujian == 'mtk')
+                                                    <th>Keterangan</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -105,6 +131,9 @@
                                                 <td style="text-align: center">@if($no == $rank - 1) <b>{{ $no+1 }}.</b> @else {{ $no+1 }}. @endif</td>
                                                 <td>@if($no == $rank - 1) <b>{{ $user->user->name }}</b> @else {{ $user->user->name }} @endif</td>
                                                 <td>@if($no == $rank - 1) <b>{{ $user->nilai }}</b> @else {{ $user->nilai }} @endif</td>
+                                                @if ($ujian->jenis_ujian == 'skd' || $ujian->jenis_ujian == 'mtk')
+                                                    <td><span class="badge bg-{{ $user->status_kelulusan ? 'success' : 'danger' }}">{{ $user->status_kelulusan ? 'Lulus' : 'Tidak Lulus' }}</span></td>
+                                                @endif
                                             </tr>
                                             @endif
                                                 @endforeach
@@ -118,6 +147,9 @@
                                                 <th style="width: 15%">Peringkat</th>
                                                 <th>Nama Peserta</th>
                                                 <th>Nilai</th>
+                                                @if ($ujian->jenis_ujian == 'skd' || $ujian->jenis_ujian == 'mtk')
+                                                    <th>Keterangan</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -127,6 +159,9 @@
                                                 <td style="text-align: center">@if($no == $rankUserFormasi - 1) <b>{{ $no+1 }}.</b> @else {{ $no+1 }}. @endif</td>
                                                 <td>@if($no == $rankUserFormasi - 1) <b>{{ $user->user->name }}</b> @else {{ $user->user->name }} @endif</td>
                                                 <td>@if($no == $rankUserFormasi - 1) <b>{{ $user->nilai }}</b> @else {{ $user->nilai }} @endif</td>
+                                                @if ($ujian->jenis_ujian == 'skd' || $ujian->jenis_ujian == 'mtk')
+                                                    <td><span class="badge bg-{{ $user->status_kelulusan ? 'success' : 'danger' }}">{{ $user->status_kelulusan ? 'Lulus' : 'Tidak Lulus' }}</span></td>
+                                                @endif
                                             </tr>
                                             @endif
                                                 @endforeach
@@ -144,8 +179,8 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">History Jawaban Ujian</h5>
-                        <table class="table table-striped table-hover">
+                        <h3 class="card-title mb-2"><b>History Jawaban Ujian</b></h3>
+                        <table class="table table-striped table-hover mt-3">
                             <thead>
                                 <tr>
                                     <th style="width:15%">No.</th>

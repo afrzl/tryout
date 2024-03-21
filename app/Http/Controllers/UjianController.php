@@ -325,15 +325,24 @@ class UjianController extends Controller
                         ->orderBy('nilai', 'desc')
                         ->get();
         $ujianUser = $ujianUser->where('user.usersDetail.prodi', $user->usersDetail->prodi)->values();
+        foreach ($ujianUser as $user) {
+            if ($ujian->jenis_ujian == 'skd') {
+                $user->status_kelulusan = ($user->nilai_twk >= 65 && $user->nilai_tiu >= 80 && $user->nilai_tkp >= 166);
+            } else if($ujian->jenis_ujian == 'mtk') {
+                $user->status_kelulusan = ($user->nilai >= 65);
+            }
+        }
+        $ujianUser = $ujianUser->sortByDesc('status_kelulusan')->values();
         $totalRank = $ujianUser->count();
         $rankUser = $ujianUser->where('user_id', auth()->user()->id);
+        // return $ujianUser;
         $rank = $rankUser->keys()->first() + 1;
 
         $userFormasi = $ujianUser->where('user.usersDetail.penempatan', auth()->user()->usersDetail->penempatan)->values();
         $totalRankFormasi = $userFormasi->count();
         $rankUserFormasi = $userFormasi->where('user_id', auth()->user()->id);
         $rankUserFormasi = $rankUserFormasi->keys()->first() + 1;
-        // return $userFormasi;
+        // return $ujianUser;
 
         return view('views_user.nilai.index', compact('ujian', 'ujianUser', 'userFormasi', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi'));
     }

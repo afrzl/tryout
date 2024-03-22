@@ -50,7 +50,7 @@ Data Peserta Ujian
                                 <th>Status Pengerjaan</th>
                                 <th>Waktu Pengerjaan</th>
                                 <th>Nilai</th>
-                                <th style="width: 5%"><i class="fa fa-cog"></i></th>
+                                <th style="width: 10%"><i class="fa fa-cog"></i></th>
                             </tr>
                         </thead>
                     </table>
@@ -135,6 +135,38 @@ Data Peserta Ujian
                 toastr.success('Data berhasil diperbarui.');
             }
         });
+    }
+
+    function deleteData(url) {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan mereset data ujian peserta?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(url, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'delete'
+                })
+                .done((response) => {
+                    tableShow.ajax.reload();
+                    toastr.options = {
+                        "positionClass": "toast-bottom-right",
+                        "closeButton": true,
+                        "progressBar": true
+                    };
+                    toastr.success('Data ujian peserta berhasil direset.');
+                })
+                .fail((response) => {
+                    toastr.error('Tidak dapat menghapus data.');
+                    return;
+                })
+            }
+        })
     }
 </script>
 

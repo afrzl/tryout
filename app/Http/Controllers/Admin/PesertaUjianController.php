@@ -154,6 +154,9 @@ class PesertaUjianController extends Controller
                         <a href="' .
                         route('admin.peserta_ujian.show_peserta', $peserta->id) .
                         '" type="button" class="btn btn-outline-info"><i class="fa fa-chevron-right"></i></a>
+                        <button onclick="deleteData(`' .
+                        route('admin.peserta_ujian.destroy', [$peserta->ujian_id, $peserta->user_id]) .
+                        '`)" type="button" class="btn btn-outline-danger ml-1"><i class="fa fa-rotate-right"></i></button>
                     ';
                 }
             })
@@ -277,8 +280,11 @@ class PesertaUjianController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ujian $ujian)
+    public function destroy($ujian_id, $user_id)
     {
-        //
+        $ujianUser = UjianUser::where('ujian_id', $ujian_id)->where('user_id', $user_id);
+        $ujianUser->delete();
+
+        return response(null, 204);
     }
 }

@@ -282,7 +282,7 @@ $ada_jawaban = false;
                 $('#skeleton').hide();
                 $('#soal').show();
 
-                window.location.href = '#';
+                // window.location.href = '#';
                 const url = new URL(window.location.href);
                 url.searchParams.set('no', page);
                 window.history.replaceState(null, null, url);

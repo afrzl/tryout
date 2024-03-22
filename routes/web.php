@@ -41,6 +41,7 @@ Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->midd
 Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     Route::get('/user/showDetails/{id}', [UserController::class, 'showDetails'])->name('user.showDetails');
+    Route::get('/user/export', [UserController::class, 'export'])->name('user.export');
     Route::resource('user', UserController::class);
     Route::post('/user/resetPassword/{id}', [UserController::class, 'resetPassword'])->name('user.resetpassword');
     Route::post('/user/makeAdmin/{action}/{id}', [UserController::class, 'makeAdmin'])->name('user.makeAdmin');

@@ -88,9 +88,7 @@ Data User
                 }
             , ]
             , dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip'
-            , buttons: [
-                'copy', 'excel', 'pdf'
-            ]
+            , buttons: ['<a href="{{ route('user.export') }}" class="btn btn-outline-warning"><i class="fa fa-file-export"></i> Export</a>']
             , columnDefs: [
                 { className: 'text-center', targets: [0, 3, 4] },
             ]

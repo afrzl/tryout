@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\UsersDetail;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -50,6 +53,12 @@ class UserController extends Controller
             })
             ->rawColumns(['name', 'aksi'])
             ->make(true);
+    }
+
+    public function export() {
+        // $data = Http::get('https://api.cahyadsn.com/province/33');
+        // return(json_decode($data->getBody()->getContents())->data->nama);
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 
     public function showDetails($id) {

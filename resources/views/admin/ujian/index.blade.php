@@ -187,8 +187,8 @@ Data Ujian
                 $('#modal-detail [id=jumlahSoal]').text(response.jumlah_soal);
                 $('#modal-detail [id=jumlahSoalTerisi]').text(response.soal.length);
                 $('#modal-detail [id=tipeUjian]').text(response.tipe_ujian == 1 ? 'Sekali Mengerjakan' : 'Periodik');
-                $('#modal-detail [id=tampilkanKunci]').text(response.tampil_kunci == 0 ? 'Tidak' : (response.tampil_kunci == 1 ? 'Ya' : 'Ya, setelah ditutup'));
-                $('#modal-detail [id=tampilkanNilai]').text(response.tampil_nilai == 0 ? 'Tidak' : (response.tampil_kunci == 1 ? 'Ya' : 'Ya, setelah ditutup'));
+                $('#modal-detail [id=tampilkanKunci]').text(response.tampil_kunci == 0 ? 'Tidak' : (response.tampil_kunci == 1 ? 'Ya' : 'Ya, setelah ujian ditutup'));
+                $('#modal-detail [id=tampilkanNilai]').text(response.tampil_nilai == 0 ? 'Tidak' : (response.tampil_nilai == 1 ? 'Ya' : 'Ya, setelah ujian ditutup'));
                 $('#modal-detail [id=tampilPoin]').text(response.tampil_poin == 0 ? 'Tidak' : 'Tampilkan');
                 $('#modal-detail [id=acakSoal]').text(response.random == 0 ? 'Tidak' : 'Acak');
                 $('#modal-detail [id=acakPilihan]').text(response.random_pilihan == 0 ? 'Tidak' : 'Acak');

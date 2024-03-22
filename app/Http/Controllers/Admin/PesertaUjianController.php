@@ -150,14 +150,16 @@ class PesertaUjianController extends Controller
             })
             ->addColumn('aksi', function ($peserta) {
                 if ($peserta->status == '2') {
-                    return '
+                    $text = '
                         <a href="' .
                         route('admin.peserta_ujian.show_peserta', $peserta->id) .
-                        '" type="button" class="btn btn-outline-info"><i class="fa fa-chevron-right"></i></a>
-                        <button onclick="deleteData(`' .
+                        '" type="button" class="btn btn-outline-info"><i class="fa fa-chevron-right"></i></a>';
+                    if (auth()->user()->hasRole('admin')) {
+                        $text .= '<button onclick="deleteData(`' .
                         route('admin.peserta_ujian.destroy', [$peserta->ujian_id, $peserta->user_id]) .
-                        '`)" type="button" class="btn btn-outline-danger ml-1"><i class="fa fa-rotate-right"></i></button>
-                    ';
+                        '`)" type="button" class="btn btn-outline-danger ml-1"><i class="fa fa-rotate-right"></i></button>';
+                    }
+                    return $text;
                 }
             })
             ->rawColumns(['aksi', 'email', 'waktu_pengerjaan', 'status_pengerjaan', 'nilai'])

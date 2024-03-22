@@ -98,7 +98,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/peserta_ujian/showdatapeserta/{id}', [PesertaUjianController::class, 'showDataPeserta'])->name('peserta_ujian.show_data_peserta');
     Route::get('/peserta_ujian/{id}/refresh', [PesertaUjianController::class, 'refresh'])->name('peserta_ujian.refresh');
     Route::resource('peserta_ujian', PesertaUjianController::class, ['except' => 'destroy']);
-    Route::delete('peserta_ujian/{ujian_id}/{user_id}', [PesertaUjianController::class, 'destroy'])->name('peserta_ujian.destroy');
+    Route::delete('peserta_ujian/{ujian_id}/{user_id}', [PesertaUjianController::class, 'destroy'])->middleware('role:admin')->name('peserta_ujian.destroy');
 });
 
 //route data soal

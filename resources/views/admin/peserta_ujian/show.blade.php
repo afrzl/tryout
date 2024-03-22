@@ -137,6 +137,7 @@ Data Peserta Ujian
         });
     }
 
+    @role('admin')
     function deleteData(url) {
         Swal.fire({
             title: 'Apakah kamu yakin akan mereset data ujian peserta?',
@@ -168,6 +169,7 @@ Data Peserta Ujian
             }
         })
     }
+    @endrole
 </script>
 
 @endpush

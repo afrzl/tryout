@@ -210,6 +210,9 @@ class PesertaUjianController extends Controller
 
                 return $text;
             })
+            ->addColumn('point', function($data) {
+                return $data->poin;
+            })
             ->addColumn('status', function ($data) {
                 if ($data->soal->jenis_soal == 'tkp') {
                     return '-';

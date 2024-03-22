@@ -48,6 +48,7 @@ Data Jawaban
                             <tr>
                                 <th style="width: 5%">No</th>
                                 <th>Soal</th>
+                                <th style="width: 5%">Point</th>
                                 <th style="width: 5%">Status</th>
                             </tr>
                         </thead>
@@ -88,6 +89,9 @@ Data Jawaban
                     data: 'soal'
                 }
                 , {
+                    data: 'point'
+                }
+                , {
                     data: 'status'
                 }
             , ]
@@ -96,7 +100,7 @@ Data Jawaban
                 'copy', 'excel', 'pdf'
             ]
             , columnDefs: [
-                { className: 'text-center', targets: [0, 2] },
+                { className: 'text-center', targets: [0, 2, 3] },
             ]
         });
     });

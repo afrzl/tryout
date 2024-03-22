@@ -232,7 +232,11 @@ $ada_jawaban = false;
             jawaban: 0,
 
             setJawaban(initJawaban) {
-                this.jawaban = initJawaban
+                if (this.jawaban == initJawaban) {
+                    this.jawaban = null
+                } else {
+                    this.jawaban = initJawaban
+                }
             },
 
             storeJawaban(id) {

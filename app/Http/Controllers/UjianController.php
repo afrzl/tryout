@@ -101,7 +101,6 @@ class UjianController extends Controller
     {
         $request->validate([
             'jawaban_peserta' => 'required',
-            'key' => 'required',
         ]);
 
         $jawaban_peserta = JawabanPeserta::with('soal')->findOrFail($request->jawaban_peserta);
@@ -112,19 +111,26 @@ class UjianController extends Controller
             $store->jawaban_id = $request->key;
             $store->save();
         } else {
-            if ($jawaban_peserta->soal->jenis_soal == 'tkp') {
-                $jawaban = Jawaban::findOrFail($request->key);
-                $jawaban_peserta->poin = $jawaban->point;
+            if ($request->key == NULL) {
+                $jawaban_peserta->jawaban_id = null;
+                $jawaban_peserta->poin = $jawaban_peserta->soal->poin_kosong;
+                $jawaban_peserta->update();
             } else {
-                if ($request->key == $jawaban_peserta->soal->kunci_jawaban) {
-                    $jawaban_peserta->poin = $jawaban_peserta->soal->poin_benar;
+                if ($jawaban_peserta->soal->jenis_soal == 'tkp') {
+                    $jawaban = Jawaban::findOrFail($request->key);
+                    $jawaban_peserta->poin = $jawaban->point;
                 } else {
-                    $jawaban_peserta->poin = $jawaban_peserta->soal->poin_salah;
+                    if ($request->key == $jawaban_peserta->soal->kunci_jawaban) {
+                        $jawaban_peserta->poin = $jawaban_peserta->soal->poin_benar;
+                    } else {
+                        $jawaban_peserta->poin = $jawaban_peserta->soal->poin_salah;
+                    }
                 }
+
+                $jawaban_peserta->jawaban_id = $request->key;
+                $jawaban_peserta->update();
             }
 
-            $jawaban_peserta->jawaban_id = $request->key;
-            $jawaban_peserta->update();
         }
 
         return response()->json('Data berhasil disimpan', 200);

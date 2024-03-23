@@ -49,6 +49,7 @@ class UjianController extends Controller
         }
 
         $tryout = $tryout->unique('id');
+        $tryout = $tryout->sortBy('nama');
         return view('views_user.ujian.tryout', compact('data', 'tryout'));
     }
 

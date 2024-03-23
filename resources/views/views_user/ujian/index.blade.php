@@ -169,7 +169,7 @@ $ada_jawaban = false;
             distance: null,
             init() {
                 setInterval(() => {
-                    let now = new Date().getTime();
+                    let now = new Date((new Date).toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
                     this.distance = countDownDate - now;
 
                     hours = String(Math.floor((this.distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');

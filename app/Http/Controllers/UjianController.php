@@ -263,7 +263,7 @@ class UjianController extends Controller
         if ($ujianUser->status != 1) {
             $ujianUser->status = 1;
             $ujianUser->waktu_mulai = Carbon::now();
-            $ujianUser->waktu_akhir = Carbon::now()->addMinutes($ujianUser->ujian->lama_pengerjaan);
+            $ujianUser->waktu_akhir = Carbon::parse($ujianUser->waktu_mulai)->addMinutes($ujianUser->ujian->lama_pengerjaan);
             $ujianUser->update();
 
             foreach ($soal as $key => $item) {

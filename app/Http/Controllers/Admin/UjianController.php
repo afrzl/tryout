@@ -61,7 +61,7 @@ class UjianController extends Controller
             })
             ->addColumn('aksi', function ($ujians) {
                 $text = '';
-                if (!$ujians->isPublished) {
+                if (!$ujians->isPublished && auth()->user()->hasRole('admin')) {
                     $text .= '<button onclick="editData(`' . route('admin.ujian.update', $ujians->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
                     <button onclick="deleteData(`' . route('admin.ujian.destroy', $ujians->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
                 }
@@ -86,6 +86,10 @@ class UjianController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return 404;
+        }
+
         $request->validate([
             'nama' => 'required',
             'jenis_ujian' => 'required',
@@ -193,6 +197,10 @@ class UjianController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return 404;
+        }
+
         $ujian = Ujian::findOrFail($id);
         $ujian->delete();
 

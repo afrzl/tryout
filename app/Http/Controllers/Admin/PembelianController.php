@@ -118,6 +118,10 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return 404;
+        }
+
         $cek = Pembelian::where('user_id', $request->user)
                 ->where('paket_id', $request->paket)
                 ->latest('updated_at')

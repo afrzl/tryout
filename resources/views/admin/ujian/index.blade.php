@@ -19,9 +19,11 @@ Data Ujian
     <div class="row">
         <div class="col-md-12">
             <div class="card">
+                @role('admin')
                 <div class="card-header">
                     <button onclick="addForm('{{ route('admin.ujian.store') }}')" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</button>
                 </div>
+                @endrole
                 <!-- /.card-header -->
                 <div class="card-body">
                     <form action="" method="post" class="form-member">

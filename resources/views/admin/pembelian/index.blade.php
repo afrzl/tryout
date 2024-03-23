@@ -26,7 +26,9 @@ Data Pembelian Paket
                                 <option value="all">-- Pilih Paket Ujian --</option>
                             </select>
                         </div>
+                        @role('admin')
                         <button onclick="addForm('{{ route('admin.pembelian.store') }}')" class="ml-3 btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah Pembelian</button>
+                        @endrole
                     </div>
                 </div>
                 <!-- /.card-header -->

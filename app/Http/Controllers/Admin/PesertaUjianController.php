@@ -111,7 +111,14 @@ class PesertaUjianController extends Controller
             ->addIndexColumn()
             ->addColumn('nama', function ($peserta)
             {
-                return $peserta->user->name;
+                $text = $peserta->user->name;
+                if (!$peserta->user->sessions->isEmpty()) {
+                    if (Carbon::createFromTimestamp($peserta->user->sessions[0]->last_activity)->diffInMinutes() < 5) {
+                        $text .= ' <badge class="badge bg-success">Online</badge>';
+                    }
+                }
+
+                return $text;
             })
             ->addColumn('email', function ($peserta)
             {
@@ -165,7 +172,7 @@ class PesertaUjianController extends Controller
                 }
                 return $text;
             })
-            ->rawColumns(['aksi', 'email', 'waktu_pengerjaan', 'status_pengerjaan', 'nilai'])
+            ->rawColumns(['nama', 'aksi', 'email', 'waktu_pengerjaan', 'status_pengerjaan', 'nilai'])
             ->make(true);
     }
 

@@ -77,7 +77,8 @@ class UjianController extends Controller
 
     public function pembahasan($id) {
         $ujian = Ujian::with('ujianUser')->findOrFail($id);
-        if (!($ujian->ujianUser || $ujian->tampil_kunci == 1 || ($ujian->tampil_kunci == 2 && Carbon::now() > $ujian->waktu_akhir))) {
+        $ujianUser = UjianUser::where('ujian_id', $id)->where('user_id', auth()->user()->id)->first();
+        if (!(($ujian->tampil_kunci == 1 && $ujianUser) || ($ujian->tampil_kunci == 2 && Carbon::now() > $ujian->waktu_akhir) || ($ujian->tampil_kunci == 3 && Carbon::now() > $ujian->waktu_pengumuman))) {
             abort(403, 'ERROR');
         }
 

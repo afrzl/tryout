@@ -14,7 +14,14 @@
                         Waktu ujian telah berakhir.
                     </div>
                 </div>
-                @endif
+            @endif
+            @if ($ujian->tampil_kunci == 3 && \Carbon\Carbon::now() < $ujian->waktu_pengumuman)
+            <div class="col-lg-12">
+                <div class="alert alert-warning" role="alert">
+                    Pembahasan akan tampil pada {{ Carbon\Carbon::parse($ujian->waktu_pengumuman)->isoFormat('D MMMM Y HH:mm:ss') }}
+                </div>
+            </div>
+            @endif
             @if($ujian->tipe_ujian == 2)
                 <div class="col-lg-12">
                     <div class="alert alert-warning" role="alert">
@@ -76,7 +83,7 @@
                             </tbody>
                         </table>
                         <div class="d-grid gap-2">
-                            @if(isset($ujian->ujianUser[0]->status) == 2 && (($ujian->tampil_kunci == 1) || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir )))
+                            @if((($ujian->tampil_kunci == 1) && (isset($ujian->ujianUser[0]->status) == 2)) || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir ) || ($ujian->tampil_kunci == 3 && \Carbon\Carbon::now() > $ujian->waktu_pengumuman ))
                                 <a href="/tryout/{{ $ujian->id }}/pembahasan?no=1" class="btn btn-primary" type="button">Pembahasan</a>
                             @endif
                             <button id="kerjakan" onclick="kerjakan('{{ $ujian->id }}')" class="btn btn-success {{ !$betweenTime ? 'disabled' : '' }}" type="button">Kerjakan</button>

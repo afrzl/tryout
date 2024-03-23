@@ -111,6 +111,7 @@
                                 <option value="0">Tidak</option>
                                 <option value="1">Ya</option>
                                 <option value="2">Ya, setelah ujian ditutup</option>
+                                <option value="3">Ya, setelah pengumuman</option>
                             </select>
                             <div class="invalid-feedback">
                                 Kolom tampilkan kunci tidak boleh kosong.

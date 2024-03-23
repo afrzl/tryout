@@ -91,11 +91,11 @@ class PesertaUjianController extends Controller
         $peserta = UjianUser::with('ujian', 'user', 'user.sessions', 'jawabanPeserta.soal')
                     ->where('ujian_id', $id)
                     ->where('is_first', 1)
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('nilai', 'desc')
                     ->get();
 
         $ujians = Ujian::with(['ujianUser', 'paketUjian.pembelian' => function($query) {
-                                            $query->where('status', 'Sukses');
+                                            $query->where('status', 'Sukses')->orderBy('created_at', 'desc');
                                         }])
                 ->findOrFail($id);
         foreach ($ujians->paketUjian as $paket) {

@@ -149,18 +149,21 @@ class PesertaUjianController extends Controller
                 }
             })
             ->addColumn('aksi', function ($peserta) {
+                $text = '';
                 if ($peserta->status == '2') {
-                    $text = '
+                    $text .= '
                         <a href="' .
                         route('admin.peserta_ujian.show_peserta', $peserta->id) .
                         '" type="button" class="btn btn-outline-info"><i class="fa fa-chevron-right"></i></a>';
+                }
+                if ($peserta->status == '1' || $peserta->status == '2') {
                     if (auth()->user()->hasRole('admin')) {
                         $text .= '<button onclick="deleteData(`' .
                         route('admin.peserta_ujian.destroy', [$peserta->ujian_id, $peserta->user_id]) .
                         '`)" type="button" class="btn btn-outline-danger ml-1"><i class="fa fa-rotate-right"></i></button>';
                     }
-                    return $text;
                 }
+                return $text;
             })
             ->rawColumns(['aksi', 'email', 'waktu_pengerjaan', 'status_pengerjaan', 'nilai'])
             ->make(true);

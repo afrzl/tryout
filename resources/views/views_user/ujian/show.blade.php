@@ -86,7 +86,7 @@
                             @if((($ujian->tampil_kunci == 1) && (isset($ujian->ujianUser[0]->status) == 2)) || ($ujian->tampil_kunci == 2 && \Carbon\Carbon::now() > $ujian->waktu_akhir ) || ($ujian->tampil_kunci == 3 && \Carbon\Carbon::now() > $ujian->waktu_pengumuman ))
                                 <a href="/tryout/{{ $ujian->id }}/pembahasan?no=1" class="btn btn-primary" type="button">Pembahasan</a>
                             @endif
-                            <button id="kerjakan" onclick="kerjakan('{{ $ujian->id }}')" class="btn btn-success {{ (!$betweenTime) || (isset($ujian->ujianUser[0]->status) ? $ujian->ujianUser[0]->status : null) == 2 ? 'disabled' : '' }}" type="button">Kerjakan</button>
+                            <button id="kerjakan" onclick="kerjakan('{{ $ujian->id }}')" class="btn btn-success {{ (!$betweenTime) || ((isset($ujian->ujianUser[0]->status) ? $ujian->ujianUser[0]->status : null) == 2 && $ujian->tipe_ujian == 1) ? 'disabled' : '' }}" type="button">Kerjakan</button>
                         </div>
                     </div>
                 </div>

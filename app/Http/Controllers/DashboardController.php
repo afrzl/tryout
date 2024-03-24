@@ -29,7 +29,7 @@ class DashboardController extends Controller
 
     public function adminIndex()
     {
-        if (!(auth()->user()->hasRole('admin') || auth()->user()->hasRole('panitia'))) {
+        if (!(auth()->user()->hasRole('admin') || auth()->user()->hasRole('panitia') || auth()->user()->hasRole('bendahara'))) {
             abort(403, 'Error!');
         }
 

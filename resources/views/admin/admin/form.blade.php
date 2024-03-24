@@ -26,6 +26,7 @@
                         <select id="roles" class="form-control select2" name="roles">
                             <option value="" selected="selected">-- Cari roles --</option>
                             <option value="admin">Admin</option>
+                            <option value="bendahara">Bendahara</option>
                             <option value="panitia">Panitia</option>
                         </select>
                         <div class="invalid-feedback">

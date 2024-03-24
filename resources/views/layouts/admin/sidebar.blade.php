@@ -95,6 +95,7 @@
                         </p>
                     </a>
                 </li>
+                @role('admin|bendahara')
                 <li class="nav-item">
                     <a href="{{ route('admin.pembelian.index') }}" class="nav-link {{ (request()->segment(2) == 'pembelian') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-receipt"></i>
@@ -103,6 +104,7 @@
                         </p>
                     </a>
                 </li>
+                @endrole
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

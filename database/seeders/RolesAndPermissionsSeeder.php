@@ -34,7 +34,8 @@ class RolesAndPermissionsSeeder extends Seeder
         //     ->givePermissionTo(['view ujian', 'create ujian', 'update ujian', 'delete ujian']);
 
         // $role = Role::create(['name' => 'himada']);
-        $role = Role::create(['name' => 'panitia']);
+        // $role = Role::create(['name' => 'panitia']);
+        $role = Role::create(['name' => 'bendahara']);
         // $role->givePermissionTo(Permission::all());
     }
 }

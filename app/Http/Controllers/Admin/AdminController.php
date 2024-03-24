@@ -18,7 +18,7 @@ class AdminController extends Controller
 
     public function data() {
         $users = User::with('roles')
-                ->role(['admin', 'panitia'])
+                ->role(['admin', 'panitia', 'bendahara'])
                 ->orderBy('name', 'asc');
 
         return datatables()

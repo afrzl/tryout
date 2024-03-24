@@ -88,8 +88,8 @@ class PesertaUjianController extends Controller
 
     public function showData($id)
     {
-        ini_set('memory_limit', '1028M');
-        $peserta = UjianUser::with('ujian', 'user', 'user.sessions', 'jawabanPeserta.soal')
+        ini_set('memory_limit', -1);
+        $peserta = UjianUser::with('ujian', 'user', 'user.sessions')
                     ->where('ujian_id', $id)
                     ->where('is_first', 1)
                     ->orderBy('nilai', 'desc')

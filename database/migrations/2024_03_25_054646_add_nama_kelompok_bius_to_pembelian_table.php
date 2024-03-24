@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('ujian', function (Blueprint $table) {
-            $table->boolean('random_pilihan')->default(false)->after('random');
+        Schema::table('pembelian', function (Blueprint $table) {
+            $table->string('nama_kelompok')->after('voucher_id')->nullable();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('ujian', function (Blueprint $table) {
-            $table->dropColumn('random_pilihan');
+        Schema::table('pembelian', function (Blueprint $table) {
+            $table->dropColumn('nama_kelompok');
         });
     }
 };

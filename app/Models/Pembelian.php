@@ -26,6 +26,7 @@ class Pembelian extends Model
         'user_id',
         'kode_pembelian',
         'batas_pembayaran',
+        'nama_kelompok',
     ];
 
     /**

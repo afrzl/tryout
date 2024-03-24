@@ -86,6 +86,19 @@
                     </a>
                 </li>
                 @endrole
+
+                @role('admin')
+                <li class="nav-header">BIUS</li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.bius.index') }}" class="nav-link {{ (request()->segment(2) == 'bius') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Data BIUS
+                        </p>
+                    </a>
+                </li>
+                @endrole
+
                 <li class="nav-header">Data Peserta Ujian</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.peserta_ujian.index') }}" class="nav-link {{ (request()->segment(2) == 'peserta_ujian') ? 'active' : '' }}">

@@ -9,6 +9,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\Admin\BiusController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\HimadaController;
 use App\Http\Controllers\Admin\VoucherController;
@@ -80,6 +81,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');
     Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
     Route::resource('ujian', UjianController_Admin::class);
+});
+
+//route data bius
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    // Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
+    Route::get('/bius/data', [BiusController::class, 'data'])->name('bius.data');
+    Route::resource('bius', BiusController::class);
 });
 
 //route data pembelian

@@ -125,7 +125,7 @@ Data Peserta Ujian
     function refresh(url) {
         $.ajax({
             url: url,
-            success: function(satwork) {
+            success: function(res) {
                 tableShow.ajax.reload();
                 toastr.options = {
                     "positionClass": "toast-bottom-right",

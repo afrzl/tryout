@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\JawabanPeserta;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UjianController;
 use Illuminate\Database\Eloquent\Collection;
 
 class PesertaUjianController extends Controller
@@ -245,18 +246,22 @@ class PesertaUjianController extends Controller
 
     public function refresh($id) {
         $ujianUser = UjianUser::where('ujian_id', $id)->get();
-        foreach ($ujianUser as $key => $value) {
-            if ($value->status != '2') {
-                if (Carbon::parse($value->waktu_akhir)->isPast()) {
-                    $client = new Client();
-                    $tokenRequest = $client->request('PUT', url('/ujian/selesaiujian/' . $value->id),);
-                    $response = Route::dispatch($tokenRequest);
-                    if($response->getStatusCode() == 200){
-                        continue;
+            foreach ($ujianUser as $key => $value) {
+                if ($value->status != '2') {
+                    if (Carbon::parse($value->waktu_akhir)->isPast()) {
+                        $printReport = new UjianController;
+
+                        $printReport->selesaiUjian($value->id);
+                        // \App::call(UjianController::class)->selesaiUjian($value->id);
+                        // $client = new Client();
+                        // $tokenRequest = $client->request('PUT', url('/ujian/selesaiujian/' . $value->id),);
+                        // $response = Route::dispatch($tokenRequest);
+                        // if($response->getStatusCode() == 200){
+                        //     continue;
+                        // }
                     }
                 }
             }
-        }
 
         return response()->json('Data berhasil disimpan', 200);
     }

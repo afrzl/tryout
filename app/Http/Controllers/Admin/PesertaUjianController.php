@@ -88,6 +88,7 @@ class PesertaUjianController extends Controller
 
     public function showData($id)
     {
+        ini_set('memory_limit', '1028M');
         $peserta = UjianUser::with('ujian', 'user', 'user.sessions', 'jawabanPeserta.soal')
                     ->where('ujian_id', $id)
                     ->where('is_first', 1)

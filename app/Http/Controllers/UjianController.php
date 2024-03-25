@@ -83,7 +83,14 @@ class UjianController extends Controller
             abort(403, 'ERROR');
         }
 
-        $preparation = Soal::with('jawaban')->where('ujian_id', $id);
+        if ($ujian->jenis_ujian == 'skd') {
+            $preparation = Soal::with('jawaban')->where('ujian_id', $id)
+                        ->whereIn('jenis_soal', ['twk', 'tiu', 'tkp'])
+                        ->orderByRaw('FIELD(jenis_soal,"twk", "tiu", "tkp")');
+        } else {
+            $preparation = Soal::with('jawaban')->where('ujian_id', $id);
+        }
+        // $preparation = Soal::with('jawaban')->where('ujian_id', $id);
         $soal = $preparation->paginate(1, ['*'], 'no');
         return view('views_user.ujian.pembahasan', compact('soal', 'ujian'));
     }

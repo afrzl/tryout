@@ -353,7 +353,7 @@ class UjianController extends Controller
         $dataUjianUser = UjianUser::where('ujian_id', $id)->where('user_id', auth()->user()->id)->get();
         $dates = $dataUjianUser->pluck('created_at');
         $dataUjianUser->tanggal = $dates->map(function ($date) {
-            return \Carbon\Carbon::parse($date)->format('d F Y h:m:s');
+            return \Carbon\Carbon::parse($date)->isoFormat('D MMMM Y HH:mm:ss');
         });
         return view('views_user.nilai.index', compact('ujian', 'ujianUser', 'userFormasi', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi', 'dataUjianUser'));
     }

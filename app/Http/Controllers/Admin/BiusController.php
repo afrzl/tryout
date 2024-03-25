@@ -28,6 +28,7 @@ class BiusController extends Controller
             ->addIndexColumn()
             ->addColumn('name', fn($pembelian) => $pembelian->user->name)
             ->addColumn('email', fn($pembelian) => $pembelian->user->email)
+            ->addColumn('no_hp', fn($pembelian) => $pembelian->user->usersDetail->no_hp)
             ->addColumn('kelompok', function ($pembelian) {
                 return '
                     <select name="kelompok[]" onChange="storeKelompok(`'. $pembelian->user->id .'`)" id="kel-'. $pembelian->user->id .'" class="form-control input-kelompok">

@@ -28,6 +28,7 @@ Data BIUS
                                     <th style="width: 5%">No</th>
                                     <th>Nama</th>
                                     <th>Email</th>
+                                    <th>No. HP</th>
                                     <th style="width: 20%">Kelompok</th>
                                 </tr>
                             </thead>
@@ -77,6 +78,9 @@ Data BIUS
                 }
                 , {
                     data: 'email'
+                }
+                , {
+                    data: 'no_hp'
                 }
                 , {
                     data: 'kelompok'

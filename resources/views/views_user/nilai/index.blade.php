@@ -109,6 +109,7 @@
                             </table>
                         </div>
                     </div>
+                    @if ($ujian->tipe_ujian == 2)
                     <div class="card mb-3">
                         <div class="card-body">
                             <h3 class="card-title mb-3"><b>Grafik Nilai</b></h3>
@@ -118,6 +119,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </div>
                 <div class="col-lg-7">
                     <div class="col-lg-12">
@@ -305,6 +307,7 @@
     </main>
 @endsection
 
+@if ($ujian->tipe_ujian == 2)
 @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js" defer></script>
     <script>
@@ -331,3 +334,4 @@
         })
     </script>
 @endpush
+@endif

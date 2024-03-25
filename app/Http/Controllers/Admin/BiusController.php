@@ -21,6 +21,7 @@ class BiusController extends Controller
     {
         $pembelian = Pembelian::with('user', 'user.usersDetail')
                 ->where('paket_id', '0df8c9b0-d352-448b-9611-abadffc4f46d')
+                ->where('status', 'Sukses')
                 ->orderBy('created_at', 'asc');
 
         return datatables()

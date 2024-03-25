@@ -343,16 +343,19 @@ class UjianController extends Controller
         $ujianUser = $ujianUser->sortByDesc('status_kelulusan')->values();
         $totalRank = $ujianUser->count();
         $rankUser = $ujianUser->where('user_id', auth()->user()->id);
-        // return $ujianUser;
         $rank = $rankUser->keys()->first() + 1;
 
         $userFormasi = $ujianUser->where('user.usersDetail.penempatan', auth()->user()->usersDetail->penempatan)->values();
         $totalRankFormasi = $userFormasi->count();
         $rankUserFormasi = $userFormasi->where('user_id', auth()->user()->id);
         $rankUserFormasi = $rankUserFormasi->keys()->first() + 1;
-        // return $ujianUser;
 
-        return view('views_user.nilai.index', compact('ujian', 'ujianUser', 'userFormasi', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi'));
+        $dataUjianUser = UjianUser::where('ujian_id', $id)->where('user_id', auth()->user()->id)->get();
+        $dates = $dataUjianUser->pluck('created_at');
+        $dataUjianUser->tanggal = $dates->map(function ($date) {
+            return \Carbon\Carbon::parse($date)->format('d F Y h:m:s');
+        });
+        return view('views_user.nilai.index', compact('ujian', 'ujianUser', 'userFormasi', 'totalRank', 'rank', 'totalRankFormasi', 'rankUserFormasi', 'dataUjianUser'));
     }
 
     /**

@@ -126,7 +126,7 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($ujianUser as $no => $user)
-                                            @if ($no < 3 || $no==$rank - 1)
+                                            @if ($no < 15 || $no==$rank - 1)
                                             <tr>
                                                 <td style="text-align: center">@if($no == $rank - 1) <b>{{ $no+1 }}.</b> @else {{ $no+1 }}. @endif</td>
                                                 <td>@if($no == $rank - 1) <b>{{ $user->user->name }}</b> @else {{ $user->user->name }} @endif</td>
@@ -154,7 +154,7 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($userFormasi as $no => $user)
-                                            @if ($no < 3 || $no==$rankUserFormasi - 1)
+                                            @if ($no < 15 || $no==$rankUserFormasi - 1)
                                             <tr>
                                                 <td style="text-align: center">@if($no == $rankUserFormasi - 1) <b>{{ $no+1 }}.</b> @else {{ $no+1 }}. @endif</td>
                                                 <td>@if($no == $rankUserFormasi - 1) <b>{{ $user->user->name }}</b> @else {{ $user->user->name }} @endif</td>

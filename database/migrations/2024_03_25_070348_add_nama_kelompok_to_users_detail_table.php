@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pembelian', function (Blueprint $table) {
-            $table->string('nama_kelompok')->after('voucher_id')->nullable();
+        Schema::table('users_detail', function (Blueprint $table) {
+            $table->string('nama_kelompok')->after('instagram')->nullable();
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pembelian', function (Blueprint $table) {
+        Schema::table('users_detail', function (Blueprint $table) {
             $table->dropColumn('nama_kelompok');
         });
     }

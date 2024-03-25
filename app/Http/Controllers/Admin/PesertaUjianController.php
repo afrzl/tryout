@@ -83,14 +83,19 @@ class PesertaUjianController extends Controller
      */
     public function show($id)
     {
-        $ujian = Ujian::find($id);
+        $ujian = Ujian::with(['paketUjian' => function ($query) {
+                        $query->where('paket_ujian.id', '0df8c9b0-d352-448b-9611-abadffc4f46d')->first();
+                    }])->find($id);
         return view('admin.peserta_ujian.show', compact('ujian'));
     }
 
     public function showData($id)
     {
         ini_set('memory_limit', -1);
-        $peserta = UjianUser::with('ujian', 'user', 'user.sessions')
+
+        $peserta = UjianUser::with(['ujian', 'user', 'user.sessions', 'ujian.paketUjian' => function ($query) {
+                        $query->where('paket_ujian.id', '0df8c9b0-d352-448b-9611-abadffc4f46d')->first();
+                    }])
                     ->where('ujian_id', $id)
                     ->where('is_first', 1)
                     ->orderBy('nilai', 'desc')
@@ -125,6 +130,9 @@ class PesertaUjianController extends Controller
             ->addColumn('email', function ($peserta)
             {
                 return $peserta->user->email;
+            })
+            ->addColumn('kelompok', function ($peserta) {
+                return $peserta->user->usersDetail->nama_kelompok;
             })
             ->addColumn('waktu_pengerjaan', function ($peserta)
             {

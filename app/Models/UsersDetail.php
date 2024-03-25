@@ -29,6 +29,7 @@ class UsersDetail extends Model
         'prodi',
         'penempatan',
         'instagram',
+        'nama_kelompok',
     ];
 
     protected $casts = [

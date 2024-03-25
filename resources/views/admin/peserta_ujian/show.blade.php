@@ -47,6 +47,9 @@ Data Peserta Ujian
                                 <th style="width: 5%">No</th>
                                 <th>Nama</th>
                                 <th>Email</th>
+                                @if (!$ujian->paketUjian->isEmpty())
+                                <th>Kelompok</th>
+                                @endif
                                 <th>Status Pengerjaan</th>
                                 <th>Waktu Pengerjaan</th>
                                 <th>Nilai</th>
@@ -78,6 +81,28 @@ Data Peserta Ujian
 <script>
     let tableShow;
     $(function() {
+        let col = new Array()
+        let order = new Array()
+        @if (!$ujian->paketUjian->isEmpty())
+        col = [{ data: 'DT_RowIndex', searchable: false, sortable: false },
+                { data: 'nama' },
+                { data: 'email' },
+                { data: 'kelompok' },
+                { data: 'status_pengerjaan'},
+                { data: 'waktu_pengerjaan' },
+                { data: 'nilai' },
+                { data: 'aksi', searchable: false, sortable: false}]
+        order = [[4, 'desc']]
+        @else
+        col = [{ data: 'DT_RowIndex', searchable: false, sortable: false },
+                { data: 'nama' },
+                { data: 'email' },
+                { data: 'status_pengerjaan'},
+                { data: 'waktu_pengerjaan' },
+                { data: 'nilai' },
+                { data: 'aksi', searchable: false, sortable: false}]
+        order = [[3, 'desc']]
+        @endif
         tableShow = $('#Table-Show-Peserta-Ujian').DataTable({
             processing: true
             , responsive: true
@@ -85,32 +110,7 @@ Data Peserta Ujian
             , ajax: {
                 url: '{{ route('admin.peserta_ujian.show_data', $ujian->id) }}'
             , }
-            , columns: [{
-                    data: 'DT_RowIndex'
-                    , searchable: false
-                    , sortable: false
-                }
-                , {
-                    data: 'nama'
-                }
-                , {
-                    data: 'email'
-                }
-                , {
-                    data: 'status_pengerjaan'
-                }
-                , {
-                    data: 'waktu_pengerjaan'
-                }
-                , {
-                    data: 'nilai'
-                }
-                , {
-                    data: 'aksi'
-                    , searchable: false
-                    , sortable: false
-                }
-            , ]
+            , columns: col
             , dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip'
             , buttons: [
                 'copy', 'excel', 'pdf'
@@ -118,7 +118,7 @@ Data Peserta Ujian
             , columnDefs: [
                 { className: 'text-center', targets: [0, 3, 4, 5, 6] },
             ]
-            , order: [[3, 'desc']]
+            , order: order
         });
     });
 

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Pembelian;
+use App\Models\UsersDetail;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class BiusController extends Controller
 {
@@ -18,7 +19,7 @@ class BiusController extends Controller
 
     public function data()
     {
-        $pembelian = Pembelian::with('user')
+        $pembelian = Pembelian::with('user', 'user.usersDetail')
                 ->where('paket_id', '0df8c9b0-d352-448b-9611-abadffc4f46d')
                 ->orderBy('created_at', 'asc');
 
@@ -29,11 +30,11 @@ class BiusController extends Controller
             ->addColumn('email', fn($pembelian) => $pembelian->user->email)
             ->addColumn('kelompok', function ($pembelian) {
                 return '
-                    <select name="kelompok[]" onChange="storeKelompok('. $pembelian->id .')" id="kel-'. $pembelian->id .'" class="form-control input-kelompok">
+                    <select name="kelompok[]" onChange="storeKelompok(`'. $pembelian->user->id .'`)" id="kel-'. $pembelian->user->id .'" class="form-control input-kelompok">
                         <option value="">-- Pilih Nama Kelompok--</option>
-                        <option value="Poisson" '. ($pembelian->nama_kelompok == "Poisson" ? "selected" : "") .'>Poisson</option>
-                        <option value="Bernoulli" '. ($pembelian->nama_kelompok == "Bernoulli" ? "selected" : "") .'>Bernoulli</option>
-                        <option value="Binomial" '. ($pembelian->nama_kelompok == "Binomial" ? "selected" : "") .'>Binomial</option>
+                        <option value="Poisson" '. ($pembelian->user->usersDetail->nama_kelompok == "Poisson" ? "selected" : "") .'>Poisson</option>
+                        <option value="Bernoulli" '. ($pembelian->user->usersDetail->nama_kelompok == "Bernoulli" ? "selected" : "") .'>Bernoulli</option>
+                        <option value="Binomial" '. ($pembelian->user->usersDetail->nama_kelompok == "Binomial" ? "selected" : "") .'>Binomial</option>
                     </select>';
             })
             ->rawColumns(['kelompok'])
@@ -58,9 +59,9 @@ class BiusController extends Controller
             'kelompok' => 'required',
         ]);
 
-        $pembelian = Pembelian::findOrFail($request->id);
-        $pembelian->nama_kelompok = $request->kelompok;
-        $pembelian->update();
+        $userDetail = UsersDetail::findOrFail($request->id);
+        $userDetail->nama_kelompok = $request->kelompok;
+        $userDetail->update();
 
         return response()->json('Berhasil menambahkan kelompok', 200);
     }

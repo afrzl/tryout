@@ -98,6 +98,7 @@
 
 @push('scripts')
 <script>
+    @if (!((!$betweenTime) || ((isset($ujian->ujianUser[0]->status) ? $ujian->ujianUser[0]->status : null) == 2 && $ujian->tipe_ujian == 1)))
     function kerjakan(id) {
         let token = $("meta[name='csrf-token']").attr("content");
         $('#kerjakan').html('Memuat soal <div class="spinner-border spinner-border-sm" role="status"></div>');
@@ -136,5 +137,6 @@
             console.log(response);
         });
     }
+    @endif
 </script>
 @endpush

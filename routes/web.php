@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ProfileController;
@@ -156,6 +157,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('sessiondestroy', [UjianController::class, 'sessionDestroy'])->name('session_destroy');
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
+
+Route::get('/redirects', function(){
+	return redirect(Redirect::intended()->getTargetUrl());
+	// You can replace above line with the following to return to previous page
+	return back();	// or return redirect()->back();
+});
 
 require_once __DIR__ . '/jetstream.php';
 

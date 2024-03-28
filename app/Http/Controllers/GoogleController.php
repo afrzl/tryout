@@ -24,7 +24,7 @@ class GoogleController extends Controller
 
         if ($findUser) {
             Auth::login($findUser);
-            return redirect()->route('dashboard');
+            return redirect('/redirects');
         } else {
             $newUser = User::create([
                 'name' => $user->getName(),
@@ -35,7 +35,7 @@ class GoogleController extends Controller
             ]);
 
             Auth::login($newUser);
-            return redirect()->route('dashboard');
+            return redirect('/redirects');
         }
     }
 

@@ -257,9 +257,13 @@ class PesertaUjianController extends Controller
             foreach ($ujianUser as $key => $value) {
                 if ($value->status != '2') {
                     if (Carbon::parse($value->waktu_akhir)->isPast()) {
+                        $waktu_akhir = $value->waktu_akhir;
                         $printReport = new UjianController;
 
                         $printReport->selesaiUjian($value->id);
+                        $user = UjianUser::findOrFail($value->id);
+                        $user->waktu_akhir = $waktu_akhir;
+                        $user->update();
                         // \App::call(UjianController::class)->selesaiUjian($value->id);
                         // $client = new Client();
                         // $tokenRequest = $client->request('PUT', url('/ujian/selesaiujian/' . $value->id),);

@@ -229,7 +229,6 @@ class UjianController extends Controller
     public function mulaiUjian($id)
     {
         $ujian = Ujian::with('ujianUser')->findOrFail($id);
-        return ($ujian);
         $betweenTime = Carbon::now()->between($ujian->waktu_mulai, $ujian->waktu_akhir);
 
         $session = Session::where('user_id', auth()->user()->id)->get();

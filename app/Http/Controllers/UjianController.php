@@ -231,7 +231,7 @@ class UjianController extends Controller
         $ujian = Ujian::findOrFail($id);
         $betweenTime = Carbon::now()->between($ujian->waktu_mulai, $ujian->waktu_akhir);
         if (!((!$betweenTime) || ((isset($ujian->ujianUser[0]->status) ? $ujian->ujianUser[0]->status : null) == 2 && $ujian->tipe_ujian == 1))) {
-            abort(403, "Tidak dapat masuk ujian");
+            abort(403, Carbon::now()->between($ujian->waktu_mulai, $ujian->waktu_akhir));
         }
 
         $session = Session::where('user_id', auth()->user()->id)->get();

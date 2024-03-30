@@ -34,7 +34,7 @@ class SoalController extends Controller
     {
         $soals = Soal::where('ujian_id', $id)
                 ->with('jawaban', 'ujian')
-                ->orderBy('created_at', 'desc');
+                ->orderBy('created_at', 'asc');
 
         return datatables()
             ->of($soals)

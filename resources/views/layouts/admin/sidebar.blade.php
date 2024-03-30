@@ -97,6 +97,14 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.tonas.index') }}" class="nav-link {{ (request()->segment(2) == 'tonas') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Data Tonas
+                        </p>
+                    </a>
+                </li>
                 @endrole
 
                 <li class="nav-header">Data Peserta Ujian</li>

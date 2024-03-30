@@ -34,7 +34,7 @@ class Voucher extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class , 'himada_id');
     }
 
     /**

@@ -29,23 +29,22 @@ class PembelianController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
+    function beliPaket($paket_id, $himada_id = NULL) {
         $cek = Pembelian::where('user_id', auth()->user()->id)
-                ->where('paket_id', $request->paket_id)
+                ->where('paket_id', $paket_id)
                 ->latest('updated_at')
                 ->first();
-        $paketUjian = PaketUjian::find($request->paket_id);
+        $paketUjian = PaketUjian::find($paket_id);
 
         if (!$cek) {
             $pembelian = new Pembelian();
-            $pembelian->paket_id = $request->paket_id;
+            $pembelian->paket_id = $paket_id;
             $pembelian->user_id = auth()->user()->id;
             $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
             $pembelian->harga = $paketUjian->harga;
+            if ($himada_id) {
+                $pembelian->voucher_id = $himada_id;
+            }
 
             //kalo udah beli tobar batch 1
             if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
@@ -64,10 +63,13 @@ class PembelianController extends Controller
         } else {
             if ($cek->status == 'Gagal') {
                 $pembelian = new Pembelian();
-                $pembelian->paket_id = $request->paket_id;
+                $pembelian->paket_id = $paket_id;
                 $pembelian->user_id = auth()->user()->id;
                 $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
                 $pembelian->harga = $paketUjian->harga;
+                if ($himada_id) {
+                    $pembelian->voucher_id = $himada_id;
+                }
                 //kalo udah beli tobar batch 1
                 if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
                     $tobar = Pembelian::where('user_id', auth()->user()->id)
@@ -89,6 +91,23 @@ class PembelianController extends Controller
         }
 
         return redirect()->route('pembelian.show', $id_pembelian);
+    }
+
+    public function tonas($voucher = null) {
+        $himada = Voucher::where('kode', $voucher)->first();
+        if ($himada) {
+            return $this->beliPaket('d5f57505-fb5a-4f59-a301-3722ef581844', $himada->id);
+        } else {
+            return $this->beliPaket('d5f57505-fb5a-4f59-a301-3722ef581844', null);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        return $this->beliPaket($request->paket_id);
     }
 
     /**

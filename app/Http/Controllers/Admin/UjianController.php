@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use App\Models\Soal;
 use App\Models\Ujian;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class UjianController extends Controller
 {
@@ -139,6 +140,21 @@ class UjianController extends Controller
         $ujian['waktu_pengumuman'] = Carbon::parse($ujian['waktu_pengumuman'])->isoFormat('D MMMM Y HH:mm:ss');
 
         return response()->json($ujian);
+    }
+
+    public function preview($id) {
+        $ujian = Ujian::findOrFail($id);
+
+        if ($ujian->jenis_ujian == 'skd') {
+            $preparation = Soal::with('jawaban')->where('ujian_id', $id)
+                        ->whereIn('jenis_soal', ['twk', 'tiu', 'tkp'])
+                        ->orderByRaw('FIELD(jenis_soal,"twk", "tiu", "tkp")');
+        } else {
+            $preparation = Soal::with('jawaban')->where('ujian_id', $id);
+        }
+        // $preparation = Soal::with('jawaban')->where('ujian_id', $id);
+        $soal = $preparation->paginate(1, ['*'], 'no');
+        return view('views_user.ujian.pembahasan', compact('soal', 'ujian'));
     }
 
     /**

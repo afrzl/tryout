@@ -81,6 +81,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia|bendahara'])->group(function () {
     Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');
     Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
+    Route::get('/ujian/{id}/preview', [UjianController_Admin::class, 'preview'])->name('ujian.preview');
     Route::resource('ujian', UjianController_Admin::class);
 });
 

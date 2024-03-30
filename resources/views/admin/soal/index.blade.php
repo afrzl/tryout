@@ -33,7 +33,7 @@ Data Soal Ujian {{ $ujian->nama }}
                         @else
                             <button onclick="published('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-warning ml-3"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
                         @endif
-                        <a href="#" target="_blank" type="button" class="btn btn-success ml-3"><i class="fa fa-preview" aria-hidden="true"></i> Preview</a>
+                        <a href="/admin/ujian/{{ $ujian->id }}/preview?no=1" target="_blank" type="button" class="btn btn-success ml-3"><i class="fa fa-preview" aria-hidden="true"></i> Preview</a>
                     @else
                         <a href="{{ route('admin.ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
                     @endif

@@ -90,7 +90,7 @@ class SoalController extends Controller
             })
             ->filter(function ($soals) use ($request) {
                 if ($request->get('jenis_soal') == 'twk' || $request->get('jenis_soal') == 'tiu' || $request->get('jenis_soal') == 'tkp') {
-                    $soals->where('jenis_soal', $request->jenis_soal);
+                    $soals->where('jenis_soal', $request->jenis_soal)->orderBy('created_at', 'asc');
                 }
                 if (!empty($request->get('search'))) {
                     $soals->where(function($w) use($request){

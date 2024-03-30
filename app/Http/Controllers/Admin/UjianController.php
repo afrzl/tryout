@@ -148,7 +148,8 @@ class UjianController extends Controller
         if ($ujian->jenis_ujian == 'skd') {
             $preparation = Soal::with('jawaban')->where('ujian_id', $id)
                         ->whereIn('jenis_soal', ['twk', 'tiu', 'tkp'])
-                        ->orderByRaw('FIELD(jenis_soal,"twk", "tiu", "tkp")');
+                        ->orderByRaw('FIELD(jenis_soal,"twk", "tiu", "tkp")')
+                        ->orderBy('created_at', 'asc');
         } else {
             $preparation = Soal::with('jawaban')->where('ujian_id', $id);
         }

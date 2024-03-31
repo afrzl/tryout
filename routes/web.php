@@ -83,6 +83,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/ujian/{id}/publish', [UjianController_Admin::class, 'publish'])->name('ujian.publish');
     Route::get('/ujian/{id}/preview', [UjianController_Admin::class, 'preview'])->name('ujian.preview');
     Route::post('/ujian/{id}/duplicate', [UjianController_Admin::class, 'duplicate'])->name('ujian.duplicate');
+    Route::put('/ujian/{id}/refresh_nilai', [UjianController_Admin::class, 'refreshNilai'])->name('soal.refreshNilai');
     Route::resource('ujian', UjianController_Admin::class);
 });
 

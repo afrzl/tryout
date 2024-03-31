@@ -30,10 +30,11 @@ Data Soal Ujian {{ $ujian->nama }}
                     @if ($ujian->soal->count() >= $ujian->jumlah_soal)
                         @if($ujian->isPublished)
                             <button onclick="cancelPublished('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-danger ml-3"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Batalkan publish</button>
+                            <button onclick="refreshNilai('{{ route('admin.soal.refreshNilai', $ujian->id) }}')" type="button" class="btn btn-warning ml-3"><i class="fa fa-arrows-rotate" aria-hidden="true"></i> Refresh nilai peserta</button>
                         @else
                             <button onclick="published('{{ route('admin.ujian.publish', $ujian->id) }}')" type="button" class="btn btn-warning ml-3"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Publish</button>
                         @endif
-                        <a href="/admin/ujian/{{ $ujian->id }}/preview?no=1" target="_blank" type="button" class="btn btn-success ml-3"><i class="fa fa-preview" aria-hidden="true"></i> Preview</a>
+                        <a href="/admin/ujian/{{ $ujian->id }}/preview?no=1" target="_blank" type="button" class="btn btn-success ml-3"><i class="fa fa-magnifying-glass" aria-hidden="true"></i> Preview</a>
                     @else
                         <a href="{{ route('admin.ujian.soal.create', $ujian->id) }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Tambah</a>
                     @endif
@@ -295,6 +296,41 @@ Data Soal Ujian {{ $ujian->nama }}
                     toastr.success('Publish ujian berhasil dibatalkan.');
                     $( ".card-header" ).load(window.location.href + " .card-header>*" );
                     tableSoal.ajax.reload();
+                })
+                .fail((response) => {
+                    toastr.error('error.');
+                    return;
+                })
+            }
+        })
+    }
+
+    function refreshNilai(url) {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan merefresh nilai ujian peserta?',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(url, {
+                    '_token': '{{ csrf_token() }}',
+                    '_method': 'put'
+                })
+                .done((response) => {
+                    alert(response);
+                    console.log(response);
+                    // toastr.options = {
+                    //     "positionClass": "toast-bottom-right",
+                    //     "closeButton": true,
+                    //     "progressBar": true,
+                    // };
+                    // toastr.success('Publish ujian berhasil dibatalkan.');
+                    // $( ".card-header" ).load(window.location.href + " .card-header>*" );
+                    // tableSoal.ajax.reload();
                 })
                 .fail((response) => {
                     toastr.error('error.');

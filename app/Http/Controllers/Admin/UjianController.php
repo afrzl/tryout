@@ -249,4 +249,32 @@ class UjianController extends Controller
         }
         return response()->json('Ujian berhasil diduplikat', 200);
     }
+
+    public function refreshNilai($id_ujian)
+    {
+        $ujian = Ujian::with('soal.jawaban')->findOrFail($id_ujian);
+        foreach ($ujian->soal as $soal) {
+            if ($soal->jenis_soal == 'tkp') {
+                $jawabanPeserta = JawabanPeserta::where('soal_id', $soal->id)->get();
+                foreach ($jawabanPeserta as $jawaban) {
+                    $jawaban->poin = $ujian->soal->jawaban->where('')
+                }
+            } else {
+                $jawabanPeserta = JawabanPeserta::where('soal_id', $soal->id)->get();
+                foreach ($jawabanPeserta as $jawaban) {
+                    if ($jawaban->jawaban_id == $soal->kunci_jawaban) {
+                        $jawaban->poin = $soal->poin_benar;
+                    } elseif ($jawaban->jawaban_id == null) {
+                        $jawaban->poin = $soal->poin_kosong;
+                    } else {
+                        $jawaban->poin = $soal->poin_salah;
+                    }
+                }
+                $jawabanPeserta->update();
+            }
+        }
+
+
+
+    }
 }

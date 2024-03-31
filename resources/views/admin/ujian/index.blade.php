@@ -264,6 +264,35 @@ Data Ujian
         })
     }
 
+    function duplicateUjian(url) {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan menduplikat ujian?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(url, {
+                    '_token': '{{ csrf_token() }}',
+                    '_method': 'post',
+                })
+                .done((response) => {
+                    tableUjian.ajax.reload();
+                    console.log(response);
+                    toastr.options = {"positionClass": "toast-bottom-right"};
+                    toastr.success('Data berhasil diduplikat.');
+                })
+                .fail((response) => {
+                    toastr.error('Tidak dapat menduplikat data.');
+                    return;
+                })
+            }
+        })
+    }
+
     //date time picker
     $(function () {
         $('#Waktu_mulai').datetimepicker({

@@ -63,23 +63,19 @@ class UjianController extends Controller
             ->addColumn('aksi', function ($ujians) {
                 $text = '';
                 if (!$ujians->isPublished && auth()->user()->hasRole('admin')) {
-                    $text .= '<button onclick="editData(`' . route('admin.ujian.update', $ujians->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
-                    <button onclick="deleteData(`' . route('admin.ujian.destroy', $ujians->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
+                    $text .= '<button onclick="editData(`' . route('admin.ujian.update', $ujians->id) . '`)" type="button" class="btn btn-outline-warning m-1"><i class="fa fa-edit"></i></button>
+                    <button onclick="deleteData(`' . route('admin.ujian.destroy', $ujians->id) . '`)" type="button" class="btn btn-outline-danger m-1"><i class="fa fa-trash-alt"></i></button>';
                 }
-                $text .= ' <a href="' . route('admin.ujian.soal.index', $ujians->id) . '" type="button" class="btn btn-outline-info"><i class="fa fa-eye"></i></a>';
+                $text .= ' <a href="' . route('admin.ujian.soal.index', $ujians->id) . '" type="button" class="btn btn-outline-info m-1"><i class="fa fa-eye"></i></a>';
+
+                if (auth()->user()->hasRole('admin')) {
+                    $text .= '<button onclick="duplicateUjian(`' . route('admin.ujian.duplicate', $ujians->id) . '`)" type="button" class="btn btn-outline-success m-1"><i class="fa fa-copy"></i></button>';
+                }
 
                 return $text;
             })
             ->rawColumns(['nama', 'aksi', 'lama_pengerjaan', 'waktu_pengerjaan'])
             ->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -159,14 +155,6 @@ class UjianController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Ujian $ujian)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
@@ -235,5 +223,30 @@ class UjianController extends Controller
             return response()->json('Data berhasil disimpan', 200);
         }
         return response()->json('Tidak dapat mempublish', 300);
+    }
+
+    public function duplicate($id_ujian) {
+        $ujian = Ujian::with('soal', 'soal.jawaban')->findOrFail($id_ujian);
+
+        $duplicateUjian = $ujian->replicate();
+        $duplicateUjian->nama  = $ujian->nama . '-DUPLICATE';
+        $duplicateUjian->isPublished = false;
+        $duplicateUjian->save();
+
+        foreach ($duplicateUjian->soal as $soal) {
+            $duplicateSoal = $soal->replicate();
+            $duplicateSoal->ujian_id = $duplicateUjian->id;
+            $duplicateSoal->save();
+            foreach ($soal->jawaban as $jawaban) {
+                $duplicateJawaban = $jawaban->replicate();
+                $duplicateJawaban->soal_id = $duplicateSoal->id;
+                $duplicateJawaban->save();
+                if ($jawaban->id == $duplicateSoal->kunci_jawaban) {
+                    $duplicateSoal->kunci_jawaban = $duplicateJawaban->id;
+                    $duplicateSoal->save();
+                }
+            }
+        }
+        return response()->json('Ujian berhasil diduplikat', 200);
     }
 }

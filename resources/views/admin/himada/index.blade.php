@@ -29,7 +29,7 @@ Data Himada
                                     <th>Nama</th>
                                     <th>Email</th>
                                     <th style="width: 15%">Kode Voucher</th>
-                                    <th style="width: 5%"><i class="fa fa-cog"></i></th>
+                                    <th style="width: 10%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
                         </table>
@@ -50,6 +50,7 @@ Data Himada
 </div>
 
 @includeIf('admin.himada.form')
+@includeIf('admin.user.reset')
 
 @endsection
 

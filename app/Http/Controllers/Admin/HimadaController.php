@@ -53,8 +53,11 @@ class HimadaController extends Controller
             ->addColumn('aksi', function ($users) {
                 return '
                     <button onclick="deleteData(`' .
-                    route('admin.himada.destroy', $users->id) .
-                    '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
+                        route('admin.himada.destroy', $users->id) .
+                        '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>
+                    <button onclick="resetPassword(`' .
+                        route('user.resetpassword', $users->id) .
+                        '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-key"></i></button>
                 ';
             })
             ->rawColumns(['aksi', 'role'])

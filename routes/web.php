@@ -40,6 +40,11 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::post('/sendEmail', [DashboardController::class, 'sendEmail'])->name('sendEmail');
 Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->middleware('auth', 'verified', 'role:admin|panitia|bendahara')->name('admin.dashboard');
 
+//route dashboard himada
+Route::get('/himada/dashboard', [\App\Http\Controllers\HimadaController::class, 'dashboard'])->middleware('auth', 'verified', 'role:himada')->name('himada.dashboard');
+Route::get('/himada/peserta', [\App\Http\Controllers\HimadaController::class, 'peserta'])->middleware('auth', 'verified', 'role:himada')->name('himada.peserta');
+Route::get('/himada/peserta/data', [\App\Http\Controllers\HimadaController::class, 'dataPeserta'])->middleware('auth', 'verified', 'role:himada')->name('himada.peserta.data');
+
 //route data user
 Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
@@ -99,7 +104,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 });
 
 //route data pembelian
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|bendahara'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|bendahara|himada'])->group(function () {
     Route::get('/pembelian/data', [PembelianController_Admin::class, 'data'])->name('pembelian.data');
     Route::post('/pembelian/getUser', [PembelianController_Admin::class, 'getUser'])->name('pembelian.getUser');
     Route::get('/pembelian/dataPaket', [PembelianController_Admin::class, 'dataPaket'])->name('pembelian.dataPaket');

@@ -59,7 +59,13 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        @include('layouts/admin/sidebar')
+        @hasanyrole(['admin', 'bendahara', 'panitia'])
+            @include('layouts/admin/sidebar')
+        @endhasrole
+
+        @role('himada')
+            @include('views_himada.sidebar')
+        @endhasrole
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">

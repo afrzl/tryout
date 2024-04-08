@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Admin\BiusController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\TonasController;
 use App\Http\Controllers\Admin\HimadaController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\PaketUjianController;
@@ -38,6 +39,11 @@ use App\Http\Controllers\Admin\PembelianController as PembelianController_Admin;
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::post('/sendEmail', [DashboardController::class, 'sendEmail'])->name('sendEmail');
 Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->middleware('auth', 'verified', 'role:admin|panitia|bendahara')->name('admin.dashboard');
+
+//route dashboard himada
+Route::get('/himada/dashboard', [\App\Http\Controllers\HimadaController::class, 'dashboard'])->middleware('auth', 'verified', 'role:himada')->name('himada.dashboard');
+Route::get('/himada/peserta', [\App\Http\Controllers\HimadaController::class, 'peserta'])->middleware('auth', 'verified', 'role:himada')->name('himada.peserta');
+Route::get('/himada/peserta/data', [\App\Http\Controllers\HimadaController::class, 'dataPeserta'])->middleware('auth', 'verified', 'role:himada')->name('himada.peserta.data');
 
 //route data user
 Route::prefix('admin')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
@@ -93,8 +99,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('bius', BiusController::class);
 });
 
+//route data bius
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/tonas', [TonasController::class, 'index'])->name('tonas.index');
+    Route::get('/tonas/data', [TonasController::class, 'data'])->name('tonas.data');
+});
+
 //route data pembelian
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|bendahara'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|bendahara|himada'])->group(function () {
     Route::get('/pembelian/data', [PembelianController_Admin::class, 'data'])->name('pembelian.data');
     Route::post('/pembelian/getUser', [PembelianController_Admin::class, 'getUser'])->name('pembelian.getUser');
     Route::get('/pembelian/dataPaket', [PembelianController_Admin::class, 'dataPaket'])->name('pembelian.dataPaket');
@@ -122,6 +134,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
 //route pembelian
 Route::middleware(['auth', 'verified', 'profiled'])->group(function () {
+    Route::get('/tonas/{voucher?}', [PembelianController::class, 'tonas'])->name('pembelian.tonas');
     Route::resource('pembelian', PembelianController::class, ['only' => ['index', 'store', 'show']]);
     Route::post('/pembelian/pay', [PembelianController::class, 'pay'])->name('pembelian.pay');
     Route::post('/pembelian/applyVoucher', [PembelianController::class, 'applyVoucher'])->name('pembelian.applyVoucher');

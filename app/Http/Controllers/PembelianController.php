@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use App\Models\Voucher;
 use App\Models\Pembelian;
 use App\Models\PaketUjian;
@@ -43,7 +44,9 @@ class PembelianController extends Controller
             $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
             $pembelian->harga = $paketUjian->harga;
             if ($himada_id) {
+                $voucher = Voucher::findOrFail($himada_id);
                 $pembelian->voucher_id = $himada_id;
+                $pembelian->harga -= $voucher->diskon;
             }
 
             //kalo udah beli tobar batch 1

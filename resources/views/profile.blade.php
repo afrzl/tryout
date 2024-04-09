@@ -181,6 +181,8 @@ Profile
 <script>
     $(function(){
 
+        let id_pembelian = {{ \Session::get('id_pembelian') }}
+
         $('#Sumber').select2({
             theme: 'bootstrap4',
         });
@@ -223,6 +225,9 @@ Profile
                             $("#infoPhoto").attr("src", response.data.profile_photo_url);
                             toastr.options = {"positionClass": "toast-bottom-right"};
                             toastr.success(response.message);
+                            if (response.check == true && id_pembelian != null) {
+                                window.location.href = '/pembelian/' + id_pembelian;
+                            }
                         } else {
                             $.each(response.error, function (key, val) {
                                 toastr.options = {"positionClass": "toast-bottom-right"};
@@ -417,6 +422,9 @@ Profile
                     $('#submitPeserta').attr('type', 'submit');
                     toastr.options = {"positionClass": "toast-bottom-right"};
                     toastr.success(response.message);
+                    if (response.check == true && id_pembelian != null) {
+                        window.location.href = '/pembelian/' + id_pembelian;
+                    }
                 })
                 .fail((errors) => {
                     toastr.options = {"positionClass": "toast-bottom-right"};
@@ -439,6 +447,10 @@ Profile
                     $('#submitPendaftar').attr('type', 'submit');
                     toastr.options = {"positionClass": "toast-bottom-right"};
                     toastr.success(response.message);
+
+                    if (response.check == true && id_pembelian != null) {
+                        window.location.href = '/pembelian/' + id_pembelian;
+                    }
                 })
                 .fail((errors) => {
                     toastr.options = {"positionClass": "toast-bottom-right"};

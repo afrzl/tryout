@@ -93,6 +93,28 @@ class PembelianController extends Controller
             }
         }
 
+        $check = false;
+        $user = \App\Models\User::with(['usersDetail' => function($query) {
+                        $query->where('no_hp', '!=', NULL)
+                                ->where('provinsi', '!=', NULL)
+                                ->where('kabupaten', '!=', NULL)
+                                ->where('kecamatan', '!=', NULL)
+                                ->where('asal_sekolah', '!=', NULL)
+                                ->where('sumber_informasi', '!=', NULL)
+                                ->where('prodi', '!=', NULL)
+                                ->where('penempatan', '!=', NULL)
+                                ->where('instagram', '!=', NULL);
+                    }])
+                ->where('id', auth()->user()->id)
+                ->first();
+        if ($user->usersDetail) {
+            $check = true;
+        }
+
+        if (!$check) {
+            return redirect()->route('profile.show')->with(['message' => 'Silahkan lengkapi profil terlebih dahulu.', 'id_pembelian' => $id_pembelian]);
+        }
+
         return redirect()->route('pembelian.show', $id_pembelian);
     }
 

@@ -133,8 +133,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 });
 
 //route pembelian
+Route::get('/tonas/{voucher?}', [PembelianController::class, 'tonas'])->middleware(['auth', 'verified'])->name('pembelian.tonas');
 Route::middleware(['auth', 'verified', 'profiled'])->group(function () {
-    Route::get('/tonas/{voucher?}', [PembelianController::class, 'tonas'])->name('pembelian.tonas');
     Route::resource('pembelian', PembelianController::class, ['only' => ['index', 'store', 'show']]);
     Route::post('/pembelian/pay', [PembelianController::class, 'pay'])->name('pembelian.pay');
     Route::post('/pembelian/applyVoucher', [PembelianController::class, 'applyVoucher'])->name('pembelian.applyVoucher');

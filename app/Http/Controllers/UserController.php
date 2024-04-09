@@ -162,7 +162,25 @@ class UserController extends Controller
             $usersDetail->save();
         }
 
-        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user], 200);
+        $check = false;
+        $user = \App\Models\User::with(['usersDetail' => function($query) {
+                        $query->where('no_hp', '!=', NULL)
+                                ->where('provinsi', '!=', NULL)
+                                ->where('kabupaten', '!=', NULL)
+                                ->where('kecamatan', '!=', NULL)
+                                ->where('asal_sekolah', '!=', NULL)
+                                ->where('sumber_informasi', '!=', NULL)
+                                ->where('prodi', '!=', NULL)
+                                ->where('penempatan', '!=', NULL)
+                                ->where('instagram', '!=', NULL);
+                    }])
+                ->where('id', auth()->user()->id)
+                ->first();
+        if ($user->usersDetail) {
+            $check = true;
+        }
+
+        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user, 'check' => $check], 200);
     }
 
     public function peserta(Request $request) {
@@ -197,7 +215,25 @@ class UserController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user], 200);
+        $check = false;
+        $user = \App\Models\User::with(['usersDetail' => function($query) {
+                        $query->where('no_hp', '!=', NULL)
+                                ->where('provinsi', '!=', NULL)
+                                ->where('kabupaten', '!=', NULL)
+                                ->where('kecamatan', '!=', NULL)
+                                ->where('asal_sekolah', '!=', NULL)
+                                ->where('sumber_informasi', '!=', NULL)
+                                ->where('prodi', '!=', NULL)
+                                ->where('penempatan', '!=', NULL)
+                                ->where('instagram', '!=', NULL);
+                    }])
+                ->where('id', auth()->user()->id)
+                ->first();
+        if ($user->usersDetail) {
+            $check = true;
+        }
+
+        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user, 'check' => $check], 200);
     }
 
     public function pendaftar(Request $request) {
@@ -223,7 +259,25 @@ class UserController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user], 200);
+        $check = false;
+        $user = \App\Models\User::with(['usersDetail' => function($query) {
+                        $query->where('no_hp', '!=', NULL)
+                                ->where('provinsi', '!=', NULL)
+                                ->where('kabupaten', '!=', NULL)
+                                ->where('kecamatan', '!=', NULL)
+                                ->where('asal_sekolah', '!=', NULL)
+                                ->where('sumber_informasi', '!=', NULL)
+                                ->where('prodi', '!=', NULL)
+                                ->where('penempatan', '!=', NULL)
+                                ->where('instagram', '!=', NULL);
+                    }])
+                ->where('id', auth()->user()->id)
+                ->first();
+        if ($user->usersDetail) {
+            $check = true;
+        }
+
+        return response()->json(['message' => 'Profil berhasil diupdate.', 'data' => $user,'check' => $check], 200);
     }
 
     /**

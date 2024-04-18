@@ -48,7 +48,7 @@ class DashboardController extends Controller
     }
 
     public function sendEmail(Request $request) {
-        Mail::to('pj3prokerbesar@gmail.com')->send(new Message($request));
+        Mail::to('ukmbimbelstis@gmail.com')->send(new Message($request));
 
         return response()->json([
             'message' => 'Sukses'

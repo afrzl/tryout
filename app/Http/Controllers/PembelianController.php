@@ -43,11 +43,6 @@ class PembelianController extends Controller
             $pembelian->user_id = auth()->user()->id;
             $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
             $pembelian->harga = $paketUjian->harga;
-            if ($himada_id) {
-                $voucher = Voucher::findOrFail($himada_id);
-                $pembelian->voucher_id = $himada_id;
-                $pembelian->harga -= $voucher->diskon;
-            }
 
             //kalo udah beli tobar batch 1
             if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
@@ -70,9 +65,6 @@ class PembelianController extends Controller
                 $pembelian->user_id = auth()->user()->id;
                 $pembelian->status = $paketUjian->harga == 0 ? 'Sukses' : 'Belum dibayar';
                 $pembelian->harga = $paketUjian->harga;
-                if ($himada_id) {
-                    $pembelian->voucher_id = $himada_id;
-                }
                 //kalo udah beli tobar batch 1
                 if ($paketUjian->id == '0df8c9b0-d352-448b-9611-abadffc4f46d') {
                     $tobar = Pembelian::where('user_id', auth()->user()->id)
@@ -92,6 +84,19 @@ class PembelianController extends Controller
                 $id_pembelian = $cek->id;
             }
         }
+
+        if ($himada_id) {
+            $pembelian = Pembelian::findOrFail($id_pembelian);
+            $voucher = Voucher::findOrFail($himada_id);
+            if ($pembelian->voucher_id != NULL) {
+                $pembelian->harga += $pembelian->voucher->diskon;
+            }
+            $pembelian->voucher_id = $himada_id;
+            $pembelian->harga -= $voucher->diskon;
+
+            $pembelian->save();
+        }
+
 
         $check = false;
         $user = \App\Models\User::with(['usersDetail' => function($query) {

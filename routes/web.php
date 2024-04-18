@@ -83,6 +83,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('paket', PaketUjianController::class);
 });
 
+//route data paket ujian
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/pengumuman/data', [\App\Http\Controllers\Admin\PengumumanController::class, 'data'])->name('pengumuman.data');
+    Route::resource('pengumuman', \App\Http\Controllers\Admin\PengumumanController::class);
+});
+
 //route data ujian
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia|bendahara'])->group(function () {
     Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');

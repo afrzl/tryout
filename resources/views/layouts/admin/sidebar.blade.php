@@ -34,6 +34,15 @@
                     </a>
                 </li>
                 @role('admin')
+                <li class="nav-item">
+                    <a href="{{ route('admin.pengumuman.index') }}"
+                        class="nav-link {{ request()->segment(2) == 'pengumuman' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Pengumuman
+                        </p>
+                    </a>
+                </li>
                     <li class="nav-header">Data Pengguna</li>
                     <li class="nav-item ">
                         <a href="{{ route('user.index') }}"

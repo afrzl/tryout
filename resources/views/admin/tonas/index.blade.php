@@ -29,7 +29,6 @@
                                         <th style="width: 5%">No</th>
                                         <th>Nama</th>
                                         <th>Email</th>
-                                        <th>No. HP</th>
                                         <th>Asal</th>
                                         <th>Referal</th>
                                     </tr>
@@ -78,8 +77,6 @@
                 }, {
                     data: 'email'
                 }, {
-                    data: 'no_hp'
-                }, {
                     data: 'asal'
                 }, {
                     data: 'referal'
@@ -90,7 +87,7 @@
                 ],
                 columnDefs: [{
                     className: 'text-center',
-                    targets: [0, 3, 5]
+                    targets: [0, 4]
                 }, ]
             });
 

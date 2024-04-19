@@ -36,7 +36,6 @@ class TonasController extends Controller
             ->addIndexColumn()
             ->addColumn('name', fn($pembelian) => $pembelian->user->name)
             ->addColumn('email', fn($pembelian) => $pembelian->user->email)
-            ->addColumn('no_hp', fn($pembelian) => $pembelian->user->usersDetail->no_hp)
             ->addColumn('asal', function ($pembelian) {
                 return Wilayah::find($pembelian->user->usersDetail->kecamatan)->nama . ', ' . Wilayah::find($pembelian->user->usersDetail->kabupaten)->nama . ', ' . Wilayah::find($pembelian->user->usersDetail->provinsi)->nama;
             })

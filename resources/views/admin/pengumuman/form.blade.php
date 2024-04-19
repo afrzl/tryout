@@ -35,7 +35,8 @@ Data Pengumuman
                         </div>
                         <div class="form-group required">
                             <label for="content" class="col-sm-3 col-form-label">Isi</label>
-                            <textarea id="content" class="@error('content') is-invalid @enderror form-control" name="content">{{ old('content', $pengumuman->content) }}</textarea>
+                            <textarea id="content" class="@error('content') is-invalid @enderror" autofocus hidden name="content">{{ old('content', $pengumuman->content) }}
+                            </textarea>
                             @error('content')
                             <div class="invalid-feedback">
                                 <h6>{{ $message }}</h6>
@@ -94,6 +95,10 @@ Data Pengumuman
 <script>
     $(function () {
       bsCustomFileInput.init();
+
+      $('#content').summernote({
+            height: 250,
+        });
     });
 </script>
 @endpush

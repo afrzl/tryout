@@ -32,7 +32,7 @@ Data Pengumuman
                                 <tr>
                                     <th style="width: 5%">No</th>
                                     <th>Judul</th>
-                                    <th>Konten</th>
+                                    <th>Isi</th>
                                     <th style="width: 10%">File Lampiran</th>
                                     <th>Author</th>
                                     <th>Tujuan</th>

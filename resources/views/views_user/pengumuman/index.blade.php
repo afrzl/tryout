@@ -331,11 +331,11 @@
                         <ul>
                             @forelse ($pengumumans as $index => $pengumuman)
                                 <li style="background-color: #f5f5ff">
-                                    <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse" data-bs-target="#faq-list-{{ $index }}">{{ $pengumuman->title }} <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+                                    <i class="bx bx-info-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse" data-bs-target="#faq-list-{{ $index }}">{{ $pengumuman->title }} <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
                                     <div id="faq-list-{{ $index }}" class="collapse {{ $index == 0 ? 'show' : '' }}" data-bs-parent=".faq-list">
                                         <h6 style="color: grey" class="mt-3">{{ Carbon\Carbon::parse($pengumuman->created_at)->isoFormat('D MMMM Y HH:mm') }}</h6>
                                         <p>
-                                            {{ $pengumuman->content }}
+                                            {!! $pengumuman->content !!}
                                         </p>
 
                                         @if ($pengumuman->file)

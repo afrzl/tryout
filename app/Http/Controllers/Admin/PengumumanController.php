@@ -46,7 +46,7 @@ class PengumumanController extends Controller
                 return '<a href="'. route('admin.pengumuman.edit', $pengumuman->id) .'" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
                         <button onclick="deleteData(`' . route('admin.pengumuman.destroy', $pengumuman->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
             })
-            ->rawColumns(['file', 'aksi'])
+            ->rawColumns(['content', 'file', 'aksi'])
             ->make(true);
     }
 

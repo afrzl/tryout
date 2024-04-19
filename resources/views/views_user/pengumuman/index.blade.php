@@ -320,29 +320,38 @@
 
 @section('content')
     <main id="main">
-        <div class="container mb-5" style="margin-top: 124px; min-height: 300px">
-            <div class="row">
-                <div class="col-lg-12">
-                    @forelse ($pengumumans as $pengumuman)
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="card-title">{{ $pengumuman->title }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <h6 style="color: grey">{{ Carbon\Carbon::parse($pengumuman->created_at)->isoFormat('D MMMM Y HH:mm') }} </h6>
-                            <p>{{ $pengumuman->content }}</p>
-
-                            @if ($pengumuman->file)
-                            <a href="{{ asset('storage/pengumuman/' . $pengumuman->file) }}" class="btn btn-primary mt-2"><i class="fas fa-download"> </i> Lampiran Pengumuman</a>
-                            @endif
-                        </div>
+        <div class="container mb-5" style="margin-top: 50px; min-height: 300px">
+            <section id="faq" class="faq">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>Daftar</h2>
+                        <p>Pengumuman</p>
                     </div>
-                    @empty
-                    <div class="alert alert-primary" role="alert">Tryout kosong. Silahkan beli paket terlebih dahulu</div>
-                    @endforelse
-                </div>
+                    <div class="faq-list">
+                        <ul>
+                            @forelse ($pengumumans as $index => $pengumuman)
+                                <li style="background-color: #f5f5ff">
+                                    <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse" data-bs-target="#faq-list-{{ $index }}">{{ $pengumuman->title }} <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+                                    <div id="faq-list-{{ $index }}" class="collapse {{ $index == 0 ? 'show' : '' }}" data-bs-parent=".faq-list">
+                                        <h6 style="color: grey" class="mt-3">{{ Carbon\Carbon::parse($pengumuman->created_at)->isoFormat('D MMMM Y HH:mm') }}</h6>
+                                        <p>
+                                            {{ $pengumuman->content }}
+                                        </p>
 
-            </div>
+                                        @if ($pengumuman->file)
+                                        <a href="{{ asset('storage/pengumuman/' . $pengumuman->file) }}" class="btn mt-2"><i class="fas fa-download"> </i> Lampiran Pengumuman</a>
+                                        @endif
+                                    </div>
+                                </li>
+                            @empty
+                            <div class="alert alert-primary" role="alert">Belum ada pengumuman..</div>
+                            @endforelse
+
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
         </div>
     </main>
 @endsection

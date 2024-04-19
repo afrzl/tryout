@@ -49,7 +49,10 @@ class HimadaController extends Controller
             })
             ->addColumn('alamat', function ($pembelians)
             {
-                return Wilayah::find($pembelians->user->usersDetail->kecamatan)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->kabupaten)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->provinsi)->nama;
+                if ($pembelians->user->usersDetail->kecamatan) {
+                    return Wilayah::find($pembelians->user->usersDetail->kecamatan)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->kabupaten)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->provinsi)->nama;
+                }
+                return '-';
             })
             ->addColumn('voucher', function ($pembelians)
             {

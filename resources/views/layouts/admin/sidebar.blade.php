@@ -37,7 +37,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.pengumuman.index') }}"
                         class="nav-link {{ request()->segment(2) == 'pengumuman' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <i class="nav-icon fas fa-bullhorn"></i>
                         <p>
                             Pengumuman
                         </p>

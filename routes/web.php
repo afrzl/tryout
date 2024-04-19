@@ -83,7 +83,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('paket', PaketUjianController::class);
 });
 
-//route data paket ujian
+//route data pengumuman
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/pengumuman/data', [\App\Http\Controllers\Admin\PengumumanController::class, 'data'])->name('pengumuman.data');
     Route::resource('pengumuman', \App\Http\Controllers\Admin\PengumumanController::class);
@@ -167,13 +167,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('/ujian/nilai/{id}', [UjianController::class, 'nilai'])->name('ujian.nilai');
 });
 
-//route ujian
+//route profile
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/account', [UserController::class, 'account'])->name('profile.account');
     Route::post('/profile/peserta', [UserController::class, 'peserta'])->name('profile.peserta');
     Route::post('/profile/pendaftar', [UserController::class, 'pendaftar'])->name('profile.pendaftar');
     // Route::post('/profile/photo', [UserController::class, 'photo'])->name('profile.photo');
 });
+
+//route pengumuman
+Route::get('/pengumuman', [\App\Http\Controllers\PengumumanController::class, 'index'])->name('pengumuman.index');
 
 Route::get('sessiondestroy', [UjianController::class, 'sessionDestroy'])->name('session_destroy');
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');

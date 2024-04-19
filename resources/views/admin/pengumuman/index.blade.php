@@ -27,13 +27,13 @@ Data Pengumuman
                 <div class="card-body">
                     <form action="" method="post" class="form-member">
                         @csrf
-                        <table class="table table-bordered table-striped center-header" id="Table-Ujian">
+                        <table class="table table-bordered table-striped center-header" id="Table-Pengumuman">
                             <thead>
                                 <tr>
                                     <th style="width: 5%">No</th>
                                     <th>Judul</th>
                                     <th>Konten</th>
-                                    <th>File Lampiran</th>
+                                    <th style="width: 10%">File Lampiran</th>
                                     <th>Author</th>
                                     <th>Tujuan</th>
                                     <th style="width: 10%"><i class="fa fa-cog"></i></th>
@@ -67,9 +67,19 @@ Data Pengumuman
 <script src="{{ asset('adminLTE') }}/plugins/select2/js/select2.full.min.js"></script>
 
 <script>
-    let tableUjian;
+    @if(Session::has('message'))
+        toastr.options =
+        {
+            "positionClass": "toast-bottom-right",
+            "closeButton" : true,
+            "progressBar" : true
+        }
+        toastr.success("{{ session('message') }}");
+    @endif
+
+    let tablePengumuman;
     $(function() {
-        tableUjian = $('#Table-Ujian').DataTable({
+        tablePengumuman = $('#Table-Pengumuman').DataTable({
             processing: true
             , responsive: true
             , autoWidth: false
@@ -98,83 +108,10 @@ Data Pengumuman
                 'copy', 'excel', 'pdf'
             ]
             , columnDefs: [
-                { className: 'text-center', targets: [0, 6] },
+                { className: 'text-center', targets: [0, 3, 4, 5, 6] },
             ]
         });
-
-        'use strict'
-
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.querySelectorAll('.needs-validation')
-
-        // Loop over them and prevent submission
-        Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-
-            form.classList.add('was-validated')
-        }, false)
-        })
-
-        $('#modal-form form').on('submit', function(e) {
-            if (! e.preventDefault()) {
-                $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
-                .done((response) => {
-                    $('#modal-form').modal('hide');
-                    tableUjian.ajax.reload();
-                    toastr.options = {"positionClass": "toast-bottom-right"};
-                    toastr.success('Data berhasil disimpan.');
-                })
-                .fail((errors) => {
-                    toastr.error('Tidak dapat menyimpan data.');
-                    return;
-                });
-                }
-            }
-        )
     });
-
-    function addForm(url) {
-        $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Tambah Paket Ujian');
-
-        $('#modal-form form')[0].classList.remove('was-validated');
-        $('#modal-form form')[0].reset();
-        $('#modal-form form').attr('action', url);
-        $('#modal-form [name=_method]').val('post');
-        $('#modal-form [name=name]').focus();
-    }
-
-    function editData(url) {
-        $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Edit Paket Ujian');
-
-        $('#modal-form form')[0].reset();
-        $('#modal-form form').attr('action', url);
-        $('#modal-form [name=_method]').val('put');
-        $('#modal-form [name=nama]').focus();
-
-        $.get(url)
-            .done((response) => {
-                let selectedUjian = new Array();
-                $('#modal-form [name=nama]').val(response.nama);
-                $('#modal-form [name=deskripsi]').val(response.deskripsi);
-                $('#modal-form [name=harga]').val(response.harga);
-                $('#modal-form [name=waktu_mulai]').val(moment(response.waktu_mulai).format('D/MM/YYYY HH:mm'));
-                $('#modal-form [name=waktu_akhir]').val(moment(response.waktu_akhir).format('D/MM/YYYY HH:mm'));
-                response.ujian.forEach(ujian => {
-                    selectedUjian.push(ujian.id);
-                });
-            })
-            .fail((errors) => {
-                alert('Tidak dapat menampilkan data.');
-                return;
-            })
-    }
 
     function deleteData(url) {
         Swal.fire({
@@ -192,7 +129,7 @@ Data Pengumuman
                     '_method': 'delete'
                 })
                 .done((response) => {
-                    tableUjian.ajax.reload();
+                    tablePengumuman.ajax.reload();
                     toastr.success('Data berhasil dihapus.');
                     toastr.options = {"positionClass": "toast-bottom-right"};
                 })
@@ -203,27 +140,5 @@ Data Pengumuman
             }
         })
     }
-
-    $(function() {
-        //Initialize Select2 Elements
-        $('#deskripsi').summernote({
-            height: 100,
-        });
-        $('#Waktu_mulai').datetimepicker({
-            icons: { time: 'far fa-clock' },
-            format: 'DD/MM/YYYY HH:mm'
-        });
-        $('#Waktu_akhir').datetimepicker({
-            useCurrent: false,
-            icons: { time: 'far fa-clock' },
-            format: 'DD/MM/YYYY HH:mm'
-        });
-        $("#Waktu_mulai").on("change.datetimepicker", function (e) {
-            $('#Waktu_akhir').datetimepicker('minDate', e.date);
-        });
-        $("#Waktu_akhir").on("change.datetimepicker", function (e) {
-            $('#Waktu_mulai').datetimepicker('maxDate', e.date);
-        });
-    });
 </script>
 @endpush

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\PaketUjian;
 use App\Models\Pengumuman;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class PengumumanController extends Controller
 {
@@ -17,11 +19,17 @@ class PengumumanController extends Controller
     }
 
     public function data() {
-        $pengumumans = Pengumuman::with('user', 'paket')->orderBy('created_at', 'asc');
+        $pengumumans = Pengumuman::with('user', 'paketUjian')->orderBy('created_at', 'asc');
 
         return datatables()
             ->eloquent($pengumumans)
             ->addIndexColumn()
+            ->addColumn('file', function ($pengumuman)
+            {
+                if ($pengumuman->file) {
+                    return '<a target="_blank" href="'. asset('storage/pengumuman/' . $pengumuman->file) .'">Lihat File</a>';
+                }
+            })
             ->addColumn('author', function ($pengumuman)
             {
                 return $pengumuman->user->name;
@@ -31,18 +39,14 @@ class PengumumanController extends Controller
                 if ($pengumuman->paket_id == null) {
                     return 'Semua';
                 } else {
-                    return $pengumuman->paketUjian->name;
+                    return $pengumuman->paketUjian->nama;
                 }
             })
-            ->addColumn('aksi', function ($pakets) {
-                if ($pakets->id == '0df8c9b0-d352-448b-9611-abadffc4f46d' || $pakets->id == '33370256-b734-470a-afe9-c7ca8421f1b3' ||$pakets->id == '981ae5b5-a48d-47e6-9cc7-9e79994a3ef0' || $pakets->id == '0be570c6-7edf-4970-bd99-304d0626f9ff' || $pakets->id == 'd5f57505-fb5a-4f59-a301-3722ef581844') {
-                    return '<button onclick="editData(`' . route('admin.paket.update', $pakets->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>';
-                }
-
-                return '<button onclick="editData(`' . route('admin.paket.update', $pakets->id) . '`)" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></button>
-                        <button onclick="deleteData(`' . route('admin.paket.destroy', $pakets->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
+            ->addColumn('aksi', function ($pengumuman) {
+                return '<a href="'. route('admin.pengumuman.edit', $pengumuman->id) .'" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
+                        <button onclick="deleteData(`' . route('admin.pengumuman.destroy', $pengumuman->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['file', 'aksi'])
             ->make(true);
     }
 
@@ -52,9 +56,10 @@ class PengumumanController extends Controller
     public function create()
     {
         $pengumuman = new Pengumuman();
-        $action = 'admin.pengumuman.store';
+        $pakets = PaketUjian::orderBy('nama')->get();
+        $action = route('admin.pengumuman.store');
 
-        return view('admin.pengumuman.form', compact('pengumuman', 'action'));
+        return view('admin.pengumuman.form', compact('pengumuman', 'pakets', 'action'));
     }
 
     /**
@@ -62,7 +67,30 @@ class PengumumanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'file' => 'file|max:2048',
+        ], [
+            'title.required' => 'Judul tidak boleh kosong.',
+            'content.required' => 'Isi tidak boleh kosong.',
+        ]);
+
+        $pengumuman = new Pengumuman();
+        $pengumuman->title = $request->title;
+        $pengumuman->content = $request->content;
+        $pengumuman->author_id = auth()->id();
+        $pengumuman->paket_id = $request->tujuan;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $file->storeAs('public/pengumuman', $file->getClientOriginalName());
+            $pengumuman->file = $file->getClientOriginalName();
+        }
+
+        $pengumuman->save();
+
+        return redirect()->route('admin.pengumuman.index')->with('message','Data berhasil disimpan');
     }
 
     /**
@@ -76,24 +104,56 @@ class PengumumanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pengumuman $pengumuman)
+    public function edit($id)
     {
-        //
+        $pengumuman = Pengumuman::findOrFail($id);
+        $action = route('admin.pengumuman.update', $pengumuman->id);
+        $pakets = PaketUjian::orderBy('nama')->get();
+        return view('admin.pengumuman.form', compact('pengumuman', 'action', 'pakets'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pengumuman $pengumuman)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'file' => 'file|max:2048',
+        ], [
+            'title.required' => 'Judul tidak boleh kosong.',
+            'content.required' => 'Isi tidak boleh kosong.',
+        ]);
+
+        $pengumuman = Pengumuman::findOrFail($id);
+        $pengumuman->title = $request->title;
+        $pengumuman->content = $request->content;
+        $pengumuman->author_id = auth()->id();
+        $pengumuman->paket_id = $request->tujuan;
+
+        if ($request->hasFile('file')) {
+            Storage::delete('public/pengumuman/'.basename($pengumuman->file));
+
+            $file = $request->file('file');
+            $file->storeAs('public/pengumuman', $file->getClientOriginalName());
+            $pengumuman->file = $file->getClientOriginalName();
+        }
+
+        $pengumuman->update();
+
+        return redirect()->route('admin.pengumuman.index')->with('message','Data berhasil disimpan');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pengumuman $pengumuman)
+    public function destroy($id)
     {
-        //
+        $pengumuman = Pengumuman::findOrFail($id);
+        Storage::delete('public/pengumuman/'.basename($pengumuman->file));
+        $pengumuman->delete();
+
+        return response(null, 204);
     }
 }

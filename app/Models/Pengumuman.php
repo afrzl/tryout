@@ -19,7 +19,7 @@ class Pengumuman extends Model
      */
     public function user()
     {
-        return $this->belongsTo(App\Models\User::class);
+        return $this->belongsTo(\App\Models\User::class, 'author_id');
     }
 
     /**
@@ -29,6 +29,6 @@ class Pengumuman extends Model
      */
     public function paketUjian()
     {
-        return $this->belongsTo(\App\Models\PaketUjian::class);
+        return $this->belongsTo(\App\Models\PaketUjian::class, 'paket_id');
     }
 }

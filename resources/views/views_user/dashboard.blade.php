@@ -159,6 +159,8 @@ Dashboard
                                 @if($paket->pembelian[0]->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')
                                 <a href="https://drive.google.com/drive/folders/1quwqv6tAgGi8OvlAVzCyMI9T_xJXuJ9U?usp=sharing" target="_blank" type="button" style="width: 12rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Modul BIUS</a>
                                 <a href="https://chat.whatsapp.com/GQefjygQnl82v9OlXwpPbL" target="_blank" type="button" style="width: 10rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Grup WA</a>
+                                @elseif($paket->pembelian[0]->paket_id = 'd5f57505-fb5a-4f59-a301-3722ef581844')
+                                <a href="https://chat.whatsapp.com/CKsDXB9OJYZFWfxlYk5QPH" target="_blank" type="button" style="width: 10rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Grup WA</a>
                                 @else
                                 <a href="https://chat.whatsapp.com/BzxL0RHOfXd1QhukyYzXTz" target="_blank" type="button" style="width: 10rem; border: 2px solid; border-color: black" class="btn-buy mb-2">Grup WA</a>
                                 @endif

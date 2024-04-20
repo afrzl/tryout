@@ -55,7 +55,7 @@ $ada_jawaban = false;
                                 @endforeach
                             </div>
                             </ul>
-                            <div class="mt-2 alert alert-secondary" role="alert">
+                            <div class="mt-2 alert alert-secondary overflow-auto" role="alert">
                                 <p><b>Pembahasan: </b></p>
                                 {!! $item->pembahasan !!}
                             </div>

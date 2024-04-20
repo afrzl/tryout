@@ -111,7 +111,7 @@ Profile
                             <div class="form-group required mb-2">
                                 <label for="sumber" class="col-form-label">Foto Profil</label>
                                 <input type="file" name="image" placeholder="Pilih Foto Profil" class="form-control" id="image">
-                                <span style="color: red; font-size: 12px">*Foto formal dengan ekstensi .jpeg atau .png maksimal 2MB</span>
+                                <span style="color: red; font-size: 12px">*Upload foto berukuran maksimal 2MB</span>
                                 <div class="invalid-feedback">
                                     Kolom foto profil tidak boleh kosong.
                                 </div>

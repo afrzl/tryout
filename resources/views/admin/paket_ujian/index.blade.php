@@ -163,7 +163,7 @@ Data Paket Ujian
             .done((response) => {
                 let selectedUjian = new Array();
                 $('#modal-form [name=nama]').val(response.nama);
-                $('#modal-form [name=deskripsi]').val(response.deskripsi);
+                $('#modal-form [name=deskripsi]').summernote("code", response.deskripsi);
                 $('#modal-form [name=harga]').val(response.harga);
                 $('#modal-form [name=waktu_mulai]').val(moment(response.waktu_mulai).format('D/MM/YYYY HH:mm'));
                 $('#modal-form [name=waktu_akhir]').val(moment(response.waktu_akhir).format('D/MM/YYYY HH:mm'));

@@ -91,7 +91,7 @@ class HimadaController extends Controller
 
         $voucher = Voucher::create([
             'kode' => $request->kode,
-            'diskon' => 0,
+            'diskon' => 5000,
             'himada_id' => $user->id,
             'is_active' => true,
             'paket_ujian_id' => 'd5f57505-fb5a-4f59-a301-3722ef581844'

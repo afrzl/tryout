@@ -16,12 +16,23 @@ class HimadaController extends Controller
     }
 
     public function peserta() {
-        $kabupaten = Wilayah::whereRaw('LEFT(kode,  2) = ' . auth()->user()->usersDetail->provinsi)
+        $dataKab = Wilayah::whereRaw('LEFT(kode,  2) = ' . auth()->user()->usersDetail->provinsi)
                             ->whereRaw('LENGTH(kode) = 5')
-                            ->get()
-                            ->pluck('nama');
-        $pembelian = Pembelian::where('voucher_id', auth()->user()->voucher->id)->where('status', 'Sukses')->count();
-        return view('views_himada.peserta', compact('pembelian', 'kabupaten'));
+                            ->get();
+        $dataPeserta = Pembelian::with('user.usersDetail')
+                                ->where('voucher_id', auth()->user()->voucher->id)
+                                ->where('status', 'Sukses')
+                                ->get();
+
+        foreach ($dataKab as $kab) {
+            $kab->jumlah = $dataPeserta->where('user.usersDetail.kabupaten', $kab->kode)->count();
+        }
+
+        $kabupaten = $dataKab->pluck('nama');
+        $pesertaKab = $dataKab->pluck('jumlah');
+
+        $pembelian = $dataPeserta->count();
+        return view('views_himada.peserta', compact('pembelian', 'kabupaten', 'pesertaKab'));
     }
 
     public function dataPeserta(Request $request) {
@@ -50,7 +61,11 @@ class HimadaController extends Controller
             ->addColumn('alamat', function ($pembelians)
             {
                 if ($pembelians->user->usersDetail) {
-                    return Wilayah::find($pembelians->user->usersDetail->kecamatan)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->kabupaten)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->provinsi)->nama;
+                    $kecamatan = Wilayah::where('kode', $pembelians->user->usersDetail->kecamatan)->get()->first()->nama;
+                    $kabupaten = Wilayah::where('kode', $pembelians->user->usersDetail->kabupaten)->get()->first()->nama;
+                    $provinsi = Wilayah::where('kode', $pembelians->user->usersDetail->provinsi)->get()->first()->nama;
+
+                    return $kecamatan . ', ' . $kabupaten . ', ' . $provinsi;
                 }
                 return '-';
             })

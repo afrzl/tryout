@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <div class="chart mb-5">
                             <canvas id="barChart"
-                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                style="min-height: 250px; height: 500px; max-height: 1000px; max-width: 100%;"></canvas>
                         </div>
                         <form action="" method="post" class="form-member">
                             @csrf
@@ -49,8 +49,6 @@
 
         <!-- /.row -->
     </div>
-
-    @includeIf('bius.himada.form')
 @endsection
 
 @push('scripts')
@@ -109,9 +107,10 @@
                 }]
             }
 
-            var barChartCanvas = $('#barChart').get(0).getContext('2d')
+            var barChartCanvas = $('#barChart').get(0).getContext('2d');
             var barChartData = $.extend(true, {}, areaChartData)
             barChartData.datasets[0] = areaChartData.datasets[0]
+            console.log(barChartData);
 
             var barChartOptions = {
                 responsive: true,

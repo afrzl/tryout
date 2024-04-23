@@ -29,7 +29,7 @@ class TonasController extends Controller
         $pembelian = Pembelian::with('user', 'user.usersDetail', 'voucher', 'voucher.user')
                 ->where('paket_id', 'd5f57505-fb5a-4f59-a301-3722ef581844')
                 ->where('status', 'Sukses')
-                ->orderBy('created_at', 'asc');
+                ->orderBy('created_at', 'desc');
 
         return datatables()
             ->eloquent($pembelian)

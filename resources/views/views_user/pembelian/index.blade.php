@@ -9,6 +9,11 @@
     <div class="container" style="margin-top: 124px">
         <div class="row" style="justify-content:center">
             <div class="col-lg-6 col-md-8 mx-auto">
+                @if ($pembelian->status == 'Sukses')
+                <div class="alert alert-success">
+                    Pembelian telah sukses dilakukan, silakan join grup WhatsApp untuk menerima informasi lebih lanjut.
+                </div>
+                @endif
                 <div class="card mb-4">
                     <div class="card-header pb-0">
                         <h6>Transaksi <b>#{{ sprintf('%06d', $pembelian->id); }}</b></h6>
@@ -126,6 +131,13 @@
                                                 <button type="submit" class="btn btn-warning mt-4 mb-0">Ulangi Bayar</button>
                                             </form>
                                             @elseif($pembelian->status == 'Sukses')
+                                                @if ($pembelian->paket_id == 'd5f57505-fb5a-4f59-a301-3722ef581844')
+                                                <a target="_blank" href="https://chat.whatsapp.com/CKsDXB9OJYZFWfxlYk5QPH" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
+                                                @elseif($pembelian->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')
+                                                <a target="_blank" href="https://chat.whatsapp.com/GQefjygQnl82v9OlXwpPbL" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
+                                                @else
+                                                <a target="_blank" href="https://chat.whatsapp.com/BzxL0RHOfXd1QhukyYzXTz" type="button" class="btn btn-success mt-4 mb-0">Grup WA</a>
+                                                @endif
                                                 <a href="{{ route('tryout.index', $pembelian->paket_id) }}" type="button" class="btn btn-primary mt-4 mb-0">Mulai Tryout</a>
                                             @else
                                             <button type="button" onClick="pay()" class="btn btn-success mt-4 mb-0">Bayar</button>

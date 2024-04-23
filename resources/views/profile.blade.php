@@ -181,8 +181,6 @@ Profile
 <script>
     $(function(){
 
-        let id_pembelian = {{ \Session::get('id_pembelian') }}
-
         $('#Sumber').select2({
             theme: 'bootstrap4',
         });
@@ -202,6 +200,7 @@ Profile
 
         $('#formAccount').on('submit', function(e) {
             if (! e.preventDefault()) {
+                let idPembelian = '{{ \Session::get('id_pembelian') }}'
                 let submitAccount = $('#submitAccount').html();
 
                 $('#submitAccount').html('Loading <div class="spinner-border spinner-border-sm" role="status"></div>');
@@ -225,8 +224,8 @@ Profile
                             $("#infoPhoto").attr("src", response.data.profile_photo_url);
                             toastr.options = {"positionClass": "toast-bottom-right"};
                             toastr.success(response.message);
-                            if (response.check == true && id_pembelian != null) {
-                                window.location.href = '/pembelian/' + id_pembelian;
+                            if (response.check == true && idPembelian != '') {
+                                window.location.href = '/pembelian/' + idPembelian;
                             }
                         } else {
                             $.each(response.error, function (key, val) {
@@ -412,6 +411,7 @@ Profile
 
         $('#formPeserta').on('submit', function(e) {
             if (! e.preventDefault()) {
+                let idPembelian = '{{ \Session::get('id_pembelian') }}'
                 let submitPeserta = $('#submitPeserta').html();
 
                 $('#submitPeserta').html('Loading <div class="spinner-border spinner-border-sm" role="status"></div>');
@@ -422,8 +422,8 @@ Profile
                     $('#submitPeserta').attr('type', 'submit');
                     toastr.options = {"positionClass": "toast-bottom-right"};
                     toastr.success(response.message);
-                    if (response.check == true && id_pembelian != null) {
-                        window.location.href = '/pembelian/' + id_pembelian;
+                    if (response.check == true && idPembelian != '') {
+                        window.location.href = '/pembelian/' + idPembelian;
                     }
                 })
                 .fail((errors) => {
@@ -438,6 +438,7 @@ Profile
         $('#formPendaftar').on('submit', function(e) {
             if (! e.preventDefault()) {
                 let submitPendaftar = $('#submitPendaftar').html();
+                let idPembelian = '{{ \Session::get('id_pembelian') }}'
 
                 $('#submitPendaftar').html('Loading <div class="spinner-border spinner-border-sm" role="status"></div>');
                 $('#submitPendaftar').attr('type', 'button');
@@ -448,8 +449,8 @@ Profile
                     toastr.options = {"positionClass": "toast-bottom-right"};
                     toastr.success(response.message);
 
-                    if (response.check == true && id_pembelian != null) {
-                        window.location.href = '/pembelian/' + id_pembelian;
+                    if (response.check == true && idPembelian != '') {
+                        window.location.href = '/pembelian/' + idPembelian;
                     }
                 })
                 .fail((errors) => {

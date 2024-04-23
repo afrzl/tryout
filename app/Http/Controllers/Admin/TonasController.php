@@ -37,7 +37,11 @@ class TonasController extends Controller
             ->addColumn('name', fn($pembelian) => $pembelian->user->name)
             ->addColumn('email', fn($pembelian) => $pembelian->user->email)
             ->addColumn('asal', function ($pembelian) {
-                return Wilayah::find($pembelian->user->usersDetail->kecamatan)->nama . ', ' . Wilayah::find($pembelian->user->usersDetail->kabupaten)->nama . ', ' . Wilayah::find($pembelian->user->usersDetail->provinsi)->nama;
+                $kecamatan = Wilayah::where('kode', $pembelian->user->usersDetail->kecamatan)->get()->first()->nama;
+                $kabupaten = Wilayah::where('kode', $pembelian->user->usersDetail->kabupaten)->get()->first()->nama;
+                $provinsi = Wilayah::where('kode', $pembelian->user->usersDetail->provinsi)->get()->first()->nama;
+
+                return $kecamatan . ', ' . $kabupaten . ', ' . $provinsi;
             })
             ->addColumn('referal', function ($pembelian) {
                 if ($pembelian->voucher) {

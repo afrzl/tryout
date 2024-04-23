@@ -49,7 +49,7 @@ class HimadaController extends Controller
             })
             ->addColumn('alamat', function ($pembelians)
             {
-                if ($pembelians->user->usersDetail->kecamatan) {
+                if ($pembelians->user->usersDetail) {
                     return Wilayah::find($pembelians->user->usersDetail->kecamatan)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->kabupaten)->nama . ', ' . Wilayah::find($pembelians->user->usersDetail->provinsi)->nama;
                 }
                 return '-';

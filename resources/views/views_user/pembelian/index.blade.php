@@ -11,7 +11,8 @@
             <div class="col-lg-6 col-md-8 mx-auto">
                 @if ($pembelian->status == 'Sukses')
                 <div class="alert alert-success">
-                    Pembelian telah sukses dilakukan, silakan join grup WhatsApp untuk menerima informasi lebih lanjut.
+                    <b>Pembelian Berhasil!</b> <br>
+                    Silakan join grup WA Peserta TONAS 2024 melalui tombol di bawah
                 </div>
                 @endif
                 <div class="card mb-4">

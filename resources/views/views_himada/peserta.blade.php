@@ -31,7 +31,7 @@ Data Peserta Tonas
                         </tr>
                     </table>
                     <div class="chart mb-5">
-                        <canvas id="barChart" style="min-height: 250px; height: 300px; max-height: 500px; max-width: 100%;"></canvas>
+                        <canvas id="barChart" style="min-height: 250px; height: 500px; max-height: 500px; max-width: 100%;"></canvas>
                     </div>
                     <form action="" method="post" class="form-member">
                         @csrf

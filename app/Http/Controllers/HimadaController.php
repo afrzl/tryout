@@ -61,11 +61,14 @@ class HimadaController extends Controller
             ->addColumn('alamat', function ($pembelians)
             {
                 if ($pembelians->user->usersDetail) {
-                    $kecamatan = Wilayah::where('kode', $pembelians->user->usersDetail->kecamatan)->get()->first()->nama;
-                    $kabupaten = Wilayah::where('kode', $pembelians->user->usersDetail->kabupaten)->get()->first()->nama;
-                    $provinsi = Wilayah::where('kode', $pembelians->user->usersDetail->provinsi)->get()->first()->nama;
+                    if ($pembelians->user->usersDetail->kecamatan) {
+                        $kecamatan = Wilayah::where('kode', $pembelians->user->usersDetail->kecamatan)->get()->first()->nama;
+                        $kabupaten = Wilayah::where('kode', $pembelians->user->usersDetail->kabupaten)->get()->first()->nama;
+                        $provinsi = Wilayah::where('kode', $pembelians->user->usersDetail->provinsi)->get()->first()->nama;
 
-                    return $kecamatan . ', ' . $kabupaten . ', ' . $provinsi;
+                        return $kecamatan . ', ' . $kabupaten . ', ' . $provinsi;
+                    }
+                    return '-';
                 }
                 return '-';
             })

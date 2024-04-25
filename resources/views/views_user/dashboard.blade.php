@@ -381,14 +381,14 @@
                                 <i class="bi bi-phone"></i>
                                 <h4>Contact Person 1:</h4>
                                 <p><a style="color: inherit;" target="_blank"
-                                        href="https://wa.me/6282163859215">082163859215 (Fira)</a></p>
+                                        href="https://wa.me/6288232397969">088232397969 (Anin)</a></p>
                             </div>
 
                             <div class="phone">
                                 <i class="bi bi-phone"></i>
                                 <h4>Contact Person 2:</h4>
                                 <p><a style="color: inherit;" target="_blank"
-                                        href="https://wa.me/6285813626170">085813626170 (Nayya)</a></p>
+                                        href="https://wa.me/6283195559334">083195559334 (Mizan)</a></p>
                             </div>
 
                             <div class="phone">

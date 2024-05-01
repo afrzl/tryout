@@ -89,6 +89,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('pengumuman', \App\Http\Controllers\Admin\PengumumanController::class);
 });
 
+//route data faq
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia|bendahara'])->group(function () {
+    Route::get('/faq/data', [\App\Http\Controllers\Admin\FaqController::class, 'data'])->name('faq.data');
+    Route::resource('faq', \App\Http\Controllers\Admin\FaqController::class);
+});
+
 //route data ujian
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia|bendahara'])->group(function () {
     Route::get('/ujian/data', [UjianController_Admin::class, 'data'])->name('ujian.data');
@@ -177,6 +183,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 //route pengumuman
 Route::get('/pengumuman', [\App\Http\Controllers\PengumumanController::class, 'index'])->name('pengumuman.index');
+//route faq
+Route::get('/faq', [\App\Http\Controllers\FaqController::class, 'index'])->name('faq.index');
 
 Route::get('sessiondestroy', [UjianController::class, 'sessionDestroy'])->name('session_destroy');
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');

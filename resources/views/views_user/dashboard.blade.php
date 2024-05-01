@@ -270,6 +270,8 @@
         </section><!-- End Testimonials Section -->
 
         <!-- ======= F.A.Q Section ======= -->
+
+        @if ($faqs)
         <section id="faq" class="faq section-bg">
             <div class="container">
 
@@ -277,82 +279,23 @@
                     <h2>F.A.Q</h2>
                     <p>Frequently Asked Questions</p>
                 </div>
-
                 <div class="faq-list">
                     <ul>
-                        <li data-aos="fade-up">
-                            <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse"
-                                data-bs-target="#faq-list-1">Apakah bimbingan dan try out yang diadakan berafiliasi dengan
-                                Polstat STIS? <i class="bx bx-chevron-down icon-show"></i><i
+                        @foreach ($faqs as $index => $faq)
+                        <li data-aos="fade-up" data-aos-delay = "{{ $index * 100 }}">
+                            <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="{{ $index > 0 ? 'collapsed' : 'collapse'}}"
+                                data-bs-target="#faq-list-{{ $index }}">{{ $faq->title }} <i class="bx bx-chevron-down icon-show"></i><i
                                     class="bx bx-chevron-up icon-close"></i></a>
-                            <div id="faq-list-1" class="collapse show" data-bs-parent=".faq-list">
+                            <div id="faq-list-{{ $index }}" class="collapse {{ $index == 0 ? 'show' : '' }}" data-bs-parent=".faq-list">
                                 <p>
-                                    Seluruh bimbingan dan try out yang diadakan tidak berafiliasi dengan Politeknik
-                                    Statistika STIS. Seluruh kegiatan bimbingan dan try out sepenuhnya merupakan tanggung
-                                    jawab UKM Bimbel.
+                                    {!! $faq->content !!}
                                 </p>
                             </div>
                         </li>
-
-                        <li data-aos="fade-up" data-aos-delay="100">
-                            <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse"
-                                data-bs-target="#faq-list-2" class="collapsed">Apakah soal dan pembahasan try out akan
-                                dibagi? <i class="bx bx-chevron-down icon-show"></i><i
-                                    class="bx bx-chevron-up icon-close"></i></a>
-                            <div id="faq-list-2" class="collapse" data-bs-parent=".faq-list">
-                                <p>
-                                    Ya, setiap peserta mendapatkan soal dan pembahasan try out yang diikuti.
-                                </p>
-                            </div>
-                        </li>
-
-                        <li data-aos="fade-up" data-aos-delay="200">
-                            <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse"
-                                data-bs-target="#faq-list-3" class="collapsed">[TOBAR] Jika sudah mendaftar batch 1,
-                                apakah harus mendaftar batch selanjutnya juga? <i
-                                    class="bx bx-chevron-down icon-show"></i><i
-                                    class="bx bx-chevron-up icon-close"></i></a>
-                            <div id="faq-list-3" class="collapse" data-bs-parent=".faq-list">
-                                <p>
-                                    Salah satu keuntungan ketika anda mendaftar TOBAR Batch 1 adalah sudah termasuk dengan
-                                    Batch 2 dan Batch 3. Jadi, anda tidak perlu melakukan pendaftaran berulang pada Batch 2
-                                    dan 3. Kemudian, apabila anda mendaftar tobar Batch 2, anda tidak perlu melakukan
-                                    pendaftaran pada Batch 3.
-                                </p>
-                            </div>
-                        </li>
-
-                        <li data-aos="fade-up" data-aos-delay="300">
-                            <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse"
-                                data-bs-target="#faq-list-4" class="collapsed">[TOBAR] Bagaimana jika saya telat
-                                mengerjakan tryout? <i class="bx bx-chevron-down icon-show"></i><i
-                                    class="bx bx-chevron-up icon-close"></i></a>
-                            <div id="faq-list-4" class="collapse" data-bs-parent=".faq-list">
-                                <p>
-                                    Waktu pelaksanaan TOBAR adalah selama 2 hari, sehingga anda dapat mengerjakannya secara
-                                    fleksibel pada rentang waktu 2 hari tersebut.
-                                </p>
-                            </div>
-                        </li>
-
-                        <li data-aos="fade-up" data-aos-delay="400">
-                            <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse"
-                                data-bs-target="#faq-list-5" class="collapsed">[TONAS] Jika saya berhalangan untuk
-                                mengerjakan try out pada tanggal tersebut, apakah saya dapat mengerjakannya atau mendapatkan
-                                soal dan pembahasannya? <i class="bx bx-chevron-down icon-show"></i><i
-                                    class="bx bx-chevron-up icon-close"></i></a>
-                            <div id="faq-list-5" class="collapse" data-bs-parent=".faq-list">
-                                <p>
-                                    Ya, bagi peserta yang berhalangan untuk melaksanakan try out di tanggal pelaksanaan,
-                                    dapat mengikuti try out susulan akan tetapi nilainya tidak dimasukkan pada perankingan
-                                    nasional. Peserta juga berhak untuk mendapatkan soal dan pembahasan walau tidak
-                                    mengerjakan try out.
-                                </p>
-                            </div>
-                        </li>
-
+                        @endforeach
                     </ul>
                 </div>
+                @endif
 
             </div>
         </section><!-- End F.A.Q Section -->

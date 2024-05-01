@@ -17,7 +17,7 @@
                 @endif
                 <div class="card mb-4">
                     <div class="card-header pb-0">
-                        <h6>Transaksi <b>#{{ sprintf('%06d', $pembelian->id); }}</b></h6>
+                        <h6>Transaksi <b>#{{ sprintf('%06d', $pembelian->id) }}</b></h6>
                     </div>
                     <div id="transaction" class="card-body px-3 pt-0 pb-2">
                         <div class="table-responsive p-0">

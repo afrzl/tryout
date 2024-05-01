@@ -324,29 +324,23 @@
             <section id="faq" class="faq">
                 <div class="container">
                     <div class="section-title">
-                        <h2>Daftar</h2>
-                        <p>Pengumuman</p>
+                        <h2>F.A.Q</h2>
+                        <p>FREQUENTLY ASKED QUESTIONS</p>
                     </div>
                     <div class="faq-list">
                         <ul>
-                            @forelse ($pengumumans as $index => $pengumuman)
+                            @forelse ($faqs as $index => $faq)
                                 <li style="background-color: #f5f5ff">
-                                    <i class="bx bx-info-circle icon-help"></i> <a data-bs-toggle="collapse" class="{{ $index > 0 ? 'collapsed' : '' }}" data-bs-target="#faq-list-{{ $index }}">{{ $pengumuman->title }} <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+                                    <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="{{ $index > 0 ? 'collapsed' : '' }}" data-bs-target="#faq-list-{{ $index }}">{{ $faq->title }} <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
                                     <div id="faq-list-{{ $index }}" class="collapse {{ $index == 0 ? 'show' : '' }}" data-bs-parent=".faq-list">
-                                        <h6 style="color: grey" class="mt-3">{{ Carbon\Carbon::parse($pengumuman->created_at)->isoFormat('D MMMM Y HH:mm') }}</h6>
                                         <p>
-                                            {!! $pengumuman->content !!}
+                                            {!! $faq->content !!}
                                         </p>
-
-                                        @if ($pengumuman->file)
-                                        <a href="{{ asset('storage/pengumuman/' . $pengumuman->file) }}" class="btn mt-2"><i class="fas fa-download"> </i> Lampiran Pengumuman</a>
-                                        @endif
                                     </div>
                                 </li>
                             @empty
-                            <div class="alert alert-primary" role="alert">Belum ada pengumuman..</div>
+                            <div class="alert alert-primary" role="alert">Belum ada FAQ..</div>
                             @endforelse
-
                         </ul>
                     </div>
 

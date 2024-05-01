@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Faq;
 use App\Models\User;
 use App\Mail\Message;
 use App\Models\Ujian;
 use App\Models\Pembelian;
 use App\Models\PaketUjian;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 
 class DashboardController extends Controller
 {
@@ -17,13 +18,14 @@ class DashboardController extends Controller
     {
         if (!auth()->check()) {
             $pakets = PaketUjian::orderBy('created_at', 'asc')->get();
-            return view('views_user.dashboard', compact('pakets'));
+            $faqs = Faq::orderBy('created_at', 'desc')->limit(4)->get();
+            return view('views_user.dashboard', compact('pakets', 'faqs'));
         } else {
             $pakets = PaketUjian::with(['pembelian' => function($query) {
                             $query->where('user_id', auth()->user()->id)->where('status', "Sukses");
                         }])->orderBy('created_at', 'asc')->get();
-            // return $pakets;
-            return view('views_user.dashboard', compact('pakets'));
+            $faqs = Faq::orderBy('created_at', 'desc')->limit(4)->get();
+            return view('views_user.dashboard', compact('pakets', 'faqs'));
         }
     }
 

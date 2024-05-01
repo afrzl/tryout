@@ -282,6 +282,7 @@
                 <div class="faq-list">
                     <ul>
                         @foreach ($faqs as $index => $faq)
+                        @if ($index < 4)
                         <li data-aos="fade-up" data-aos-delay = "{{ $index * 100 }}">
                             <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="{{ $index > 0 ? 'collapsed' : 'collapse'}}"
                                 data-bs-target="#faq-list-{{ $index }}">{{ $faq->title }} <i class="bx bx-chevron-down icon-show"></i><i
@@ -292,13 +293,17 @@
                                 </p>
                             </div>
                         </li>
+                        @endif
                         @endforeach
                     </ul>
                 </div>
+                @if ($faq->count() > 4)
+                <a data-aos="fade-up" data-aos-delay = "{{ 5 * 100 }}" class="float-end mt-2" href="{{ route('faq.index') }}"><h6><b>Lihat lainnya...</b></h6></a>
                 @endif
 
             </div>
         </section><!-- End F.A.Q Section -->
+        @endif
 
         <!-- ======= Contact Section ======= -->
         <section id="contact" class="contact">

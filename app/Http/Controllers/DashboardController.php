@@ -18,13 +18,13 @@ class DashboardController extends Controller
     {
         if (!auth()->check()) {
             $pakets = PaketUjian::orderBy('created_at', 'asc')->get();
-            $faqs = Faq::orderBy('created_at', 'desc')->limit(4)->get();
+            $faqs = Faq::orderBy('created_at', 'desc')->get();
             return view('views_user.dashboard', compact('pakets', 'faqs'));
         } else {
             $pakets = PaketUjian::with(['pembelian' => function($query) {
                             $query->where('user_id', auth()->user()->id)->where('status', "Sukses");
                         }])->orderBy('created_at', 'asc')->get();
-            $faqs = Faq::orderBy('created_at', 'desc')->limit(4)->get();
+            $faqs = Faq::orderBy('created_at', 'desc')->get();
             return view('views_user.dashboard', compact('pakets', 'faqs'));
         }
     }

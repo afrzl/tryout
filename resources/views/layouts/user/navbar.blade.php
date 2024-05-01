@@ -3,8 +3,8 @@
         <li><a class="nav-link scrollto {{ (request()->segment(1) == '') ? 'active' : '' }}" href="{{ (request()->segment(1) == '') ? '#hero' : route('dashboard') }}">Home</a></li>
         <li><a class="nav-link scrollto" href="{{ (request()->segment(1) == '') ? '#pricing' : route('dashboard') . '/#pricing' }}">Paket Ujian</a></li>
         <li><a class="nav-link scrollto {{ (request()->segment(1) == 'tryout' || request()->segment(2) == 'tryout') ? 'active' : '' }}" href="{{ route('tryout.index') }}">Tryout</a></li>
-        <li><a class="nav-link scrollto {{ (request()->segment(1) == 'pengumuman') ? 'active' : '' }}"  href="{{ route('pengumuman.index') }}">Pengumuman</a></li>
         <li><a class="nav-link scrollto {{ (request()->segment(1) == 'faq') ? 'active' : '' }}"  href="{{ route('faq.index') }}">FAQ</a></li>
+        <li><a class="nav-link scrollto {{ (request()->segment(1) == 'pengumuman') ? 'active' : '' }}"  href="{{ route('pengumuman.index') }}">Pengumuman</a></li>
         @hasanyrole(['admin', 'panitia', 'bendahara'])
         <li><a class="nav-link scrollto" href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
         @endhasrole

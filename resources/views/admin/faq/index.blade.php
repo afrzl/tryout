@@ -34,7 +34,7 @@ Data FAQ
                                     <th>Judul</th>
                                     <th>Isi</th>
                                     <th>Author</th>
-                                    <th style="width: 10%"><i class="fa fa-cog"></i></th>
+                                    <th style="width: 15%"><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
                         </table>
@@ -131,6 +131,38 @@ Data FAQ
                 })
                 .fail((response) => {
                     toastr.error('Tidak dapat menghapus data.');
+                    return;
+                })
+            }
+        })
+    }
+
+    function pinData(url) {
+        Swal.fire({
+            title: 'Apakah kamu yakin akan menyematkan FAQ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.post(url, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'post'
+                })
+                .done((response) => {
+                    tablePengumuman.ajax.reload();
+                    if(response) {
+                        toastr.success('FAQ berhasil disematkan.');
+                    } else {
+                        toastr.success('Sematan FAQ berhasil dilepas.');
+                    }
+                    toastr.options = {"positionClass": "toast-bottom-right"};
+                })
+                .fail((response) => {
+                    toastr.error('Tidak dapat menyematkan data.');
                     return;
                 })
             }

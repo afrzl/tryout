@@ -92,6 +92,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 //route data faq
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|panitia|bendahara'])->group(function () {
     Route::get('/faq/data', [\App\Http\Controllers\Admin\FaqController::class, 'data'])->name('faq.data');
+    Route::post('/faq/{id}/pin', [\App\Http\Controllers\Admin\FaqController::class, 'pin'])->name('faq.pin');
     Route::resource('faq', \App\Http\Controllers\Admin\FaqController::class);
 });
 

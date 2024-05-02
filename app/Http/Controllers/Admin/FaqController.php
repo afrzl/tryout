@@ -22,15 +22,24 @@ class FaqController extends Controller
         return datatables()
             ->eloquent($faqs)
             ->addIndexColumn()
+            ->addColumn('title', function ($faq)
+            {
+                $text = $faq->title;
+                if ($faq->pinned) {
+                    $text .= ' <i class="fa fa-thumbtack"></i>';
+                }
+                return $text;
+            })
             ->addColumn('author', function ($faq)
             {
                 return $faq->user->name;
             })
             ->addColumn('aksi', function ($faq) {
-                return '<a href="'. route('admin.faq.edit', $faq->id) .'" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
+                return '<button onclick="pinData(`' . route('admin.faq.pin', $faq->id) . '`)" type="button" class="btn btn-outline-success"><i class="fa fa-thumbtack"></i></button>
+                        <a href="'. route('admin.faq.edit', $faq->id) .'" type="button" class="btn btn-outline-warning"><i class="fa fa-edit"></i></a>
                         <button onclick="deleteData(`' . route('admin.faq.destroy', $faq->id) . '`)" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-alt"></i></button>';
             })
-            ->rawColumns(['content', 'file', 'aksi'])
+            ->rawColumns(['title', 'content', 'file', 'aksi'])
             ->make(true);
     }
 
@@ -118,5 +127,14 @@ class FaqController extends Controller
         $faq->delete();
 
         return response(null, 204);
+    }
+
+    public function pin($id)
+    {
+        $faq = Faq::findOrFail($id);
+        $faq->pinned = !$faq->pinned;
+        $faq->update();
+
+        return response($faq->pinned, 200);
     }
 }

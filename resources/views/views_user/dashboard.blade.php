@@ -357,7 +357,7 @@ Dashboard
     </section><!-- End Contact Section -->
 
     <div class="modal fade" id="modal-undur">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
                     <button type="button" class="btn float-end mb-2" data-bs-dismiss="modal" aria-label="Close">

@@ -248,9 +248,9 @@ class SoalController extends Controller
 
         foreach ($request->id_jawaban as $key => $id_jawaban) {
             $jawaban = Jawaban::findOrFail($id_jawaban);
-            if ($request->jenis_soal != 'tkp') {
-                $jawaban->jawaban = $request->jawaban[$key];
-            }
+            // if ($request->jenis_soal != 'tkp') {
+            $jawaban->jawaban = $request->jawaban[$key];
+            // }
             $jawaban->point = $request->point[$key];
             $jawaban->update();
         }

@@ -160,7 +160,7 @@ Dashboard
                                 <input type="hidden" name="paket_id" value="{{ $paket->id }}">
                                 <button type="submit" class="btn-buy">Beli Paket</button>
                                 @else
-                                <button type="button" style="background-color: grey; border-color: black" class="btn-buy">Belum tersedia</button>
+                                <button type="button" style="background-color: grey; border-color: black" class="btn-buy">Selesai Dilaksanakan</button>
                                 @endif
                                 @else
                                 @if ($paket->pembelian[0]->paket_id == '0df8c9b0-d352-448b-9611-abadffc4f46d')

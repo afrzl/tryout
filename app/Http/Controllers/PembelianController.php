@@ -180,6 +180,15 @@ class PembelianController extends Controller
             'user',
             'voucher'
         )->findOrFail($id);
+        if (
+            !Carbon::now()->between(
+                $pembelian->paketUjian->waktu_mulai,
+                $pembelian->paketUjian->waktu_akhir
+            )
+        ) {
+            abort(403, 'Waktu pendaftaran sudah selesai');
+        }
+
         if ($pembelian->user_id === auth()->user()->id) {
             return view('views_user.pembelian.index', compact('pembelian'));
         }

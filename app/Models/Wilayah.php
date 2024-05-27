@@ -11,4 +11,5 @@ class Wilayah extends Model
 
     protected $table = 'wilayah';
 
+    protected $primaryKey = 'kode';
 }
